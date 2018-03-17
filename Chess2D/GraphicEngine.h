@@ -11,7 +11,7 @@ class GraphicEngine
 	static sf::RenderWindow mainWindow;
 	sf::Font font;
 public:
-	sf::Texture* loadTexture(std::string fileName);
+	static sf::Texture* loadTexture(std::string fileName);
 	static void errorMessage(std::string errorDescription);
 	sf::RenderWindow* getMainWindow() { return &mainWindow; }
 	GraphicEngine();

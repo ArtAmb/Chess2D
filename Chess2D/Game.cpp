@@ -1,64 +1,33 @@
 #include "Game.h"
 
 
+
 #define WIDTH_FIELD 56
 
-#define WIDTH_BACKGROUND 836
-#define HEIGHT_BACKGROUND 728
+
 
 #define WIDTH_BACKGROUND_MODE 648
 #define HEIGHT_BACKGROUND_MODE 264
 
-#define WIDTH_BUTTON 296
-#define HEIGHT_BUTTON 50
-
-int ConvertBUTTONtoPositionOnTexture_COLUMN(int COLUMN)
-{
-	return COLUMN + WIDTH_BUTTON * COLUMN;
-}
-
-int ConvertBUTTONtoPositionOnTexture_ROW(int row)
-{
-	return 1 + row * HEIGHT_BUTTON + row;
-}
 
 Game::Game(sf::RenderWindow* mainWindow, GraphicEngine* engine)
 {
-	sf::Texture* texture = engine->loadTexture("resources/menu.png");
-	sf::Texture* buttonsTexture = engine->loadTexture("resources/buttons.png");
 	this->mainWindow = mainWindow;
-	sf::Sprite* menuBackground = new sf::Sprite(*texture, sf::IntRect(0, 0, WIDTH_BACKGROUND, HEIGHT_BACKGROUND));
-	menuView = new LayoutView(WIDTH_BACKGROUND, HEIGHT_BACKGROUND, menuBackground);
+	TextureResource* buttonsTexture = resourceManager->getTexture(RESOURCE::TEXTURE::NORMAL_BUTTONS);
+	TextureResource* menuBackground = resourceManager->getTexture(RESOURCE::TEXTURE::BACKGROUNDS);
+
+	
+	menuView = new LayoutView(menuBackground->getConverter()->getElementWidth(), menuBackground->getConverter()->getElementHeight(), menuBackground->getSprite(0,0));
 	int i = 0;
-	Button* newGameButton = new Button();
-	newGameButton->SetTexture(buttonsTexture);
-	newGameButton->AddFrameOFF(sf::IntRect(ConvertBUTTONtoPositionOnTexture_COLUMN(0), ConvertBUTTONtoPositionOnTexture_ROW(i), WIDTH_BUTTON, HEIGHT_BUTTON));
-	newGameButton->AddFrameON(sf::IntRect(ConvertBUTTONtoPositionOnTexture_COLUMN(1), ConvertBUTTONtoPositionOnTexture_ROW(i), WIDTH_BUTTON, HEIGHT_BUTTON));
-	menuView->addButton(newGameButton);
+	Button* newGameButton = createDefaultButton(buttonsTexture, i, menuView);
 	++i;
-	Button* optionsButton = new Button();
-	optionsButton->SetTexture(buttonsTexture);
-	optionsButton->AddFrameOFF(sf::IntRect(ConvertBUTTONtoPositionOnTexture_COLUMN(0), ConvertBUTTONtoPositionOnTexture_ROW(i), WIDTH_BUTTON, HEIGHT_BUTTON));
-	optionsButton->AddFrameON(sf::IntRect(ConvertBUTTONtoPositionOnTexture_COLUMN(1), ConvertBUTTONtoPositionOnTexture_ROW(i), WIDTH_BUTTON, HEIGHT_BUTTON));
-	menuView->addButton(optionsButton);
+	Button* optionsButton = createDefaultButton(buttonsTexture, i, menuView);
 	++i;
-	Button* resultsButton = new Button();
-	resultsButton->SetTexture(buttonsTexture);
-	resultsButton->AddFrameOFF(sf::IntRect(ConvertBUTTONtoPositionOnTexture_COLUMN(0), ConvertBUTTONtoPositionOnTexture_ROW(i), WIDTH_BUTTON, HEIGHT_BUTTON));
-	resultsButton->AddFrameON(sf::IntRect(ConvertBUTTONtoPositionOnTexture_COLUMN(1), ConvertBUTTONtoPositionOnTexture_ROW(i), WIDTH_BUTTON, HEIGHT_BUTTON));
-	menuView->addButton(resultsButton);
+	Button* resultsButton = createDefaultButton(buttonsTexture, i, menuView);
 	++i;
-	Button* creditsButton = new Button();
-	creditsButton->SetTexture(buttonsTexture);
-	creditsButton->AddFrameOFF(sf::IntRect(ConvertBUTTONtoPositionOnTexture_COLUMN(0), ConvertBUTTONtoPositionOnTexture_ROW(i), WIDTH_BUTTON, HEIGHT_BUTTON));
-	creditsButton->AddFrameON(sf::IntRect(ConvertBUTTONtoPositionOnTexture_COLUMN(1), ConvertBUTTONtoPositionOnTexture_ROW(i), WIDTH_BUTTON, HEIGHT_BUTTON));
-	menuView->addButton(creditsButton);
+	Button* creditsButton = createDefaultButton(buttonsTexture, i, menuView);
 	++i;
-	Button* exitButton = new Button();
-	exitButton->SetTexture(buttonsTexture);
-	exitButton->AddFrameOFF(sf::IntRect(ConvertBUTTONtoPositionOnTexture_COLUMN(0), ConvertBUTTONtoPositionOnTexture_ROW(i), WIDTH_BUTTON, HEIGHT_BUTTON));
-	exitButton->AddFrameON(sf::IntRect(ConvertBUTTONtoPositionOnTexture_COLUMN(1), ConvertBUTTONtoPositionOnTexture_ROW(i), WIDTH_BUTTON, HEIGHT_BUTTON));
-	menuView->addButton(exitButton);
+	Button* exitButton = createDefaultButton(buttonsTexture, i, menuView);
 
 	menuView->prepareView();
 }
@@ -69,9 +38,23 @@ void Game::startGame()
 	while (true) {
 		menuView->display(mainWindow);
 
+
+
+
+
 		mainWindow->display();
 	}
 
+}
+
+Button * Game::createDefaultButton(TextureResource * texture, int logicalRow, LayoutView* view)
+{
+	Button* button = new Button();
+	button->SetTexture(texture->getTexture());
+	button->AddFrameOFF(texture->getConverter()->getElementRect(logicalRow, 0));
+	button->AddFrameON(texture->getConverter()->getElementRect(logicalRow, 1));
+	view->addButton(button);
+	return button;
 }
 
 

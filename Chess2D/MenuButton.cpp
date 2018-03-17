@@ -36,3 +36,16 @@ bool Button::contains(sf::Vector2f point)
 	return SpriteButton.getGlobalBounds().contains(point);
 }
 
+void Button::setOnClickAction(ButtonAction* action)
+{
+	this->action = action;
+}
+
+void Button::click()
+{
+	if (action == nullptr)
+		return;
+
+	action->doAction();
+}
+

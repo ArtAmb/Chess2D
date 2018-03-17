@@ -121,17 +121,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="PositionTextureConverter.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GraphicEngine.cpp" />
     <ClCompile Include="LayoutView.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MenuButton.cpp" />
+    <ClCompile Include="ResourceManager.cpp" />
+    <ClCompile Include="TextureResource.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="PositionTextureConverter.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GraphicEngine.h" />
     <ClInclude Include="LayoutView.h" />
     <ClInclude Include="MenuButton.h" />
+    <ClInclude Include="ResourceKeys.h" />
+    <ClInclude Include="ResourceManager.h" />
+    <ClInclude Include="TextureResource.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
