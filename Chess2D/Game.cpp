@@ -1,4 +1,9 @@
 #include "Game.h"
+#include "GameButtonAction.h"
+#include "OptionsButtonAction.h"
+#include "QuitButtonAction.h"
+#include "ResultsButtonAction.h"
+#include "CreditsButtonAction.h"
 
 
 
@@ -16,18 +21,23 @@ Game::Game(sf::RenderWindow* mainWindow, GraphicEngine* engine)
 	TextureResource* buttonsTexture = resourceManager->getTexture(RESOURCE::TEXTURE::NORMAL_BUTTONS);
 	TextureResource* menuBackground = resourceManager->getTexture(RESOURCE::TEXTURE::BACKGROUNDS);
 
-	
-	menuView = new LayoutView(menuBackground->getConverter()->getElementWidth(), menuBackground->getConverter()->getElementHeight(), menuBackground->getSprite(0,0));
+
+	menuView = new LayoutView(menuBackground->getConverter()->getElementWidth(), menuBackground->getConverter()->getElementHeight(), menuBackground->getSprite(0, 0));
 	int i = 0;
 	Button* newGameButton = createDefaultButton(buttonsTexture, i, menuView);
+	newGameButton->setOnClickAction(new GameButtonAction());
 	++i;
 	Button* optionsButton = createDefaultButton(buttonsTexture, i, menuView);
+	optionsButton->setOnClickAction(new OptionsButtonAction());
 	++i;
 	Button* resultsButton = createDefaultButton(buttonsTexture, i, menuView);
+	resultsButton->setOnClickAction(new ResultsButtonAction());
 	++i;
 	Button* creditsButton = createDefaultButton(buttonsTexture, i, menuView);
+	creditsButton->setOnClickAction(new CreditsButtonAction());
 	++i;
 	Button* exitButton = createDefaultButton(buttonsTexture, i, menuView);
+	exitButton->setOnClickAction(new QuitButtonAction());
 
 	menuView->prepareView();
 }

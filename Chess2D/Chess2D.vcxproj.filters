@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\buttons">
+      <UniqueIdentifier>{837e71b0-c1d9-48f4-849c-6588080ee862}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\buttons">
+      <UniqueIdentifier>{b410da6f-5974-4fc9-a11e-772bb43eaae1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -37,6 +43,30 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ResourceManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OptionsButtonAction.cpp">
+      <Filter>Source Files\buttons</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiplayerGameButtonAction.cpp">
+      <Filter>Source Files\buttons</Filter>
+    </ClCompile>
+    <ClCompile Include="QuitButtonAction.cpp">
+      <Filter>Source Files\buttons</Filter>
+    </ClCompile>
+    <ClCompile Include="SingleGameButtonAction.cpp">
+      <Filter>Source Files\buttons</Filter>
+    </ClCompile>
+    <ClCompile Include="GameButtonAction.cpp">
+      <Filter>Source Files\buttons</Filter>
+    </ClCompile>
+    <ClCompile Include="ResultsButtonAction.cpp">
+      <Filter>Source Files\buttons</Filter>
+    </ClCompile>
+    <ClCompile Include="CreditsButtonAction.cpp">
+      <Filter>Source Files\buttons</Filter>
+    </ClCompile>
+    <ClCompile Include="ClickEvent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -65,5 +95,45 @@
     <ClInclude Include="ResourceKeys.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GameButtonAction.h">
+      <Filter>Header Files\buttons</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiplayerGameButtonAction.h">
+      <Filter>Header Files\buttons</Filter>
+    </ClInclude>
+    <ClInclude Include="OptionsButtonAction.h">
+      <Filter>Header Files\buttons</Filter>
+    </ClInclude>
+    <ClInclude Include="QuitButtonAction.h">
+      <Filter>Header Files\buttons</Filter>
+    </ClInclude>
+    <ClInclude Include="SingleGameButtonAction.h">
+      <Filter>Header Files\buttons</Filter>
+    </ClInclude>
+    <ClInclude Include="CreditsButtonAction.h">
+      <Filter>Header Files\buttons</Filter>
+    </ClInclude>
+    <ClInclude Include="ResultsButtonAction.h">
+      <Filter>Header Files\buttons</Filter>
+    </ClInclude>
+    <ClInclude Include="ClickEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="resources\BOOKOSB.TTF">
+      <Filter>Resource Files</Filter>
+    </Font>
+    <Font Include="resources\coolvetica rg.ttf">
+      <Filter>Resource Files</Filter>
+    </Font>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\buttons.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\menu.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

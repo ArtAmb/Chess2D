@@ -30,7 +30,9 @@ void LayoutView::display(sf::RenderWindow* window)
 				button->SetON();
 				if (happening.type == sf::Event::MouseButtonReleased && happening.key.code == sf::Mouse::Left)
 				{
-					button->click();
+					ClickEvent* event = new ClickEvent();
+					event->setWindow(window);
+					button->click(event);
 					return;
 				}
 			}

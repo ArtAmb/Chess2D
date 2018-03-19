@@ -1,11 +1,11 @@
 #pragma once
 #include <SFML\Graphics.hpp>
-
+#include "ClickEvent.h"
 
 class ButtonAction {
 	
 public:
-	virtual void doAction() = 0;
+	virtual void doAction(ClickEvent* event) = 0;
 
 };
 
@@ -29,6 +29,6 @@ public:
 	void SetTexture(sf::Texture*);
 	bool contains(sf::Vector2f);
 	void setOnClickAction(ButtonAction* action);
-	void click();
+	void click(ClickEvent* event);
 	~Button();
 };

@@ -7,6 +7,8 @@ Button::Button()
 
 Button::~Button()
 {
+	if (action != nullptr)
+		delete action;
 }
 
 void Button::AddFrameON(sf::IntRect Frame)
@@ -41,11 +43,12 @@ void Button::setOnClickAction(ButtonAction* action)
 	this->action = action;
 }
 
-void Button::click()
+void Button::click(ClickEvent* event)
 {
 	if (action == nullptr)
 		return;
 
-	action->doAction();
+	action->doAction(event);
+	delete event;
 }
 
