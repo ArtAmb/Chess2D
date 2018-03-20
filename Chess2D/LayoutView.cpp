@@ -1,5 +1,10 @@
 #include "LayoutView.h"
 
+void LayoutView::setTopPadding(int padding)
+{
+	this->topPadding = padding;
+}
+
 void LayoutView::addButton(Button * button)
 {
 	buttons.push_back(button);
@@ -70,17 +75,17 @@ void LayoutView::prepareView()
 {
 	int middleWidth = width / 2;
 	int i = 0;
-	int heightPixel = heightComponentsGap;
+	int heightPixel = topPadding;
 	for (Button* button : buttons) {
 
 		int buttonWidth = button->RetSprite().getTextureRect().width;
 		int buttonHeight = button->RetSprite().getTextureRect().height;
 
 		int widthPixel = middleWidth - buttonWidth/2;
-		heightPixel += i * heightComponentsGap;
+		heightPixel += (heightComponentsGap + 1);
 		button->SetXY(widthPixel, heightPixel);
 
-		heightPixel += buttonHeight + 1;
+		heightPixel += buttonHeight;
 		++i;
 		if (heightPixel >= height)
 			GraphicEngine::errorMessage("TO MANY BUTTONS...");
