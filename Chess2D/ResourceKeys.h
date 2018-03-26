@@ -7,6 +7,7 @@ namespace RESOURCE {
 		NORMAL_BUTTONS,
 		GAME_MODE_BUTTONS,
 		FIELDS,
+		PODGLAD
 		
 	};
 

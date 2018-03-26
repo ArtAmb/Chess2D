@@ -7,6 +7,6 @@ public:
 	MultiplayerGameButtonAction();
 	~MultiplayerGameButtonAction();
 
-	void doAction();
+	void doAction(ClickEvent* event);
 };
 

@@ -50,7 +50,7 @@ Game::Game(sf::RenderWindow* mainWindow, GraphicEngine* engine)
 
 void Game::startGame()
 {
-	while (true) {
+	while (mainWindow->isOpen()) {
 		menuView->display(mainWindow);
 		
 		//chessBoard->display(mainWindow);

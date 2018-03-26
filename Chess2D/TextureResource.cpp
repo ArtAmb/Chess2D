@@ -28,3 +28,13 @@ TextureResource::TextureResource(std::string texturePath, int width, int heigth)
 TextureResource::~TextureResource()
 {
 }
+
+int TextureResource::getWidth()
+{
+	return getConverter()->getElementWidth();
+}
+
+int TextureResource::getHeight()
+{
+	return getConverter()->getElementHeight();
+}

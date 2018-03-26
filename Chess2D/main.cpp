@@ -14,6 +14,9 @@
 #define WIDTH_BUTTON 296
 #define HEIGHT_BUTTON 50
 
+#define GAME_MODE_HEIGHT_BUTTON 150
+#define GAME_MODE_WIDTH_BUTTON 400
+
 #define WIDTH_FIELD 72
 
 
@@ -24,7 +27,9 @@ int main()
 
 	resourceManager->loadTexture(RESOURCE::TEXTURE::BACKGROUNDS, "backgrounds.png", WIDTH_BACKGROUND, HEIGHT_BACKGROUND);
 	resourceManager->loadTexture(RESOURCE::TEXTURE::NORMAL_BUTTONS, "buttons.png", WIDTH_BUTTON, HEIGHT_BUTTON);
+	resourceManager->loadTexture(RESOURCE::TEXTURE::GAME_MODE_BUTTONS, "game_mode_buttons.png", GAME_MODE_WIDTH_BUTTON, GAME_MODE_HEIGHT_BUTTON);
 	resourceManager->loadTexture(RESOURCE::TEXTURE::FIELDS, "fields.png", WIDTH_FIELD, WIDTH_FIELD);
+	resourceManager->loadTexture(RESOURCE::TEXTURE::PODGLAD, "podglad.png", WIDTH_BACKGROUND, HEIGHT_BACKGROUND);
 	
 	GraphicEngine graphicEngine;
 	Game game(graphicEngine.getMainWindow(), &graphicEngine);

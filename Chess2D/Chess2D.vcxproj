@@ -84,11 +84,11 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Karolina\VisualStudio Biblioteki\SFML-2.4.2\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\SFML 2.4.1\SFML-2.4.1\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\Users\Karolina\VisualStudio Biblioteki\SFML-2.4.2\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\SFML 2.4.1\SFML-2.4.1\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-audio-d.lib;sfml-graphics-d.lib;sfml-main-d.lib;sfml-network-d.lib;sfml-system-d.lib;sfml-window-d.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -125,11 +125,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ChessBoard.cpp" />
+    <ClCompile Include="ChessPiece.cpp" />
     <ClCompile Include="ClickEvent.cpp" />
     <ClCompile Include="CreditsButtonAction.cpp" />
     <ClCompile Include="GameButtonAction.cpp" />
     <ClCompile Include="MultiplayerGameButtonAction.cpp" />
     <ClCompile Include="OptionsButtonAction.cpp" />
+    <ClCompile Include="Pawn.cpp" />
     <ClCompile Include="PositionTextureConverter.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GraphicEngine.cpp" />
@@ -145,11 +147,13 @@
   <ItemGroup>
     <ClInclude Include="ChessBoard.h" />
     <ClInclude Include="ChessEnums.h" />
+    <ClInclude Include="ChessPiece.h" />
     <ClInclude Include="ClickEvent.h" />
     <ClInclude Include="CreditsButtonAction.h" />
     <ClInclude Include="GameButtonAction.h" />
     <ClInclude Include="MultiplayerGameButtonAction.h" />
     <ClInclude Include="OptionsButtonAction.h" />
+    <ClInclude Include="Pawn.h" />
     <ClInclude Include="PositionTextureConverter.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GraphicEngine.h" />

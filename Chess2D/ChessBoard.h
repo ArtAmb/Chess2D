@@ -4,43 +4,41 @@
 #include "ResourceManager.h"
 #include "ResourceKeys.h"
 #include "GraphicEngine.h"
+#include "ChessPiece.h"
 
 class ChessBoardField {
 private:
-
-	int WIDTH_FIELD = 72;
-	sf::Sprite* spriteField;
-
+	sf::Sprite* sprite;
+	ChessPiece* chessPiece = nullptr;
 	int height, width;
-	sf::RenderWindow* mainWindow;
-	ResourceManager* resourceManager = ResourceManager::getInstance();
-
 
 public:
 	ChessBoardField() {}
 	~ChessBoardField() {}
-	ChessBoardField(int width, int height, sf::Sprite * spriteField);
-	//void SetXY(int x, int y) { spriteField.setPosition(static_cast<float>(x), static_cast<float>(y)); }
-	//void draw(sf::Sprite SpriteField);
-	void prepareChessBoardField(sf::RenderWindow * window);
-	void setTexture(sf::Sprite *spriteField);
+	ChessBoardField(int width, int height, sf::Sprite* sprite);
+	void setXY(int x, int y);
+	void draw(sf::RenderWindow* mainWindow);
+	void setSprite(sf::Sprite* sprite);
+	bool isEmpty();
+
+	ChessPiece* getPiece();
+	void setPiece(ChessPiece* piece);
 
 };
 
 class ChessBoard {
 
-	sf::Sprite* background;
+	sf::Sprite* whiteField;
+	sf::Sprite* blackField;
+	ChessPiece* pieces[2][16];
 
 	int height, width;
 	const static int BOARD_SIZE = 8;
-	//ChessBoardField board[BOARD_SIZE][BOARD_SIZE];
-
+	ChessBoardField board[BOARD_SIZE][BOARD_SIZE];
 
 public:
 
 	ChessBoard(int height, int width, sf::Sprite* background);
-
 	void draw(sf::RenderWindow* window);
-	void display(sf::RenderWindow* window);
-	void setTexture(sf::Sprite* background);
+	ChessBoardField* getField(CHESS_COLUMN c, CHESS_ROW r);
 };

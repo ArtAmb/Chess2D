@@ -11,6 +11,6 @@ MultiplayerGameButtonAction::~MultiplayerGameButtonAction()
 {
 }
 
-void MultiplayerGameButtonAction::doAction()
+void MultiplayerGameButtonAction::doAction(ClickEvent* event)
 {
 }

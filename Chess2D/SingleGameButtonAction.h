@@ -8,6 +8,6 @@ public:
 	SingleGameButtonAction();
 	~SingleGameButtonAction();
 
-	void doAction();
+	void doAction(ClickEvent* event);
 };
 

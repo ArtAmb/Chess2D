@@ -14,6 +14,8 @@ public:
 	sf::Sprite* getSprite(int logicalRow, int logicalColumn);
 	~TextureResource();
 
+	int getWidth();
+	int getHeight();
 
 };
 
