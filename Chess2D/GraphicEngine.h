@@ -5,8 +5,8 @@
 
 class GraphicEngine
 {
-	int WIDTH_BACKGROUND = 836;
-	int HEIGHT_BACKGROUND = 728;
+	int WIDTH_BACKGROUND = 1008;
+	int HEIGHT_BACKGROUND = 720;
 
 	static sf::RenderWindow mainWindow;
 	sf::Font font;

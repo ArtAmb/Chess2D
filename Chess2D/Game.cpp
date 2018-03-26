@@ -7,8 +7,8 @@
 
 
 
-#define WIDTH_FIELD 56
 
+#define WIDTH_FIELD 72
 
 
 #define WIDTH_BACKGROUND_MODE 648
@@ -40,6 +40,11 @@ Game::Game(sf::RenderWindow* mainWindow, GraphicEngine* engine)
 	exitButton->setOnClickAction(new QuitButtonAction());
 
 	menuView->prepareView();
+
+	TextureResource* gameBackground = resourceManager->getTexture(RESOURCE::TEXTURE::BACKGROUNDS);
+	chessBoard = new ChessBoard(gameBackground->getConverter()->getElementWidth(), gameBackground->getConverter()->getElementHeight(), gameBackground->getSprite(0, 1));
+
+	
 }
 
 
@@ -47,7 +52,8 @@ void Game::startGame()
 {
 	while (true) {
 		menuView->display(mainWindow);
-
+		
+		//chessBoard->display(mainWindow);
 
 
 
@@ -56,6 +62,7 @@ void Game::startGame()
 	}
 
 }
+
 
 Button * Game::createDefaultButton(TextureResource * texture, int logicalRow, LayoutView* view)
 {

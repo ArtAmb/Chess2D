@@ -21,6 +21,6 @@ GameButtonAction::~GameButtonAction()
 void GameButtonAction::doAction(ClickEvent* event)
 {
 	view->draw(event->getWindow());
-
 	
+		
 }

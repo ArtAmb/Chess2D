@@ -8,19 +8,23 @@
 #include "ResourceManager.h"
 #include "ResourceKeys.h"
 
-#define WIDTH_BACKGROUND 836
-#define HEIGHT_BACKGROUND 728
+#define WIDTH_BACKGROUND 1008
+#define HEIGHT_BACKGROUND 720
 
 #define WIDTH_BUTTON 296
 #define HEIGHT_BUTTON 50
+
+#define WIDTH_FIELD 72
+
 
 int main()
 {
 	ResourceManager* resourceManager = ResourceManager::getInstance();
 	resourceManager->setPathToResource("resources/");
 
-	resourceManager->loadTexture(RESOURCE::TEXTURE::BACKGROUNDS, "menu.png", WIDTH_BACKGROUND, HEIGHT_BACKGROUND);
+	resourceManager->loadTexture(RESOURCE::TEXTURE::BACKGROUNDS, "backgrounds.png", WIDTH_BACKGROUND, HEIGHT_BACKGROUND);
 	resourceManager->loadTexture(RESOURCE::TEXTURE::NORMAL_BUTTONS, "buttons.png", WIDTH_BUTTON, HEIGHT_BUTTON);
+	resourceManager->loadTexture(RESOURCE::TEXTURE::FIELDS, "fields.png", WIDTH_FIELD, WIDTH_FIELD);
 	
 	GraphicEngine graphicEngine;
 	Game game(graphicEngine.getMainWindow(), &graphicEngine);

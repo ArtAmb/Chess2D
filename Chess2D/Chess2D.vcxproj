@@ -124,6 +124,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ChessBoard.cpp" />
     <ClCompile Include="ClickEvent.cpp" />
     <ClCompile Include="CreditsButtonAction.cpp" />
     <ClCompile Include="GameButtonAction.cpp" />
@@ -142,6 +143,8 @@
     <ClCompile Include="TextureResource.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ChessBoard.h" />
+    <ClInclude Include="ChessEnums.h" />
     <ClInclude Include="ClickEvent.h" />
     <ClInclude Include="CreditsButtonAction.h" />
     <ClInclude Include="GameButtonAction.h" />
