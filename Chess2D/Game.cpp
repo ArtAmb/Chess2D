@@ -5,9 +5,6 @@
 #include "ResultsButtonAction.h"
 #include "CreditsButtonAction.h"
 
-
-
-
 #define WIDTH_FIELD 72
 
 
@@ -42,25 +39,13 @@ Game::Game(sf::RenderWindow* mainWindow, GraphicEngine* engine)
 	menuView->prepareView();
 
 	TextureResource* gameBackground = resourceManager->getTexture(RESOURCE::TEXTURE::BACKGROUNDS);
-	chessBoard = new ChessBoard(gameBackground->getConverter()->getElementWidth(), gameBackground->getConverter()->getElementHeight(), gameBackground->getSprite(0, 1));
-
-	
+	chessBoard = new ChessBoard();
 }
 
 
 void Game::startGame()
 {
-	while (mainWindow->isOpen()) {
-		menuView->display(mainWindow);
-		
-		//chessBoard->display(mainWindow);
-
-
-
-
-		mainWindow->display();
-	}
-
+	menuView->display(mainWindow);
 }
 
 

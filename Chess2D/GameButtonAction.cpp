@@ -8,7 +8,8 @@ GameButtonAction::GameButtonAction()
 {
 	TextureResource* buttonsTextures = resourceManager->getTexture(RESOURCE::TEXTURE::GAME_MODE_BUTTONS);
 	TextureResource* backgroundTexture = resourceManager->getTexture(RESOURCE::TEXTURE::BACKGROUNDS);
-	view = new LayoutView(backgroundTexture->getHeight(), backgroundTexture->getWidth(), backgroundTexture->getSprite(0,0));
+	
+	view = new LayoutView(backgroundTexture->getWidth(), backgroundTexture->getHeight(), backgroundTexture->getSprite(0,0));
 
 	view->setHeightGap(50);
 	view->setTopPadding(50);
@@ -31,13 +32,11 @@ GameButtonAction::GameButtonAction()
 }
 
 
-GameButtonAction::~GameButtonAction()
-{
+GameButtonAction::~GameButtonAction() {
 	if (view != nullptr)
 		delete view;
 }
 
-void GameButtonAction::doAction(ClickEvent* event)
-{
+void GameButtonAction::doAction(ClickEvent* event) {
 	view->display(event->getWindow());
 }

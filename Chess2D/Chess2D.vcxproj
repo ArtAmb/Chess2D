@@ -129,6 +129,7 @@
     <ClCompile Include="ClickEvent.cpp" />
     <ClCompile Include="CreditsButtonAction.cpp" />
     <ClCompile Include="GameButtonAction.cpp" />
+    <ClCompile Include="GameView.cpp" />
     <ClCompile Include="MultiplayerGameButtonAction.cpp" />
     <ClCompile Include="OptionsButtonAction.cpp" />
     <ClCompile Include="Pawn.cpp" />
@@ -151,6 +152,7 @@
     <ClInclude Include="ClickEvent.h" />
     <ClInclude Include="CreditsButtonAction.h" />
     <ClInclude Include="GameButtonAction.h" />
+    <ClInclude Include="GameView.h" />
     <ClInclude Include="MultiplayerGameButtonAction.h" />
     <ClInclude Include="OptionsButtonAction.h" />
     <ClInclude Include="Pawn.h" />

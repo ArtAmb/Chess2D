@@ -23,6 +23,15 @@ void ChessBoardField::setPiece(ChessPiece* piece)
 	this->chessPiece = piece;
 }
 
+ChessBoardField::~ChessBoardField()
+{
+	if (sprite != nullptr)
+		delete sprite;
+
+	if (chessPiece != nullptr)
+		delete chessPiece;
+}
+
 ChessBoardField::ChessBoardField(int width, int height, sf::Sprite* sprite)
 {
 	this->width = width;
@@ -32,15 +41,15 @@ ChessBoardField::ChessBoardField(int width, int height, sf::Sprite* sprite)
 
 void ChessBoardField::setXY(int x, int y)
 {
-	sprite->setPosition(static_cast<float>(x), static_cast<float>(y)); 
+	sprite->setPosition(static_cast<float>(x), static_cast<float>(y));
 	if (chessPiece != nullptr)
-		chessPiece->setXY(x,y);
+		chessPiece->setXY(x, y);
 }
 
 void ChessBoardField::draw(sf::RenderWindow * mainWindow)
 {
 	mainWindow->draw(*sprite);
-	if(chessPiece != nullptr)
+	if (chessPiece != nullptr)
 		mainWindow->draw(*chessPiece->getSprite());
 }
 
@@ -49,16 +58,18 @@ ChessBoardField* ChessBoard::getField(CHESS_COLUMN c, CHESS_ROW r)
 	return &board[r][c];
 }
 
-ChessBoard::ChessBoard(int width, int height, sf::Sprite* background)
+sf::Sprite * ChessBoard::getWhiteFieldSprite()
 {
-	this->width = width;
-	this->height = height;
+	return fieldTexture->getSprite(2, 1);
+}
 
-	TextureResource* fieldTexture = ResourceManager::getInstance()->getTexture(RESOURCE::TEXTURE::FIELDS);
+sf::Sprite * ChessBoard::getBlackFieldSprite()
+{
+	return fieldTexture->getSprite(2, 0);
+}
 
-	blackField = fieldTexture->getSprite(2, 0);
-	whiteField = fieldTexture->getSprite(2, 1);
-	
+ChessBoard::ChessBoard()
+{
 	for (int i = 0; i < 8; ++i)
 	{
 		pieces[WHITE][i] = new Pawn(R_2, (CHESS_COLUMN)i, WHITE, this, fieldTexture->getSprite(0, 0));
@@ -97,20 +108,21 @@ ChessBoard::ChessBoard(int width, int height, sf::Sprite* background)
 	{
 		for (int j = 0; j < BOARD_SIZE; ++j)
 		{
-			board[i][j].setSprite(i % 2 == j % 2 ? fieldTexture->getSprite(2, 0) : fieldTexture->getSprite(2, 1));
+			board[i][j].setSprite(i % 2 == j % 2 ? getWhiteFieldSprite() : getBlackFieldSprite());
 			board[i][j].setXY(72 + j * 72, 72 + i * 72);
 		}
 	}
 }
 
-/*
-int getRowInPixels(CHESS_ROW row) {
-
+ChessBoard::~ChessBoard()
+{
+	for (int i = 0; i < 2; ++i)
+		for (ChessPiece* piece : pieces[i]) {
+			if (piece != nullptr)
+				delete piece;
+		}
 }
-int getColInPixels(CHESS_COLUMN col) {
 
-}
-*/
 void ChessBoard::draw(sf::RenderWindow* window) {
 
 	for (int i = 0; i < BOARD_SIZE; ++i)

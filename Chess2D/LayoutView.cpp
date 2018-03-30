@@ -1,5 +1,9 @@
 #include "LayoutView.h"
 
+void LayoutView::setEndKey(sf::Keyboard::Key key) {
+	endKey = key;
+}
+
 void LayoutView::setTopPadding(int padding)
 {
 	this->topPadding = padding;
@@ -12,60 +16,50 @@ void LayoutView::addButton(Button * button)
 
 void LayoutView::display(sf::RenderWindow* window)
 {
-
 	while (window->isOpen())
 	{
-		sf::Event happening;
-		while (window->pollEvent(happening))
-		{
+		mousePosition = sf::Vector2f(sf::Mouse::getPosition(*window));
+		while (window->pollEvent(happening)) {
 			if (happening.type == sf::Event::Closed)
 				window->close();
 
-		}
-
-
-		sf::Vector2f mousePosition(sf::Mouse::getPosition(*window));
-
-		for (Button* button : buttons) {
-			button->SetOFF();
-		}
-
-		for (Button* button : buttons) {
-			if (button->contains(mousePosition)) {
-				button->SetON();
-				if (happening.type == sf::Event::MouseButtonReleased && happening.key.code == sf::Mouse::Left)
-				{
-					ClickEvent* event = new ClickEvent();
-					event->setWindow(window);
-					button->click(event);
-					return;
-				}
+			if (happening.type == sf::Event::KeyReleased && happening.key.code == sf::Keyboard::Escape) {
+				setDisplaying(false);
 			}
 
-
+			checkButtons(window);
 		}
 
+		if (!isDisplaying()) {
+			finishDisplaying();
+			return;
+		}
 
 		draw(window);
 		window->display();
 	}
 }
 
+void LayoutView::setDisplaying(bool displaying)
+{
+	this->displaying = displaying;
+}
+
 void LayoutView::draw(sf::RenderWindow* window) {
 	window->draw(*background);
+
+	additionalDisplayAction(window);
 
 	for (Button* button : buttons) {
 		window->draw(button->RetSprite());
 	}
 }
 
-void LayoutView::setTexture(sf::Sprite* background)
-{
+void LayoutView::setTexture(sf::Sprite* background) {
 	this->background = background;
 }
 
-LayoutView::LayoutView(int width, int height, sf::Sprite* background)
-{
+LayoutView::LayoutView(int width, int height, sf::Sprite* background) {
 	this->width = width;
 	this->height = height;
 	this->background = background;
@@ -81,7 +75,7 @@ void LayoutView::prepareView()
 		int buttonWidth = button->RetSprite().getTextureRect().width;
 		int buttonHeight = button->RetSprite().getTextureRect().height;
 
-		int widthPixel = middleWidth - buttonWidth/2;
+		int widthPixel = middleWidth - buttonWidth / 2;
 		heightPixel += (heightComponentsGap + 1);
 		button->SetXY(widthPixel, heightPixel);
 
@@ -98,6 +92,41 @@ void LayoutView::setHeightGap(int gap)
 	heightComponentsGap = gap;
 }
 
+
+void LayoutView::finishDisplaying()
+{
+	displaying = true;
+}
+
+void LayoutView::additionalDisplayAction(sf::RenderWindow* window)
+{
+
+}
+
+void LayoutView::additionalEventCheck(sf::RenderWindow * window)
+{
+}
+
+void LayoutView::checkButtons(sf::RenderWindow* window)
+{
+	for (Button* button : buttons) {
+		button->SetOFF();
+	}
+
+	for (Button* button : buttons) {
+		if (button->contains(mousePosition)) {
+			button->SetON();
+			if (happening.type == sf::Event::MouseButtonReleased && happening.key.code == sf::Mouse::Left) {
+				ClickEvent* event = new ClickEvent();
+				event->setWindow(window);
+				event->setView(this);
+
+				button->click(event);
+			}
+		}
+
+	}
+}
 
 LayoutView::~LayoutView()
 {

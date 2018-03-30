@@ -2,6 +2,11 @@
 
 
 
+void PositionTextureConverter::setIsGridOnTexture(bool isGridOnTexture)
+{
+	this->isGridOnTexture = isGridOnTexture;
+}
+
 int PositionTextureConverter::getElementWidth()
 {
 	return width_element;
@@ -24,12 +29,18 @@ PositionTextureConverter::~PositionTextureConverter()
 
 int PositionTextureConverter::convertToColumn(int COLUMN)
 {
-	return COLUMN + width_element * COLUMN;
+	if(isGridOnTexture)
+		return COLUMN + width_element * COLUMN;
+	
+	return width_element * COLUMN;
 }
 
 int PositionTextureConverter::convertToRow(int row)
 {
-	return 1 + row * height_element + row;
+	if(isGridOnTexture)
+		return 1 + row * height_element + row;
+
+	return row * height_element;
 }
 
 sf::IntRect PositionTextureConverter::getElementRect(int row, int col)
