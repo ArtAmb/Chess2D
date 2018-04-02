@@ -128,8 +128,10 @@
     <ClCompile Include="ChessPiece.cpp" />
     <ClCompile Include="ClickEvent.cpp" />
     <ClCompile Include="CreditsButtonAction.cpp" />
+    <ClCompile Include="FieldSelector.cpp" />
     <ClCompile Include="GameButtonAction.cpp" />
     <ClCompile Include="GameView.cpp" />
+    <ClCompile Include="King.cpp" />
     <ClCompile Include="MultiplayerGameButtonAction.cpp" />
     <ClCompile Include="OptionsButtonAction.cpp" />
     <ClCompile Include="Pawn.cpp" />
@@ -151,8 +153,10 @@
     <ClInclude Include="ChessPiece.h" />
     <ClInclude Include="ClickEvent.h" />
     <ClInclude Include="CreditsButtonAction.h" />
+    <ClInclude Include="FieldSelector.h" />
     <ClInclude Include="GameButtonAction.h" />
     <ClInclude Include="GameView.h" />
+    <ClInclude Include="King.h" />
     <ClInclude Include="MultiplayerGameButtonAction.h" />
     <ClInclude Include="OptionsButtonAction.h" />
     <ClInclude Include="Pawn.h" />
@@ -165,6 +169,7 @@
     <ClInclude Include="ResourceKeys.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="ResultsButtonAction.h" />
+    <ClInclude Include="SimpleChessField.h" />
     <ClInclude Include="SingleGameButtonAction.h" />
     <ClInclude Include="TextureResource.h" />
   </ItemGroup>

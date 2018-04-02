@@ -31,3 +31,162 @@ sf::Sprite * ChessPiece::getSprite()
 {
 	return sprite;
 }
+
+PLAYER_COLOR ChessPiece::getColor()
+{
+	return chessColor;
+}
+
+void ChessPiece::reset()
+{
+	resetPossibleMoves();
+}
+
+std::vector<SimpleChessField> ChessPiece::getPossibleMovesIncludingKing()
+{
+	if (!isBeingProcessed()) {
+		resetPossibleMoves();
+		fillPossibleMoves();
+	}
+	return possibleMoves;
+}
+
+std::vector<SimpleChessField> ChessPiece::getPossibleMoves() {
+	resetPossibleMoves();
+	tryToFillPossibleMoves();
+
+	return possibleMoves;
+}
+
+void ChessPiece::highlightPossibleMoves()
+{
+	tryToFillPossibleMoves();
+	for (int i = 0; i < possibleMoves.size(); ++i) {
+		highlightField(possibleMoves[i]);
+	}
+}
+
+bool ChessPiece::checkNextMove(SimpleChessField field)
+{
+	tryToFillPossibleMoves();
+	for (int i = 0; i < possibleMoves.size(); ++i) {
+		if (possibleMoves[i] == field)
+			return true;
+	}
+	return false;
+}
+
+bool ChessPiece::tryToMove(ChessBoardField * field)
+{
+	if (checkNextMove(field->toSimpleField())) {
+		move(field);
+		return true;
+	}
+	return false;
+}
+
+SimpleChessField ChessPiece::getSimpleField()
+{
+	if (isBeingProcessed())
+		return getNewField();
+
+	return SimpleChessField(row, col);
+}
+
+void ChessPiece::move(ChessBoardField* field)
+{
+	if (field->getPiece() != NULL) {
+		field->getPiece()->die();
+	}
+	board->getField(col, row)->empty();
+	col = field->getColumn();
+	row = field->getRow();
+	field->setPiece(this);
+
+}
+
+void ChessPiece::fillPossibleMovesFieldSeries(int deltaRow, int deltaColumn) {
+	for (int i = 1; ; i++) {
+		if (board->getField(col + i * deltaColumn, row + i * deltaRow) && board->getField(col + i * deltaColumn, row + i * deltaRow)->isPossibleToMoveHere(chessColor)) {
+			addToPossibleMoves(board->getField(col + i * deltaColumn, row + i * deltaRow));
+			if (board->getField(col + i * deltaColumn, row + i * deltaRow)->getPiece() != NULL && !board->getField(col + i * deltaColumn, row + i * deltaRow)->checkPieceColor(chessColor))
+				break;
+		}
+		else break;
+	}
+}
+
+void ChessPiece::fillPossibleMovesForRook() {
+	fillPossibleMovesFieldSeries(1, 0);
+	fillPossibleMovesFieldSeries(-1, 0);
+	fillPossibleMovesFieldSeries(0, 1);
+	fillPossibleMovesFieldSeries(0, -1);
+}
+
+void ChessPiece::fillPossibleMovesForBishop() {
+	fillPossibleMovesFieldSeries(1, 1);
+	fillPossibleMovesFieldSeries(-1, -1);
+	fillPossibleMovesFieldSeries(-1, 1);
+	fillPossibleMovesFieldSeries(1, -1);
+}
+
+void ChessPiece::addToPossibleMoves(ChessBoardField* field)
+{
+	if (field == NULL)
+		return;
+	possibleMoves.push_back(field->toSimpleField());
+}
+
+void ChessPiece::highlightField(SimpleChessField field)
+{
+	ChessBoardField* chessBoardField = board->getField(field);
+	if (chessBoardField->getPiece() != NULL)
+		chessBoardField->inDanger();
+	else
+		chessBoardField->highlight();
+}
+
+void ChessPiece::tryToFillPossibleMoves()
+{
+	resetPossibleMoves();
+	if (!isAlive())
+		return;
+	fillPossibleMoves();
+	for (int i = 0; i < possibleMoves.size(); ) {
+		ChessBoardField* field = board->getField(possibleMoves[i]);
+		ChessBoardField* myField = board->getField(col, row);
+		ChessPiece* tmpPiece = field->getPiece();
+
+		startProcessing();
+		setAlive(false);
+		myField->setPiece(NULL);
+		if (tmpPiece != NULL)
+			tmpPiece->setAlive(false);
+		field->setPiece(this);
+		setNewField(field->getRow(), field->getColumn());
+		if (board->checkIfKingIsInCheck(getColor())) {
+			possibleMoves.erase(possibleMoves.begin() + i);
+			stopProcesing(field, tmpPiece);
+			continue;
+		}
+		stopProcesing(field, tmpPiece);
+		++i;
+	}
+}
+
+void ChessPiece::stopProcesing(ChessBoardField* field, ChessPiece* tmpPiece)
+{
+	field->setPiece(tmpPiece);
+	if (tmpPiece != NULL)
+		tmpPiece->setAlive(true);
+	setAlive(true);
+	ChessBoardField* myField = board->getField(col, row);
+	myField->setPiece(this);
+	stopProcessing();
+}
+
+void ChessPiece::resetPossibleMoves()
+{
+	possibleMoves.clear();
+}
+

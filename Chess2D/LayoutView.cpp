@@ -26,15 +26,16 @@ void LayoutView::display(sf::RenderWindow* window)
 			if (happening.type == sf::Event::KeyReleased && happening.key.code == sf::Keyboard::Escape) {
 				setDisplaying(false);
 			}
-
+			
 			checkButtons(window);
+			additionalEventCheck(window);
 		}
 
 		if (!isDisplaying()) {
 			finishDisplaying();
 			return;
 		}
-
+		
 		draw(window);
 		window->display();
 	}

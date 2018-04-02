@@ -29,6 +29,6 @@ public:
 	void SetTexture(sf::Texture*);
 	bool contains(sf::Vector2f);
 	void setOnClickAction(ButtonAction* action);
-	void click(ClickEvent* event);
+	virtual void click(ClickEvent* event);
 	~Button();
 };

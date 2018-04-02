@@ -5,10 +5,12 @@
 class GameView : public LayoutView
 {
 	ChessBoard* board = new ChessBoard(); 
+	FieldSelector* fieldSelector = new FieldSelector();
 public:
 	GameView(int height, int width, sf::Sprite* background) : LayoutView(width, height, background) {};
 	~GameView();
 	
 	void additionalDisplayAction(sf::RenderWindow* window);
+	void additionalEventCheck(sf::RenderWindow* window);
 };
 
