@@ -124,6 +124,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Bishop.cpp" />
     <ClCompile Include="ChessBoard.cpp" />
     <ClCompile Include="ChessPiece.cpp" />
     <ClCompile Include="ClickEvent.cpp" />
@@ -132,6 +133,7 @@
     <ClCompile Include="GameButtonAction.cpp" />
     <ClCompile Include="GameView.cpp" />
     <ClCompile Include="King.cpp" />
+    <ClCompile Include="Knight.cpp" />
     <ClCompile Include="MultiplayerGameButtonAction.cpp" />
     <ClCompile Include="OptionsButtonAction.cpp" />
     <ClCompile Include="Pawn.cpp" />
@@ -141,13 +143,16 @@
     <ClCompile Include="LayoutView.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MenuButton.cpp" />
+    <ClCompile Include="Queen.cpp" />
     <ClCompile Include="QuitButtonAction.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="ResultsButtonAction.cpp" />
+    <ClCompile Include="Rook.cpp" />
     <ClCompile Include="SingleGameButtonAction.cpp" />
     <ClCompile Include="TextureResource.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Bishop.h" />
     <ClInclude Include="ChessBoard.h" />
     <ClInclude Include="ChessEnums.h" />
     <ClInclude Include="ChessPiece.h" />
@@ -157,6 +162,7 @@
     <ClInclude Include="GameButtonAction.h" />
     <ClInclude Include="GameView.h" />
     <ClInclude Include="King.h" />
+    <ClInclude Include="Knight.h" />
     <ClInclude Include="MultiplayerGameButtonAction.h" />
     <ClInclude Include="OptionsButtonAction.h" />
     <ClInclude Include="Pawn.h" />
@@ -165,10 +171,12 @@
     <ClInclude Include="GraphicEngine.h" />
     <ClInclude Include="LayoutView.h" />
     <ClInclude Include="MenuButton.h" />
+    <ClInclude Include="Queen.h" />
     <ClInclude Include="QuitButtonAction.h" />
     <ClInclude Include="ResourceKeys.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="ResultsButtonAction.h" />
+    <ClInclude Include="Rook.h" />
     <ClInclude Include="SimpleChessField.h" />
     <ClInclude Include="SingleGameButtonAction.h" />
     <ClInclude Include="TextureResource.h" />

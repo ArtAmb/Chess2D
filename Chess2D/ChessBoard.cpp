@@ -2,6 +2,10 @@
 #include "ChessPiece.h"
 #include "Pawn.h"
 #include "King.h"
+#include "Bishop.h"
+#include "Rook.h"
+#include "Queen.h"
+#include "Knight.h"
 #include "PositionTextureConverter.h"
 #include "SimpleChessField.h"
 
@@ -113,26 +117,26 @@ ChessBoard::ChessBoard()
 		pieces[BLACK][i] = new Pawn(R_7, (CHESS_COLUMN)i, BLACK, this, fieldTexture->getSprite(1, 0));
 	}
 
-	pieces[WHITE][8] = new Pawn(R_1, C_C, WHITE, this, fieldTexture->getSprite(0, 1));
-	pieces[WHITE][9] = new Pawn(R_1, C_F, WHITE, this, fieldTexture->getSprite(0, 1));
+	pieces[WHITE][8] = new Bishop(R_1, C_C, WHITE, this, fieldTexture->getSprite(0, 1));
+	pieces[WHITE][9] = new Bishop(R_1, C_F, WHITE, this, fieldTexture->getSprite(0, 1));
 
-	pieces[BLACK][8] = new Pawn(R_8, C_C, BLACK, this, fieldTexture->getSprite(1, 1));
-	pieces[BLACK][9] = new Pawn(R_8, C_F, BLACK, this, fieldTexture->getSprite(1, 1));
+	pieces[BLACK][8] = new Bishop(R_8, C_C, BLACK, this, fieldTexture->getSprite(1, 1));
+	pieces[BLACK][9] = new Bishop(R_8, C_F, BLACK, this, fieldTexture->getSprite(1, 1));
 
-	pieces[WHITE][10] = new Pawn(R_1, C_A, WHITE, this, fieldTexture->getSprite(0, 2));
-	pieces[WHITE][11] = new Pawn(R_1, C_H, WHITE, this, fieldTexture->getSprite(0, 2));
+	pieces[WHITE][10] = new Rook(R_1, C_A, WHITE, this, fieldTexture->getSprite(0, 2));
+	pieces[WHITE][11] = new Rook(R_1, C_H, WHITE, this, fieldTexture->getSprite(0, 2));
 
-	pieces[BLACK][10] = new Pawn(R_8, C_A, BLACK, this, fieldTexture->getSprite(1, 2));
-	pieces[BLACK][11] = new Pawn(R_8, C_H, BLACK, this, fieldTexture->getSprite(1, 2));
+	pieces[BLACK][10] = new Rook(R_8, C_A, BLACK, this, fieldTexture->getSprite(1, 2));
+	pieces[BLACK][11] = new Rook(R_8, C_H, BLACK, this, fieldTexture->getSprite(1, 2));
 
-	pieces[WHITE][12] = new Pawn(R_1, C_B, WHITE, this, fieldTexture->getSprite(0, 3));
-	pieces[WHITE][13] = new Pawn(R_1, C_G, WHITE, this, fieldTexture->getSprite(0, 3));
+	pieces[WHITE][12] = new Knight(R_1, C_B, WHITE, this, fieldTexture->getSprite(0, 3));
+	pieces[WHITE][13] = new Knight(R_1, C_G, WHITE, this, fieldTexture->getSprite(0, 3));
 
-	pieces[BLACK][12] = new Pawn(R_8, C_B, BLACK, this, fieldTexture->getSprite(1, 3));
-	pieces[BLACK][13] = new Pawn(R_8, C_G, BLACK, this, fieldTexture->getSprite(1, 3));
+	pieces[BLACK][12] = new Knight(R_8, C_B, BLACK, this, fieldTexture->getSprite(1, 3));
+	pieces[BLACK][13] = new Knight(R_8, C_G, BLACK, this, fieldTexture->getSprite(1, 3));
 
-	pieces[WHITE][14] = new Pawn(R_1, C_D, WHITE, this, fieldTexture->getSprite(0, 4));
-	pieces[BLACK][14] = new Pawn(R_8, C_D, BLACK, this, fieldTexture->getSprite(1, 4));
+	pieces[WHITE][14] = new Queen(R_1, C_D, WHITE, this, fieldTexture->getSprite(0, 4));
+	pieces[BLACK][14] = new Queen(R_8, C_D, BLACK, this, fieldTexture->getSprite(1, 4));
 
 	pieces[WHITE][15] = new King(R_1, C_E, WHITE, this, fieldTexture->getSprite(0, 5));
 	pieces[BLACK][15] = new King(R_8, C_E, BLACK, this, fieldTexture->getSprite(1, 5));
