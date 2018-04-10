@@ -177,5 +177,11 @@
     <Image Include="resources\menu.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="resources\fields.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\game_mode_buttons.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

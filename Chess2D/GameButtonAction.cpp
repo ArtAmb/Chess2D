@@ -12,7 +12,7 @@ GameButtonAction::GameButtonAction()
 	view = new LayoutView(backgroundTexture->getWidth(), backgroundTexture->getHeight(), backgroundTexture->getSprite(0,0));
 
 	view->setHeightGap(50);
-	view->setTopPadding(50);
+	view->setTopPadding(150);
 
 	Button* buttonSingle = new Button();
 	buttonSingle->SetTexture(buttonsTextures->getTexture());
