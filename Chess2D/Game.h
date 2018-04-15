@@ -22,5 +22,8 @@ public:
 	void SingleplayerGame();
 	Button* createDefaultButton(TextureResource* texture, int logicalRow, LayoutView* view);
 	~Game();
+	
+	
+	
 };
 

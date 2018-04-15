@@ -1,10 +1,10 @@
-#include "GameButtonAction.h"
+#include "GameModeButtonAction.h"
 #include "SingleGameButtonAction.h"
 #include "MultiplayerGameButtonAction.h"
 
 
 
-GameButtonAction::GameButtonAction()
+GameModeButtonAction::GameModeButtonAction()
 {
 	TextureResource* buttonsTextures = resourceManager->getTexture(RESOURCE::TEXTURE::GAME_MODE_BUTTONS);
 	TextureResource* backgroundTexture = resourceManager->getTexture(RESOURCE::TEXTURE::BACKGROUNDS);
@@ -32,11 +32,11 @@ GameButtonAction::GameButtonAction()
 }
 
 
-GameButtonAction::~GameButtonAction() {
+GameModeButtonAction::~GameModeButtonAction() {
 	if (view != nullptr)
 		delete view;
 }
 
-void GameButtonAction::doAction(ClickEvent* event) {
+void GameModeButtonAction::doAction(ClickEvent* event) {
 	view->display(event->getWindow());
 }

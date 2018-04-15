@@ -31,6 +31,7 @@ int main()
 	resourceManager->loadTexture(RESOURCE::TEXTURE::FIELDS, "fields.png", WIDTH_FIELD, WIDTH_FIELD);
 	
 	
+	
 	GraphicEngine graphicEngine;
 	Game game(graphicEngine.getMainWindow(), &graphicEngine);
 	

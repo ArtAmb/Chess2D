@@ -31,6 +31,7 @@ TextureResource* ResourceManager::getTexture(int key)
 	return textureMap[key];
 }
 
+
 ResourceManager::ResourceManager()
 {
 }

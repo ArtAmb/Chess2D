@@ -6,15 +6,15 @@
 #include "ResourceKeys.h"
 #include "ChessBoard.h"
 
-class GameButtonAction : public ButtonAction
+class GameModeButtonAction : public ButtonAction
 {
 	LayoutView* view = nullptr;
 	ChessBoard* chessBoard;
 	ResourceManager* resourceManager = ResourceManager::getInstance();
 	
 public:
-	GameButtonAction();
-	~GameButtonAction();
+	GameModeButtonAction();
+	~GameModeButtonAction();
 
 	void doAction(ClickEvent* event);
 };

@@ -18,6 +18,7 @@ protected:
 
 	sf::Event happening;
 	sf::Vector2f mousePosition;
+	sf::Font font;
 	
 	virtual void finishDisplaying();
 	virtual void additionalDisplayAction(sf::RenderWindow* window);
@@ -25,6 +26,7 @@ protected:
 	void checkButtons(sf::RenderWindow* window);
 public:
 
+	
 	LayoutView(int height, int width, sf::Sprite* background);
 	void setEndKey(sf::Keyboard::Key key);
 	void setTopPadding(int padding);
@@ -37,5 +39,6 @@ public:
 	void setDisplaying(bool);
 	bool isDisplaying() { return displaying; };
 	~LayoutView();
+	
 };
 

@@ -1,8 +1,9 @@
 #include "Game.h"
-#include "GameButtonAction.h"
+#include "GameModeButtonAction.h"
+#include "SavedGameButtonAction.h"
 #include "OptionsButtonAction.h"
 #include "QuitButtonAction.h"
-#include "ResultsButtonAction.h"
+#include "InstructionButtonAction.h"
 #include "CreditsButtonAction.h"
 
 #define WIDTH_FIELD 72
@@ -21,14 +22,17 @@ Game::Game(sf::RenderWindow* mainWindow, GraphicEngine* engine)
 
 	menuView = new LayoutView(menuBackground->getConverter()->getElementWidth(), menuBackground->getConverter()->getElementHeight(), menuBackground->getSprite(0, 0));
 	int i = 0;
-	Button* newGameButton = createDefaultButton(buttonsTexture, i, menuView);
-	newGameButton->setOnClickAction(new GameButtonAction());
+	Button* gameModeButton = createDefaultButton(buttonsTexture, i, menuView);
+	gameModeButton->setOnClickAction(new GameModeButtonAction());
+	++i;
+	Button* savedGameButton = createDefaultButton(buttonsTexture, i, menuView);
+	savedGameButton->setOnClickAction(new SavedGameButtonAction());
 	++i;
 	Button* optionsButton = createDefaultButton(buttonsTexture, i, menuView);
 	optionsButton->setOnClickAction(new OptionsButtonAction());
 	++i;
-	Button* resultsButton = createDefaultButton(buttonsTexture, i, menuView);
-	resultsButton->setOnClickAction(new ResultsButtonAction());
+	Button* instructionButton = createDefaultButton(buttonsTexture, i, menuView);
+	instructionButton->setOnClickAction(new InstructionButtonAction());
 	++i;
 	Button* creditsButton = createDefaultButton(buttonsTexture, i, menuView);
 	creditsButton->setOnClickAction(new CreditsButtonAction());
@@ -40,12 +44,15 @@ Game::Game(sf::RenderWindow* mainWindow, GraphicEngine* engine)
 
 	TextureResource* gameBackground = resourceManager->getTexture(RESOURCE::TEXTURE::BACKGROUNDS);
 	chessBoard = new ChessBoard();
+
+	
 }
 
 
 void Game::startGame()
 {
 	menuView->display(mainWindow);
+	
 }
 
 
@@ -63,3 +70,4 @@ Button * Game::createDefaultButton(TextureResource * texture, int logicalRow, La
 Game::~Game()
 {
 }
+

@@ -305,9 +305,19 @@ CHESS_GAME_STATE ChessBoard::checkIfGameEnd()
 
 void ChessBoard::endGame(CHESS_GAME_STATE gameState)
 {
+	
+
 	state = gameState;
 	switch (gameState)
 	{
+	case CONTINIUE:
+	{
+		if (getCurrPlayer() == WHITE)
+			std::cout << "MOVE: WHITE" << std::endl;
+		else
+			std::cout << "MOVE: BLACK" << std::endl;
+		break;
+	}
 	case WINNER_BLACK:
 
 		std::cout << "CHECKMATE!!! WINNER: BLACK" << std::endl;

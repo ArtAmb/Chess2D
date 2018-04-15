@@ -129,8 +129,9 @@
     <ClCompile Include="ChessPiece.cpp" />
     <ClCompile Include="ClickEvent.cpp" />
     <ClCompile Include="CreditsButtonAction.cpp" />
+    <ClCompile Include="CreditsView.cpp" />
     <ClCompile Include="FieldSelector.cpp" />
-    <ClCompile Include="GameButtonAction.cpp" />
+    <ClCompile Include="GameModeButtonAction.cpp" />
     <ClCompile Include="GameView.cpp" />
     <ClCompile Include="King.cpp" />
     <ClCompile Include="Knight.cpp" />
@@ -146,8 +147,9 @@
     <ClCompile Include="Queen.cpp" />
     <ClCompile Include="QuitButtonAction.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
-    <ClCompile Include="ResultsButtonAction.cpp" />
+    <ClCompile Include="InstructionButtonAction.cpp" />
     <ClCompile Include="Rook.cpp" />
+    <ClCompile Include="SavedGameButtonAction.cpp" />
     <ClCompile Include="SingleGameButtonAction.cpp" />
     <ClCompile Include="TextureResource.cpp" />
   </ItemGroup>
@@ -158,9 +160,11 @@
     <ClInclude Include="ChessPiece.h" />
     <ClInclude Include="ClickEvent.h" />
     <ClInclude Include="CreditsButtonAction.h" />
+    <ClInclude Include="CreditsView.h" />
     <ClInclude Include="FieldSelector.h" />
-    <ClInclude Include="GameButtonAction.h" />
+    <ClInclude Include="GameModeButtonAction.h" />
     <ClInclude Include="GameView.h" />
+    <ClInclude Include="SavedGameButtonAction.h" />
     <ClInclude Include="King.h" />
     <ClInclude Include="Knight.h" />
     <ClInclude Include="MultiplayerGameButtonAction.h" />
@@ -175,7 +179,7 @@
     <ClInclude Include="QuitButtonAction.h" />
     <ClInclude Include="ResourceKeys.h" />
     <ClInclude Include="ResourceManager.h" />
-    <ClInclude Include="ResultsButtonAction.h" />
+    <ClInclude Include="InstructionButtonAction.h" />
     <ClInclude Include="Rook.h" />
     <ClInclude Include="SimpleChessField.h" />
     <ClInclude Include="SingleGameButtonAction.h" />

@@ -64,6 +64,9 @@ LayoutView::LayoutView(int width, int height, sf::Sprite* background) {
 	this->width = width;
 	this->height = height;
 	this->background = background;
+
+	if (!font.loadFromFile("resources/Lora.ttf"))
+		std::cout << "ERROR: LOADING FONT";
 }
 
 void LayoutView::prepareView()

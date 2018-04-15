@@ -27,4 +27,6 @@ void SingleGameButtonAction::doAction(ClickEvent* event)
 {
 	prepareBoard();
 	view->display(event->getWindow());
+	
+	
 }

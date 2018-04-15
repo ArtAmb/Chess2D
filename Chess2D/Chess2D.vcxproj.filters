@@ -57,15 +57,6 @@
     <ClCompile Include="SingleGameButtonAction.cpp">
       <Filter>Source Files\buttons</Filter>
     </ClCompile>
-    <ClCompile Include="GameButtonAction.cpp">
-      <Filter>Source Files\buttons</Filter>
-    </ClCompile>
-    <ClCompile Include="ResultsButtonAction.cpp">
-      <Filter>Source Files\buttons</Filter>
-    </ClCompile>
-    <ClCompile Include="CreditsButtonAction.cpp">
-      <Filter>Source Files\buttons</Filter>
-    </ClCompile>
     <ClCompile Include="ClickEvent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -99,6 +90,21 @@
     <ClCompile Include="Rook.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GameModeButtonAction.cpp">
+      <Filter>Source Files\buttons</Filter>
+    </ClCompile>
+    <ClCompile Include="SavedGameButtonAction.cpp">
+      <Filter>Source Files\buttons</Filter>
+    </ClCompile>
+    <ClCompile Include="InstructionButtonAction.cpp">
+      <Filter>Source Files\buttons</Filter>
+    </ClCompile>
+    <ClCompile Include="CreditsButtonAction.cpp">
+      <Filter>Source Files\buttons</Filter>
+    </ClCompile>
+    <ClCompile Include="CreditsView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MenuButton.h">
@@ -125,9 +131,6 @@
     <ClInclude Include="ResourceKeys.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GameButtonAction.h">
-      <Filter>Header Files\buttons</Filter>
-    </ClInclude>
     <ClInclude Include="MultiplayerGameButtonAction.h">
       <Filter>Header Files\buttons</Filter>
     </ClInclude>
@@ -141,9 +144,6 @@
       <Filter>Header Files\buttons</Filter>
     </ClInclude>
     <ClInclude Include="CreditsButtonAction.h">
-      <Filter>Header Files\buttons</Filter>
-    </ClInclude>
-    <ClInclude Include="ResultsButtonAction.h">
       <Filter>Header Files\buttons</Filter>
     </ClInclude>
     <ClInclude Include="ClickEvent.h">
@@ -183,6 +183,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Rook.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameModeButtonAction.h">
+      <Filter>Header Files\buttons</Filter>
+    </ClInclude>
+    <ClInclude Include="InstructionButtonAction.h">
+      <Filter>Header Files\buttons</Filter>
+    </ClInclude>
+    <ClInclude Include="SavedGameButtonAction.h">
+      <Filter>Header Files\buttons</Filter>
+    </ClInclude>
+    <ClInclude Include="CreditsView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
