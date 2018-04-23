@@ -64,7 +64,9 @@ class ChessBoard {
 
 	PLAYER_COLOR currPlayer;
 	ChessPiece* pieces[2][16];
-	TextureResource* fieldTexture = ResourceManager::getInstance()->getTexture(RESOURCE::TEXTURE::FIELDS);
+	
+	TextureResource* fieldTexture= ResourceManager::getInstance()->getTexture(RESOURCE::TEXTURE::FIELDS);
+
 	King* kings[2];
 	King* checkedKing = NULL;
 	std::vector<Pawn*> enPassantPawns;
@@ -79,9 +81,11 @@ class ChessBoard {
 	void checkKing(King* king);
 public:
 
+	
+
 	ChessBoard();
 	void prepareBoard();
-	~ChessBoard();
+		~ChessBoard();
 	void draw(sf::RenderWindow* window);
 	void updateCurrentPlayer(bool isChangeNeeded);
 	CHESS_GAME_STATE checkIfGameEnd();
@@ -95,6 +99,7 @@ public:
 	void unlightAllFields();
 	void addEnPassantPawns(Pawn* pawn);
 	void tryToKillEnPassantPawn(SimpleChessField field);
+	void loadSprites();
 
 	void setKing(King * king);
 

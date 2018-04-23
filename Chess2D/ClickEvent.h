@@ -22,5 +22,7 @@ public:
 	
 	ClickEvent();
 	~ClickEvent();
+
+	void prepareBoardSettings();
 };
 

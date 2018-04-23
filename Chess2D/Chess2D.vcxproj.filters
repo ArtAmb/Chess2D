@@ -93,9 +93,6 @@
     <ClCompile Include="GameModeButtonAction.cpp">
       <Filter>Source Files\buttons</Filter>
     </ClCompile>
-    <ClCompile Include="SavedGameButtonAction.cpp">
-      <Filter>Source Files\buttons</Filter>
-    </ClCompile>
     <ClCompile Include="InstructionButtonAction.cpp">
       <Filter>Source Files\buttons</Filter>
     </ClCompile>
@@ -104,6 +101,15 @@
     </ClCompile>
     <ClCompile Include="CreditsView.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OptionsView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameSettings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelOptionsButton.cpp">
+      <Filter>Source Files\buttons</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -161,9 +167,6 @@
     <ClInclude Include="Pawn.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GameView.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="FieldSelector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -191,11 +194,17 @@
     <ClInclude Include="InstructionButtonAction.h">
       <Filter>Header Files\buttons</Filter>
     </ClInclude>
-    <ClInclude Include="SavedGameButtonAction.h">
-      <Filter>Header Files\buttons</Filter>
-    </ClInclude>
     <ClInclude Include="CreditsView.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OptionsView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameSettings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelOptionsButton.h">
+      <Filter>Header Files\buttons</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

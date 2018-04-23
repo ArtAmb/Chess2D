@@ -8,7 +8,7 @@
 
 class CreditsButtonAction : public ButtonAction
 {
-	CreditsView* view;
+	CreditsView* view = nullptr;
 	ResourceManager* resourceManager = ResourceManager::getInstance();
 public:
 	CreditsButtonAction();

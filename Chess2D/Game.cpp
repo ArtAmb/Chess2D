@@ -1,6 +1,5 @@
 #include "Game.h"
 #include "GameModeButtonAction.h"
-#include "SavedGameButtonAction.h"
 #include "OptionsButtonAction.h"
 #include "QuitButtonAction.h"
 #include "InstructionButtonAction.h"
@@ -24,9 +23,6 @@ Game::Game(sf::RenderWindow* mainWindow, GraphicEngine* engine)
 	int i = 0;
 	Button* gameModeButton = createDefaultButton(buttonsTexture, i, menuView);
 	gameModeButton->setOnClickAction(new GameModeButtonAction());
-	++i;
-	Button* savedGameButton = createDefaultButton(buttonsTexture, i, menuView);
-	savedGameButton->setOnClickAction(new SavedGameButtonAction());
 	++i;
 	Button* optionsButton = createDefaultButton(buttonsTexture, i, menuView);
 	optionsButton->setOnClickAction(new OptionsButtonAction());

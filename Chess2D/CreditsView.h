@@ -12,7 +12,6 @@ public:
 	~CreditsView();
 
 	void additionalDisplayAction(sf::RenderWindow * window);
-	void drawCredits();
 	
 
 };

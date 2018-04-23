@@ -53,8 +53,8 @@ ChessBoardField::~ChessBoardField()
 	if (sprite != nullptr)
 		delete sprite;
 
-	if (chessPiece != nullptr)
-		delete chessPiece;
+	//if (chessPiece != nullptr)
+	//	delete chessPiece;
 }
 
 void ChessBoardField::setXY(int x, int y)
@@ -106,6 +106,7 @@ void ChessBoard::checkKing(King * king)
 ChessBoard::ChessBoard()
 {
 	prepareBoard();
+	
 
 	for (int i = 0; i < 8; ++i)
 	{
@@ -116,6 +117,8 @@ ChessBoard::ChessBoard()
 	{
 		pieces[BLACK][i] = new Pawn(R_7, (CHESS_COLUMN)i, BLACK, this, fieldTexture->getSprite(1, 0));
 	}
+	
+	
 
 	pieces[WHITE][8] = new Bishop(R_1, C_C, WHITE, this, fieldTexture->getSprite(0, 1));
 	pieces[WHITE][9] = new Bishop(R_1, C_F, WHITE, this, fieldTexture->getSprite(0, 1));

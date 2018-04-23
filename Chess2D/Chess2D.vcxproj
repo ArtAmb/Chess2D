@@ -132,11 +132,14 @@
     <ClCompile Include="CreditsView.cpp" />
     <ClCompile Include="FieldSelector.cpp" />
     <ClCompile Include="GameModeButtonAction.cpp" />
+    <ClCompile Include="GameSettings.cpp" />
     <ClCompile Include="GameView.cpp" />
     <ClCompile Include="King.cpp" />
     <ClCompile Include="Knight.cpp" />
+    <ClCompile Include="LevelOptionsButton.cpp" />
     <ClCompile Include="MultiplayerGameButtonAction.cpp" />
     <ClCompile Include="OptionsButtonAction.cpp" />
+    <ClCompile Include="OptionsView.cpp" />
     <ClCompile Include="Pawn.cpp" />
     <ClCompile Include="PositionTextureConverter.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -149,7 +152,6 @@
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="InstructionButtonAction.cpp" />
     <ClCompile Include="Rook.cpp" />
-    <ClCompile Include="SavedGameButtonAction.cpp" />
     <ClCompile Include="SingleGameButtonAction.cpp" />
     <ClCompile Include="TextureResource.cpp" />
   </ItemGroup>
@@ -163,12 +165,13 @@
     <ClInclude Include="CreditsView.h" />
     <ClInclude Include="FieldSelector.h" />
     <ClInclude Include="GameModeButtonAction.h" />
-    <ClInclude Include="GameView.h" />
-    <ClInclude Include="SavedGameButtonAction.h" />
+    <ClInclude Include="GameSettings.h" />
+    <ClInclude Include="LevelOptionsButton.h" />
     <ClInclude Include="King.h" />
     <ClInclude Include="Knight.h" />
     <ClInclude Include="MultiplayerGameButtonAction.h" />
     <ClInclude Include="OptionsButtonAction.h" />
+    <ClInclude Include="OptionsView.h" />
     <ClInclude Include="Pawn.h" />
     <ClInclude Include="PositionTextureConverter.h" />
     <ClInclude Include="Game.h" />
