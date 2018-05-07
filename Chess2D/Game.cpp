@@ -4,6 +4,7 @@
 #include "QuitButtonAction.h"
 #include "InstructionButtonAction.h"
 #include "CreditsButtonAction.h"
+#include "ChessEnums.h"
 
 #define WIDTH_FIELD 72
 
@@ -61,7 +62,6 @@ Button * Game::createDefaultButton(TextureResource * texture, int logicalRow, La
 	view->addButton(button);
 	return button;
 }
-
 
 Game::~Game()
 {

@@ -23,19 +23,17 @@ OptionsButtonAction::OptionsButtonAction()
 	Button* blackColorButton = game->createDefaultButton(buttonsTexture, i, view);	
 	++i;
 	Button* levelModeButton = game->createDefaultButton(buttonsTexture, i, view);	
-
 	++i;
 	Button* easyLevelButton = game->createDefaultButton(buttonsTexture, i, view);
-	//easyLevelButton->setOnClickAction(new LevelOptionsButton());
+	easyLevelButton->setOnClickAction(new LevelOptionsButton(LEVEL_OPTION::EASY));
 	++i;
 	Button* normalLevelButton = game->createDefaultButton(buttonsTexture, i, view);
-
+	normalLevelButton->setOnClickAction(new LevelOptionsButton(LEVEL_OPTION::NORMAL));
 	++i;
-	Button* hardLevelButton = game->createDefaultButton(buttonsTexture, i, view);	
+	Button* hardLevelButton = game->createDefaultButton(buttonsTexture, i, view);
+	hardLevelButton->setOnClickAction(new LevelOptionsButton(LEVEL_OPTION::HARD));
 	
 	view->prepareView();
-	
-
 }
 
 

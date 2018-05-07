@@ -23,8 +23,9 @@ public:
 	void AddFrameON(sf::IntRect);
 	void AddFrameOFF(sf::IntRect);
 	void SetXY(int x, int y) { SpriteButton.setPosition(static_cast<float>(x), static_cast<float>(y)); }
-	void SetON() { STATE = BT_ON; }
-	void SetOFF() { STATE = BT_OFF; }
+	virtual void SetON() { STATE = BT_ON; }
+	virtual void SetOFF() { STATE = BT_OFF; }
+	void setState(ButtonType state) { STATE = state; }
 	sf::Sprite RetSprite();
 	void SetTexture(sf::Texture*);
 	bool contains(sf::Vector2f);

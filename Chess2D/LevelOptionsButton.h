@@ -11,7 +11,7 @@ class LevelOptionsButton : public ButtonAction
 public:
 	LevelOptionsButton(LEVEL_OPTION level);
 	~LevelOptionsButton();
-
+		
 	void doAction(ClickEvent* event);
 };
 

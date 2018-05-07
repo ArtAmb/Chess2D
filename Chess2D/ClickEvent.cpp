@@ -17,3 +17,13 @@ void ClickEvent::setView(LayoutView* view) {
 LayoutView* ClickEvent::getView() {
 	return view;
 }
+
+Button * ClickEvent::getButton()
+{
+	return button;
+}
+
+void ClickEvent::setButton(Button * button)
+{
+	this->button = button;
+}

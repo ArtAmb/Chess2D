@@ -9,7 +9,21 @@ class GameSettings
 	
 
 public:
-	
+	LEVEL_OPTION getLevel() {
+		return level;
+	}
+
+	COLOR_OPTION getColor() {
+		return color;
+	}
+
+	void setColor(COLOR_OPTION color) {
+		this->color = color;
+	}
+	void setLevel(LEVEL_OPTION level) {
+		this->level = level;
+	}
+
 	GameSettings();
 	~GameSettings();
 };
