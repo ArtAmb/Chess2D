@@ -8,7 +8,7 @@ CreditsView::~CreditsView()
 void CreditsView::additionalDisplayAction(sf::RenderWindow* window)
 {
 	
-	const int howMany=5;
+	const int howMany=6;
 	sf::Text str[howMany];
 	
 	
@@ -32,7 +32,10 @@ void CreditsView::additionalDisplayAction(sf::RenderWindow* window)
 	//str[3].setString("Autor:");
 	str[4].setString(L"B¹tkowska Karolina");
 
-	for (int i = 0; i < 5; i++) {
+	str[5].setPosition(100, 600);
+	str[5].setString(L"Kielce 2018");
+
+	for (int i = 0; i < howMany; i++) {
 		
 		window->draw(str[i]);
 	}
