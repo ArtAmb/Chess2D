@@ -13,12 +13,16 @@ void LayoutView::addButton(Button * button)
 {
 	buttons.push_back(button);
 }
+void LayoutView::initDisplaying() {
 
+}
 void LayoutView::display(sf::RenderWindow* window)
 {
 	while (window->isOpen())
 	{
 		mousePosition = sf::Vector2f(sf::Mouse::getPosition(*window));
+		initDisplaying();
+
 		while (window->pollEvent(happening)) {
 			if (happening.type == sf::Event::Closed)
 				window->close();

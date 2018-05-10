@@ -54,7 +54,7 @@ public:
 	bool isAlive() {
 		return alive;
 	};
-	void die() { alive = false; }
+	void die();
 
 	virtual void fillPossibleMoves() = 0;
 	std::vector<SimpleChessField> getPossibleMovesIncludingKing();
@@ -64,6 +64,7 @@ public:
 	SimpleChessField getSimpleField();
 	void setAlive(bool alive) { this->alive = alive; }
 	std::vector<SimpleChessField> getPossibleMoves();
-	
+	CHESS_ROW getRow() { return row; }
+	CHESS_COLUMN getCol() { return col; }
 };
 

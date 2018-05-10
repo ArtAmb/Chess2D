@@ -20,6 +20,8 @@ void ChessPiece::init(CHESS_COLUMN col, CHESS_ROW row, PLAYER_COLOR color, Chess
 
 ChessPiece::~ChessPiece()
 {
+	if (sprite != nullptr)
+		delete sprite;
 }
 
 void ChessPiece::draw(sf::RenderWindow * window)
@@ -40,6 +42,13 @@ PLAYER_COLOR ChessPiece::getColor()
 void ChessPiece::reset()
 {
 	resetPossibleMoves();
+}
+
+void ChessPiece::die()
+{
+	reset();
+	board->getField(col, row)->empty();
+	alive = false;
 }
 
 std::vector<SimpleChessField> ChessPiece::getPossibleMovesIncludingKing()
@@ -80,6 +89,13 @@ bool ChessPiece::tryToMove(ChessBoardField * field)
 {
 	if (checkNextMove(field->toSimpleField())) {
 		move(field);
+
+		if (dynamic_cast<Pawn*>(this) != nullptr && (row == CHESS_ROW::R_1 || row == CHESS_ROW::R_8)) {
+			board->setPawnBeingPromoted(dynamic_cast<Pawn*>(this));
+			board->activatePromotionButtons(this->getColor());
+			return false;
+		}
+
 		return true;
 	}
 	return false;
@@ -102,7 +118,6 @@ void ChessPiece::move(ChessBoardField* field)
 	col = field->getColumn();
 	row = field->getRow();
 	field->setPiece(this);
-
 }
 
 void ChessPiece::fillPossibleMovesFieldSeries(int deltaRow, int deltaColumn) {

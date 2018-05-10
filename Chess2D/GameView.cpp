@@ -6,27 +6,46 @@ GameView::~GameView()
 		delete board;
 }
 
-void GameView::additionalDisplayAction(sf::RenderWindow * window)
-{
-	
+void GameView::additionalDisplayAction(sf::RenderWindow * window) {
 	board->unlightAllFields();
 	board->highlightFields(*fieldSelector);
-	
+	highlightSelectedPromotionPawnButton();
+
 	board->draw(window);
 	checkStatus(window);
-	
 }
 
-void GameView::additionalEventCheck(sf::RenderWindow * window)
-{
-	
+void GameView::highlightSelectedPromotionPawnButton() {
+	for (int i = 0; i < 2; ++i)
+		for (int j = 0; j < 4; ++j) {
+			PawnTransformationButton* button = board->getPawnTransformationButton((PLAYER_COLOR)i, (PAWN_PROMOTION)j);
+			if (button->contains(mousePosition)) {
+				button->selected();
+			}
+		}
+
+}
+
+void GameView::initDisplaying() {
+	for (int i = 0; i < 2; ++i)
+	{
+		for (int j = 0; j < 4; ++j)
+		{
+			board->getPawnTransformationButton((PLAYER_COLOR)i, (PAWN_PROMOTION)j)->disabled();
+		}
+	}
+}
+
+void GameView::additionalEventCheck(sf::RenderWindow * window) {
+
 	if (happening.type == sf::Event::KeyReleased && happening.key.code == sf::Keyboard::S) {
 		std::cout << "ROW " << fieldSelector->getRow() << std::endl
 			<< "COLUMN " << fieldSelector->getColumn() << std::endl
 			<< "Saved piece  " << fieldSelector->getSavedPiece() << std::endl << std::endl;
 	}
-	for(int i = 0; i <8; ++i)
-		for (int j = 0; j < 8; ++j)	{
+
+	for (int i = 0; i < 8; ++i)
+		for (int j = 0; j < 8; ++j) {
 			ChessBoardField* field = board->getField(i, j);
 			if (field->contains(mousePosition)) {
 				field->selected();
@@ -36,15 +55,30 @@ void GameView::additionalEventCheck(sf::RenderWindow * window)
 					board->selectField(fieldSelector);
 				}
 			}
-			
+
 		}
-	
-	
+
+	for (int i = 0; i < 2; ++i)
+		for (int j = 0; j < 4; ++j) {
+			PawnTransformationButton* button = board->getPawnTransformationButton((PLAYER_COLOR)i, (PAWN_PROMOTION)j);
+			if (button->contains(mousePosition)) {
+			
+				if (happening.type == sf::Event::MouseButtonReleased && happening.key.code == sf::Mouse::Left) {
+					if (button->isActive()) {
+						board->promotePawnTo(button->getPawnPromotionType());
+					}
+				}
+			}
+		}
+
+
+
+
 }
 
 void GameView::checkStatus(sf::RenderWindow * window)
 {
-	
+
 	sf::Text str;
 	str.setFont(font);
 	str.setCharacterSize(40);
@@ -81,7 +115,7 @@ void GameView::checkStatus(sf::RenderWindow * window)
 	default:
 		break;
 	}
-	window->draw(str);	
+	window->draw(str);
 
 
 }

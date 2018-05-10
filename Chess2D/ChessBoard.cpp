@@ -105,8 +105,11 @@ void ChessBoard::checkKing(King * king)
 
 ChessBoard::ChessBoard()
 {
+	for (int i = 0; i < 2; ++i)
+		for (int j = 0; j < 4; ++j)
+			pawnTransformationButtons[i][j] = new PawnTransformationButton(transformationButtonTexture->getTexture());
+
 	prepareBoard();
-	
 
 	for (int i = 0; i < 8; ++i)
 	{
@@ -117,8 +120,8 @@ ChessBoard::ChessBoard()
 	{
 		pieces[BLACK][i] = new Pawn(R_7, (CHESS_COLUMN)i, BLACK, this, fieldTexture->getSprite(1, 0));
 	}
-	
-	
+
+
 
 	pieces[WHITE][8] = new Bishop(R_1, C_C, WHITE, this, fieldTexture->getSprite(0, 1));
 	pieces[WHITE][9] = new Bishop(R_1, C_F, WHITE, this, fieldTexture->getSprite(0, 1));
@@ -164,6 +167,24 @@ void ChessBoard::prepareBoard() {
 			// TODO dobrze by bylo to wpakowac do jakiegos konstruktora i jakies dto dla spritow zbudowac
 		}
 	}
+
+	for (int i = 0; i < 4; ++i) {
+		pawnTransformationButtons[WHITE][i]->setXY(5 * 72 - TRANSFORMATION_BUTTON_FIELD * 2 + i * TRANSFORMATION_BUTTON_FIELD, 4);
+		pawnTransformationButtons[BLACK][i]->setXY(5 * 72 - TRANSFORMATION_BUTTON_FIELD * 2 + i * TRANSFORMATION_BUTTON_FIELD, 25 + (BOARD_SIZE + 1) * 72);
+	}
+
+	pawnTransformationButtons[WHITE][PAWN_PROMOTION::PROM_QUEEN]->setFrames(transformationButtonTexture->getConverter()->getElementRect(0, 0), transformationButtonTexture->getConverter()->getElementRect(1, 0), WHITE, PROM_QUEEN);
+	pawnTransformationButtons[BLACK][PAWN_PROMOTION::PROM_QUEEN]->setFrames(transformationButtonTexture->getConverter()->getElementRect(0, 0), transformationButtonTexture->getConverter()->getElementRect(1, 0), BLACK, PROM_QUEEN);
+
+	pawnTransformationButtons[WHITE][PAWN_PROMOTION::PROM_KNIGHT]->setFrames(transformationButtonTexture->getConverter()->getElementRect(0, 1), transformationButtonTexture->getConverter()->getElementRect(1, 1), WHITE, PROM_KNIGHT);
+	pawnTransformationButtons[BLACK][PAWN_PROMOTION::PROM_KNIGHT]->setFrames(transformationButtonTexture->getConverter()->getElementRect(0, 1), transformationButtonTexture->getConverter()->getElementRect(1, 1), BLACK, PROM_KNIGHT);
+
+	pawnTransformationButtons[WHITE][PAWN_PROMOTION::PROM_BISHOP]->setFrames(transformationButtonTexture->getConverter()->getElementRect(0, 2), transformationButtonTexture->getConverter()->getElementRect(1, 2), WHITE, PROM_BISHOP);
+	pawnTransformationButtons[BLACK][PAWN_PROMOTION::PROM_BISHOP]->setFrames(transformationButtonTexture->getConverter()->getElementRect(0, 2), transformationButtonTexture->getConverter()->getElementRect(1, 2), BLACK, PROM_BISHOP);
+
+	pawnTransformationButtons[WHITE][PAWN_PROMOTION::PROM_ROOK]->setFrames(transformationButtonTexture->getConverter()->getElementRect(0, 3), transformationButtonTexture->getConverter()->getElementRect(1, 3), WHITE, PROM_ROOK);
+	pawnTransformationButtons[BLACK][PAWN_PROMOTION::PROM_ROOK]->setFrames(transformationButtonTexture->getConverter()->getElementRect(0, 3), transformationButtonTexture->getConverter()->getElementRect(1, 3), BLACK, PROM_ROOK);
+
 }
 
 ChessBoard::~ChessBoard()
@@ -173,6 +194,10 @@ ChessBoard::~ChessBoard()
 			if (piece != nullptr)
 				delete piece;
 		}
+
+	for (int i = 0; i < 2; ++i)
+		for (int j = 0; j < 4; ++j)
+			delete pawnTransformationButtons[i][j];
 }
 
 void ChessBoard::draw(sf::RenderWindow* window) {
@@ -185,6 +210,9 @@ void ChessBoard::draw(sf::RenderWindow* window) {
 		}
 	}
 
+	for (int i = 0; i < 2; ++i)
+		for (int j = 0; j < 4; ++j)
+			pawnTransformationButtons[i][j]->draw(window);
 }
 void ChessBoard::tryToKillEnPassantPawn(SimpleChessField field)
 {
@@ -196,8 +224,59 @@ void ChessBoard::tryToKillEnPassantPawn(SimpleChessField field)
 		if (enPassantPawns[i]->isEnPasantAvailable() && enPassantPawns[i]->getOldField() == field)
 		{
 			enPassantPawns[i]->die();
+			
 		}
 	}
+}
+
+void ChessBoard::promotePawnTo(PAWN_PROMOTION pawnPromotion)
+{
+	if (pawnBeingPromoted == nullptr)
+		return;
+	PLAYER_COLOR pawnColor = pawnBeingPromoted->getColor();
+
+	ChessPiece * newPawn = nullptr;
+	switch (pawnPromotion) {
+		case PROM_KNIGHT:
+			newPawn = new Knight(pawnBeingPromoted->getRow(), pawnBeingPromoted->getCol(), pawnColor, this, fieldTexture->getSprite(pawnColor, 3));
+			break; 
+		case PROM_ROOK: 
+			newPawn = new Rook(pawnBeingPromoted->getRow(), pawnBeingPromoted->getCol(), pawnColor, this, fieldTexture->getSprite(pawnColor, 2));
+			break;
+		case PROM_BISHOP: 
+			newPawn = new Bishop(pawnBeingPromoted->getRow(), pawnBeingPromoted->getCol(), pawnColor, this, fieldTexture->getSprite(pawnColor, 1));
+			break;
+		case PROM_QUEEN: 
+			newPawn = new Queen(pawnBeingPromoted->getRow(), pawnBeingPromoted->getCol(), pawnColor, this, fieldTexture->getSprite(pawnColor, 4));
+			break;
+	}
+
+	newPawn->getSprite()->setPosition(pawnBeingPromoted->getSprite()->getPosition());
+
+	for (int i = 0; i < 16; ++i)
+		if (pieces[pawnBeingPromoted->getColor()][i] == pawnBeingPromoted) {
+			pieces[pawnBeingPromoted->getColor()][i] = newPawn;
+			delete pawnBeingPromoted;
+				break;
+		}
+
+
+	pawnBeingPromoted = nullptr;
+	deactivatePromotionButtons();
+	updateCurrentPlayer(true);
+}
+
+
+void ChessBoard::activatePromotionButtons(PLAYER_COLOR color)
+{
+	for (int j = 0; j < 4; ++j)
+		pawnTransformationButtons[color][j]->setActive(true);
+}
+
+void ChessBoard::deactivatePromotionButtons() {
+	for (int i = 0; i < 2; ++i)
+		for (int j = 0; j < 4; ++j)
+			pawnTransformationButtons[i][j]->setActive(false);
 }
 
 void ChessBoard::setKing(King * king)
@@ -218,6 +297,7 @@ void ChessBoard::unlightAllFields()
 			board[i][j].stopHighlighting();
 		}
 	}
+
 }
 
 void ChessBoard::highlightFields(FieldSelector fieldSelector)
@@ -308,7 +388,7 @@ CHESS_GAME_STATE ChessBoard::checkIfGameEnd()
 
 void ChessBoard::endGame(CHESS_GAME_STATE gameState)
 {
-	
+
 
 	state = gameState;
 	switch (gameState)
@@ -429,6 +509,9 @@ void ChessBoardField::prepareSprite()
 }
 void ChessBoard::selectField(FieldSelector* fieldSelector)
 {
+	if (pawnBeingPromoted != nullptr) {
+		return;
+	}
 	ChessBoardField* field = getField(fieldSelector->getColumn(), fieldSelector->getRow());
 
 	if (fieldSelector->isSelected())

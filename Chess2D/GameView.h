@@ -13,8 +13,10 @@ public:
 	~GameView();
 	
 	void additionalDisplayAction(sf::RenderWindow* window);
+	void initDisplaying();
 	void additionalEventCheck(sf::RenderWindow* window);
 	void checkStatus(sf::RenderWindow * window);
+	void highlightSelectedPromotionPawnButton();
 
 };
 

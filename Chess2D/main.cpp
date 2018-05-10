@@ -19,6 +19,7 @@
 
 #define WIDTH_FIELD 72
 
+#define TRANSFORMATION_PAWN_BUTTON_FIELD 42
 
 int main()
 {
@@ -29,9 +30,9 @@ int main()
 	resourceManager->loadTexture(RESOURCE::TEXTURE::NORMAL_BUTTONS, "buttons.png", WIDTH_BUTTON, HEIGHT_BUTTON);
 	resourceManager->loadTexture(RESOURCE::TEXTURE::GAME_MODE_BUTTONS, "game_mode_buttons.png", GAME_MODE_WIDTH_BUTTON, GAME_MODE_HEIGHT_BUTTON);
 	resourceManager->loadTexture(RESOURCE::TEXTURE::FIELDS, "fields.png", WIDTH_FIELD, WIDTH_FIELD);
+	resourceManager->loadTexture(RESOURCE::TEXTURE::TRANSFORMATION_PAWN_BUTTON, "transformation_button.png", TRANSFORMATION_PAWN_BUTTON_FIELD, TRANSFORMATION_PAWN_BUTTON_FIELD);
 	
-	
-	
+		
 	GraphicEngine graphicEngine;
 	Game game(graphicEngine.getMainWindow(), &graphicEngine);
 	

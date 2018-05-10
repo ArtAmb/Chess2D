@@ -20,6 +20,7 @@ protected:
 	sf::Vector2f mousePosition;
 	sf::Font font;
 	
+	virtual void initDisplaying();
 	virtual void finishDisplaying();
 	virtual void additionalDisplayAction(sf::RenderWindow* window);
 	virtual void additionalEventCheck(sf::RenderWindow* window);
