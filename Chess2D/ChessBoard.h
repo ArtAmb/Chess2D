@@ -175,4 +175,5 @@ public:
 	ChessBoardField* getField(SimpleChessField field);
 	ChessBoardField* getField(int col, int row);
 	ChessBoardField* getField(CHESS_COLUMN c, CHESS_ROW r);
+	ChessPiece** getPieces(PLAYER_COLOR color) { return pieces[color]; }
 };

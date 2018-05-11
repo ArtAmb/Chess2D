@@ -4,6 +4,12 @@ GameView::~GameView()
 {
 	if (board != nullptr)
 		delete board;
+
+	if (chessAI != nullptr)
+		delete chessAI;
+
+	if (fieldSelector != nullptr)
+		delete fieldSelector;
 }
 
 void GameView::additionalDisplayAction(sf::RenderWindow * window) {
@@ -49,6 +55,9 @@ void GameView::additionalEventCheck(sf::RenderWindow * window) {
 			ChessBoardField* field = board->getField(i, j);
 			if (field->contains(mousePosition)) {
 				field->selected();
+				if (chessAI != nullptr && board->getCurrPlayer() == chessAI->getColor())
+					continue;
+
 				fieldSelector->update(field->toSimpleField());
 
 				if (happening.type == sf::Event::MouseButtonReleased && happening.key.code == sf::Mouse::Left) {
@@ -71,8 +80,12 @@ void GameView::additionalEventCheck(sf::RenderWindow * window) {
 			}
 		}
 
-
-
+	if (chessAI != nullptr && board->getCurrPlayer() == chessAI->getColor() && !chessAI->isThinking()) {
+		chessAI->startThinking();
+		ChessAIMove chessAIMove = chessAI->calculateNextMove(board);
+		board->updateCurrentPlayer(chessAIMove.getPiece()->tryToMove(chessAIMove.getField()));
+		chessAI->stopThinking();
+	}
 
 }
 

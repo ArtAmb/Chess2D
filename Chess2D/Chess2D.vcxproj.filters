@@ -19,6 +19,15 @@
     <Filter Include="Header Files\buttons">
       <UniqueIdentifier>{b410da6f-5974-4fc9-a11e-772bb43eaae1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\chesspieces">
+      <UniqueIdentifier>{2ae7339f-4401-4393-b3de-e79ce4b2a178}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ai">
+      <UniqueIdentifier>{8d664b76-8902-44a6-89b9-7600ff08ab2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\chesspieces">
+      <UniqueIdentifier>{82da75ad-c303-47ff-9353-baf689393747}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -63,31 +72,10 @@
     <ClCompile Include="ChessBoard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ChessPiece.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Pawn.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GameView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FieldSelector.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="King.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Bishop.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Knight.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Queen.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Rook.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GameModeButtonAction.cpp">
@@ -110,6 +98,30 @@
     </ClCompile>
     <ClCompile Include="LevelOptionsButton.cpp">
       <Filter>Source Files\buttons</Filter>
+    </ClCompile>
+    <ClCompile Include="Bishop.cpp">
+      <Filter>Source Files\chesspieces</Filter>
+    </ClCompile>
+    <ClCompile Include="ChessPiece.cpp">
+      <Filter>Source Files\chesspieces</Filter>
+    </ClCompile>
+    <ClCompile Include="King.cpp">
+      <Filter>Source Files\chesspieces</Filter>
+    </ClCompile>
+    <ClCompile Include="Knight.cpp">
+      <Filter>Source Files\chesspieces</Filter>
+    </ClCompile>
+    <ClCompile Include="Pawn.cpp">
+      <Filter>Source Files\chesspieces</Filter>
+    </ClCompile>
+    <ClCompile Include="Queen.cpp">
+      <Filter>Source Files\chesspieces</Filter>
+    </ClCompile>
+    <ClCompile Include="Rook.cpp">
+      <Filter>Source Files\chesspieces</Filter>
+    </ClCompile>
+    <ClCompile Include="ChessAI.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -161,31 +173,13 @@
     <ClInclude Include="ChessBoard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ChessPiece.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Pawn.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="FieldSelector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SimpleChessField.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="King.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Bishop.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Knight.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Queen.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Rook.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GameModeButtonAction.h">
@@ -205,6 +199,27 @@
     </ClInclude>
     <ClInclude Include="LevelOptionsButton.h">
       <Filter>Header Files\buttons</Filter>
+    </ClInclude>
+    <ClInclude Include="ChessAI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Bishop.h">
+      <Filter>Header Files\chesspieces</Filter>
+    </ClInclude>
+    <ClInclude Include="King.h">
+      <Filter>Header Files\chesspieces</Filter>
+    </ClInclude>
+    <ClInclude Include="Knight.h">
+      <Filter>Header Files\chesspieces</Filter>
+    </ClInclude>
+    <ClInclude Include="ChessPiece.h">
+      <Filter>Header Files\chesspieces</Filter>
+    </ClInclude>
+    <ClInclude Include="Pawn.h">
+      <Filter>Header Files\chesspieces</Filter>
+    </ClInclude>
+    <ClInclude Include="Rook.h">
+      <Filter>Header Files\chesspieces</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

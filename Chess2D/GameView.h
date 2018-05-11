@@ -1,11 +1,13 @@
 #pragma once
 #include "LayoutView.h"
 #include "ChessBoard.h"
+#include "ChessAI.h"
 
 class GameView : public LayoutView
 {
 	ChessBoard* board = new ChessBoard(); 
 	FieldSelector* fieldSelector = new FieldSelector();
+	ChessAI* chessAI = nullptr;
 	
 	
 public:
@@ -17,6 +19,6 @@ public:
 	void additionalEventCheck(sf::RenderWindow* window);
 	void checkStatus(sf::RenderWindow * window);
 	void highlightSelectedPromotionPawnButton();
-
+	void setChessAI(ChessAI* chessAI) { this->chessAI = chessAI; }
 };
 

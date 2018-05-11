@@ -61,6 +61,7 @@ public:
 
 	bool checkNextMove(SimpleChessField field);
 	bool tryToMove(ChessBoardField * field);
+	bool tryToMove(SimpleChessField simpleField);
 	SimpleChessField getSimpleField();
 	void setAlive(bool alive) { this->alive = alive; }
 	std::vector<SimpleChessField> getPossibleMoves();

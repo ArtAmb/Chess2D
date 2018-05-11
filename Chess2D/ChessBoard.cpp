@@ -260,7 +260,7 @@ void ChessBoard::promotePawnTo(PAWN_PROMOTION pawnPromotion)
 				break;
 		}
 
-
+	
 	pawnBeingPromoted = nullptr;
 	deactivatePromotionButtons();
 	updateCurrentPlayer(true);

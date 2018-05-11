@@ -1,6 +1,6 @@
 #include "ChessPiece.h"
 #include "ChessBoard.h"
-
+#include <iostream>
 
 ChessPiece::ChessPiece()
 {
@@ -85,8 +85,12 @@ bool ChessPiece::checkNextMove(SimpleChessField field)
 	return false;
 }
 
-bool ChessPiece::tryToMove(ChessBoardField * field)
-{
+bool ChessPiece::tryToMove(SimpleChessField simpleField) {
+	ChessBoardField* field = board->getField(simpleField.getColumn(), simpleField.getRow());
+	return tryToMove(field);
+}
+
+bool ChessPiece::tryToMove(ChessBoardField * field) {
 	if (checkNextMove(field->toSimpleField())) {
 		move(field);
 
