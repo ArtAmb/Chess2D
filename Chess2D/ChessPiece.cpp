@@ -17,6 +17,18 @@ void ChessPiece::init(CHESS_COLUMN col, CHESS_ROW row, PLAYER_COLOR color, Chess
 	board->getField(col, row)->setPiece(this);
 }
 
+void ChessPiece::init(CHESS_COLUMN col, CHESS_ROW row, PLAYER_COLOR color, ChessBoard *board, bool setOnBoard)
+{
+	this->col = col;
+	this->row = row;
+	this->chessColor = color;
+	this->board = board;
+	this->alive = setOnBoard;
+
+	if(setOnBoard)
+		board->getField(col, row)->setPiece(this);
+}
+
 
 ChessPiece::~ChessPiece()
 {
@@ -65,6 +77,11 @@ std::vector<SimpleChessField> ChessPiece::getPossibleMoves() {
 	tryToFillPossibleMoves();
 
 	return possibleMoves;
+}
+
+void ChessPiece::printf()
+{
+	std::cout << getType() << "(" << getRow() << "," << getCol() << ")" << std::endl;
 }
 
 void ChessPiece::highlightPossibleMoves()

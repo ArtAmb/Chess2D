@@ -80,7 +80,7 @@ void GameView::additionalEventCheck(sf::RenderWindow * window) {
 			}
 		}
 
-	if (chessAI != nullptr && board->getCurrPlayer() == chessAI->getColor() && !chessAI->isThinking()) {
+	if ( chessAI != nullptr && board->getGameState() == CONTINIUE && board->getCurrPlayer() == chessAI->getColor() && !chessAI->isThinking()) {
 		chessAI->startThinking();
 		ChessAIMove chessAIMove = chessAI->calculateNextMove(board);
 		board->updateCurrentPlayer(chessAIMove.getPiece()->tryToMove(chessAIMove.getField()));

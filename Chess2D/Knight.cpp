@@ -2,13 +2,19 @@
 #include "ChessBoard.h"
 Knight::Knight()
 {
+	type = KNIGHT;
 }
 
 Knight::Knight(CHESS_ROW row, CHESS_COLUMN col, PLAYER_COLOR color, ChessBoard* board, sf::Sprite* sprite)
 {
 	init(col, row, color, board, sprite);
-	
-	
+	type = KNIGHT;
+
+}
+
+Knight::Knight(CHESS_COLUMN col, CHESS_ROW row, PLAYER_COLOR color, ChessBoard *board, bool setOnBoard) {
+	init(col, row, color, board, setOnBoard);
+	type = KNIGHT;
 }
 
 

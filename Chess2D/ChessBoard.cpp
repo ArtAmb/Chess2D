@@ -89,6 +89,73 @@ ChessBoardField* ChessBoard::getField(CHESS_COLUMN c, CHESS_ROW r)
 	return &board[r][c];
 }
 
+ChessPiece * ChessBoard::getMyChessPiece(ChessPiece * chessPieceFromTemporaryBoard)
+{
+	return getField(chessPieceFromTemporaryBoard->getSimpleField())->getPiece();
+}
+
+ChessBoard * ChessBoard::toTemporaryBoard()
+{
+	return new ChessBoard(this);
+}
+
+
+std::string pawnTypeToChar(CHESS_PIECES type) {
+	switch (type) {
+	case PAWN: {
+		return "P";
+	}
+
+	case KNIGHT:
+	{
+		return "H";
+	}
+	case ROOK:
+	{
+		return "R";
+	}
+	case BISHOP:
+	{
+		return "B";
+	}
+	case QUEEN:
+	{
+		return "Q";
+	}
+	case KING:
+	{
+		return "K";
+	}
+	}
+}
+
+void ChessBoard::printfBoard(std::string comment)
+{
+	std::cout << "==============" << comment << "==============" << std::endl;
+	for (int i = 0; i < 8; ++i) {
+		
+		for (int j = 0; j < 8; ++j) {
+			if (board[i][j].getPiece() == nullptr) {
+				std::cout << ".";
+			}
+			else {
+				if(board[i][j].getPiece()->getColor() == BLACK)
+					std::cout << pawnTypeToChar(board[i][j].getPiece()->getType());
+				else
+					std::cout << board[i][j].getPiece()->getType();
+			}
+
+		}
+		std::cout << std::endl;
+
+	}
+	std::cout << "=============================================" << std::endl;
+	std::cout << "=============================================" << std::endl;
+}
+
+
+
+
 sf::IntRect ChessBoard::getWhiteFieldSprite()
 {
 	return fieldTexture->getConverter()->getElementRect(2, 1);
@@ -105,6 +172,10 @@ void ChessBoard::checkKing(King * king)
 
 ChessBoard::ChessBoard()
 {
+	fieldTexture = ResourceManager::getInstance()->getTexture(RESOURCE::TEXTURE::FIELDS);
+	transformationButtonTexture = ResourceManager::getInstance()->getTexture(RESOURCE::TEXTURE::TRANSFORMATION_PAWN_BUTTON);
+	TRANSFORMATION_BUTTON_FIELD = transformationButtonTexture->getConverter()->getElementWidth();
+
 	for (int i = 0; i < 2; ++i)
 		for (int j = 0; j < 4; ++j)
 			pawnTransformationButtons[i][j] = new PawnTransformationButton(transformationButtonTexture->getTexture());
@@ -149,6 +220,83 @@ ChessBoard::ChessBoard()
 
 
 }
+
+ChessBoard::ChessBoard(ChessBoard* chessBoard) {
+	for (int i = 0; i < BOARD_SIZE; ++i)
+		for (int j = 0; j < BOARD_SIZE; ++j)
+		{
+			board[i][j] = ChessBoardField((CHESS_ROW)i, (CHESS_COLUMN)j);
+		}
+
+	for (int j = 0; j < 2; ++j)
+		for (int i = 0; i < 16; ++i)
+		{
+			auto piece = chessBoard->pieces[j][i];
+			pieces[j][i] = createChessPiece(piece);
+		}
+
+	currPlayer = chessBoard->currPlayer;
+	checkedKing = chessBoard->checkedKing != nullptr ? kings[chessBoard->checkedKing->getColor()] : nullptr;
+
+	initEnPasantPawns(chessBoard->enPassantPawns);
+	pawnBeingPromoted = chessBoard->pawnBeingPromoted != nullptr ? static_cast<Pawn*>(getMyChessPiece(chessBoard->pawnBeingPromoted)) : nullptr;
+	state = chessBoard->state;
+}
+
+void ChessBoard::initEnPasantPawns(std::vector<Pawn*> pawns) {
+	for (auto pawn : pawns)
+		enPassantPawns.push_back(static_cast<Pawn*>(getMyChessPiece(pawn)));
+}
+
+ChessPiece* ChessBoard::createChessPiece(ChessPiece* piece) {
+	ChessPiece* result = nullptr;
+
+	switch (piece->getType()) {
+	case PAWN: {
+		Pawn * pawn = new Pawn(piece->getCol(), piece->getRow(), piece->getColor(), this, piece->isAlive());
+		Pawn* piecePawn = static_cast<Pawn*>(piece);
+		pawn->initFirstMove(piecePawn->isFirstMoveAvailable());
+		piecePawn->isEnPasantAvailable() ? pawn->enableEnPasant() : pawn->disableEnPasant();
+
+		result = pawn;
+		break;
+	}
+
+	case KNIGHT:
+	{
+		result = new Knight(piece->getCol(), piece->getRow(), piece->getColor(), this, piece->isAlive());
+		break;
+	}
+	case ROOK:
+	{
+		result = new Rook(piece->getCol(), piece->getRow(), piece->getColor(), this, piece->isAlive());
+		break;
+	}
+	case BISHOP:
+	{
+		result = new Bishop(piece->getCol(), piece->getRow(), piece->getColor(), this, piece->isAlive());
+		break;
+	}
+	case QUEEN:
+	{
+		result = new Queen(piece->getCol(), piece->getRow(), piece->getColor(), this, piece->isAlive());
+		break;
+	}
+	case KING:
+	{
+		result = new King(piece->getCol(), piece->getRow(), piece->getColor(), this, piece->isAlive());
+		break;
+	}
+	default:
+		GraphicEngine::errorMessage("Nie mozna stworzyc pionka! Typ nie rozpoznany");
+	}
+
+
+	piece->isBeingProcessed() ? result->startProcessing() : result->stopProcessing();
+
+	return result;
+}
+
 void ChessBoard::prepareBoard() {
 	for (int i = 0; i < BOARD_SIZE; ++i)
 	{
@@ -224,7 +372,7 @@ void ChessBoard::tryToKillEnPassantPawn(SimpleChessField field)
 		if (enPassantPawns[i]->isEnPasantAvailable() && enPassantPawns[i]->getOldField() == field)
 		{
 			enPassantPawns[i]->die();
-			
+
 		}
 	}
 }
@@ -237,18 +385,18 @@ void ChessBoard::promotePawnTo(PAWN_PROMOTION pawnPromotion)
 
 	ChessPiece * newPawn = nullptr;
 	switch (pawnPromotion) {
-		case PROM_KNIGHT:
-			newPawn = new Knight(pawnBeingPromoted->getRow(), pawnBeingPromoted->getCol(), pawnColor, this, fieldTexture->getSprite(pawnColor, 3));
-			break; 
-		case PROM_ROOK: 
-			newPawn = new Rook(pawnBeingPromoted->getRow(), pawnBeingPromoted->getCol(), pawnColor, this, fieldTexture->getSprite(pawnColor, 2));
-			break;
-		case PROM_BISHOP: 
-			newPawn = new Bishop(pawnBeingPromoted->getRow(), pawnBeingPromoted->getCol(), pawnColor, this, fieldTexture->getSprite(pawnColor, 1));
-			break;
-		case PROM_QUEEN: 
-			newPawn = new Queen(pawnBeingPromoted->getRow(), pawnBeingPromoted->getCol(), pawnColor, this, fieldTexture->getSprite(pawnColor, 4));
-			break;
+	case PROM_KNIGHT:
+		newPawn = new Knight(pawnBeingPromoted->getRow(), pawnBeingPromoted->getCol(), pawnColor, this, fieldTexture->getSprite(pawnColor, 3));
+		break;
+	case PROM_ROOK:
+		newPawn = new Rook(pawnBeingPromoted->getRow(), pawnBeingPromoted->getCol(), pawnColor, this, fieldTexture->getSprite(pawnColor, 2));
+		break;
+	case PROM_BISHOP:
+		newPawn = new Bishop(pawnBeingPromoted->getRow(), pawnBeingPromoted->getCol(), pawnColor, this, fieldTexture->getSprite(pawnColor, 1));
+		break;
+	case PROM_QUEEN:
+		newPawn = new Queen(pawnBeingPromoted->getRow(), pawnBeingPromoted->getCol(), pawnColor, this, fieldTexture->getSprite(pawnColor, 4));
+		break;
 	}
 
 	newPawn->getSprite()->setPosition(pawnBeingPromoted->getSprite()->getPosition());
@@ -257,10 +405,10 @@ void ChessBoard::promotePawnTo(PAWN_PROMOTION pawnPromotion)
 		if (pieces[pawnBeingPromoted->getColor()][i] == pawnBeingPromoted) {
 			pieces[pawnBeingPromoted->getColor()][i] = newPawn;
 			delete pawnBeingPromoted;
-				break;
+			break;
 		}
 
-	
+
 	pawnBeingPromoted = nullptr;
 	deactivatePromotionButtons();
 	updateCurrentPlayer(true);

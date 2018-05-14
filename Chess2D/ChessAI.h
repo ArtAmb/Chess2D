@@ -29,6 +29,7 @@ public:
 	~ChessAI();
 
 	ChessAIPositionEstimation estimatePosition(ChessPiece* piece, SimpleChessField field, ChessBoard* board);
+	ChessAIPositionEstimation estimatePosition(ChessBoard * board);
 	ChessAIMove calculateNextMove(ChessBoard*);
 	PLAYER_COLOR getColor() { return color; }
 	

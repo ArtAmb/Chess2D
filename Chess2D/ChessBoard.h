@@ -142,6 +142,9 @@ class ChessBoard {
 public:
 	
 	ChessBoard();
+	ChessBoard(ChessBoard * board);
+	void initEnPasantPawns(std::vector<Pawn*> pawns);
+	ChessPiece * createChessPiece(ChessPiece * piece);
 	~ChessBoard();
 	void prepareBoard();
 	void draw(sf::RenderWindow* window);
@@ -162,8 +165,7 @@ public:
 
 	void activatePromotionButtons(PLAYER_COLOR);
 	void deactivatePromotionButtons();
-
-
+	
 	PawnTransformationButton* getPawnTransformationButton(PLAYER_COLOR color, PAWN_PROMOTION pawnType) {
 		return pawnTransformationButtons[color][pawnType];
 	}
@@ -176,4 +178,10 @@ public:
 	ChessBoardField* getField(int col, int row);
 	ChessBoardField* getField(CHESS_COLUMN c, CHESS_ROW r);
 	ChessPiece** getPieces(PLAYER_COLOR color) { return pieces[color]; }
+
+	ChessPiece* getMyChessPiece(ChessPiece* chessPieceFromTemporaryBoard);
+	ChessBoard* toTemporaryBoard();
+
+
+	void printfBoard(std::string comment);
 };

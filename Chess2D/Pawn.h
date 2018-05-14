@@ -17,10 +17,12 @@ public:
 	bool isEnPasantAvailable() { return enPasantAvailable; }
 	void disableEnPasant() { enPasantAvailable = false; }
 	void enableEnPasant() { enPasantAvailable = true; }
+	void initFirstMove(bool firstMoveAvailable) { this->firstMoveAvailable = firstMoveAvailable; }
 	SimpleChessField getOldField() { return SimpleChessField(oldRow, oldColumn); }
 
 public:
 	Pawn(CHESS_ROW, CHESS_COLUMN, PLAYER_COLOR, ChessBoard*, sf::Sprite*);
+	Pawn(CHESS_COLUMN col, CHESS_ROW row, PLAYER_COLOR color, ChessBoard * board, bool setOnBoard);
 	~Pawn();
 };
 

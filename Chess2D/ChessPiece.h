@@ -14,6 +14,8 @@ protected:
 	CHESS_COLUMN newColumn;
 	CHESS_ROW newRow;
 
+	CHESS_PIECES type;
+
 	PLAYER_COLOR chessColor;
 	sf::Sprite* sprite;
 	ChessBoard* board;
@@ -30,9 +32,7 @@ protected:
 	void highlightField(SimpleChessField field);
 
 	virtual void move(ChessBoardField* field);
-	bool isBeingProcessed() { return beingProcessed; }
-	void startProcessing() { beingProcessed = true; }
-	void stopProcessing() { beingProcessed = false; }
+	
 	SimpleChessField getNewField() { return SimpleChessField(newRow, newColumn); }
 	void setNewField(CHESS_ROW r, CHESS_COLUMN col) { newRow = r; newColumn = col; }
 
@@ -41,6 +41,7 @@ protected:
 public:
 	ChessPiece();
 	void init(CHESS_COLUMN, CHESS_ROW, PLAYER_COLOR, ChessBoard*, sf::Sprite*);
+	void init(CHESS_COLUMN col, CHESS_ROW row, PLAYER_COLOR color, ChessBoard * board, bool setOnBoard);
 	virtual ~ChessPiece();
 	void draw(sf::RenderWindow* window);
 	sf::Sprite* getSprite();
@@ -67,5 +68,12 @@ public:
 	std::vector<SimpleChessField> getPossibleMoves();
 	CHESS_ROW getRow() { return row; }
 	CHESS_COLUMN getCol() { return col; }
+	CHESS_PIECES getType() { return type; }
+
+	bool isBeingProcessed() { return beingProcessed; }
+	void startProcessing() { beingProcessed = true; }
+	void stopProcessing() { beingProcessed = false; }
+
+	void printf();
 };
 
