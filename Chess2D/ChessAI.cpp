@@ -1,4 +1,5 @@
 #include "ChessAI.h"
+#include <algorithm>   
 
 ChessAI::~ChessAI()
 {
@@ -6,42 +7,125 @@ ChessAI::~ChessAI()
 
 ChessAIPositionEstimation ChessAI::estimatePosition(ChessPiece* piece, SimpleChessField field, ChessBoard* board)
 {
-	
+	ChessAIPositionEstimation estimation;
 	ChessBoard* tmpBoard = board->toTemporaryBoard();
 	tmpBoard->getMyChessPiece(piece)->tryToMove(field);
-	ChessAIPositionEstimation estimation = estimatePosition(tmpBoard);
+
+	if (tmpBoard->isPawnBeingPromoted()) {
+		estimation = estimatePostionForPawnPromotion(tmpBoard);
+	}
+	else {
+		estimation = estimatePosition(tmpBoard, piece->getColor());
+	}
+
+
 	delete tmpBoard;
 	return estimation;
-
-	//return estimatePosition(board);
 }
 
-ChessAIPositionEstimation ChessAI::estimatePosition(ChessBoard* board) {
-	return ChessAIPositionEstimation();
+ChessAIPositionEstimation ChessAI::estimatePostionForPawnPromotion(ChessBoard* board) {
+
+	std::vector<ChessAIPositionEstimation> promotionEstimations;
+
+	promotionEstimations.push_back(estimatePostiontionForPawnPromotionType(board, PROM_QUEEN));
+	promotionEstimations.push_back(estimatePostiontionForPawnPromotionType(board, PROM_BISHOP));
+	promotionEstimations.push_back(estimatePostiontionForPawnPromotionType(board, PROM_KNIGHT));
+	promotionEstimations.push_back(estimatePostiontionForPawnPromotionType(board, PROM_ROOK));
+
+	ChessAIPositionEstimation bestEstimation = findBestEstimation(promotionEstimations);
+
+	return bestEstimation;
 }
 
-class PieceWithField {
-	ChessPiece* piece;
-	SimpleChessField field;
-	ChessAIPositionEstimation estimation;
-public:
-	PieceWithField(ChessPiece* piece, SimpleChessField field, ChessAIPositionEstimation estimation)
-		: piece(piece), field(field), estimation(estimation) {};
+ChessAIPositionEstimation ChessAI::estimatePostiontionForPawnPromotionType(ChessBoard* board, PAWN_PROMOTION promotionType) {
+	ChessBoard* tmpBoard = board->toTemporaryBoard();
+	PLAYER_COLOR playerColor = board->getPawnBeingPromoted()->getColor();
+	board->promotePawnTo(PROM_QUEEN);
+	ChessAIPositionEstimation estimation = estimatePosition(board, playerColor);
+	estimation.setForPromotionPawn(promotionType);
+	delete tmpBoard;
 
-	ChessPiece* getPiece() { return piece; };
-	SimpleChessField getField() { return field; };
-	ChessAIPositionEstimation getEstimation() { return estimation; };
+	return estimation;
+}
 
-	void printf() {
-		std::cout << "[" << piece->getType() << "(" << piece->getRow() << "," << piece->getCol() << ") -> " << "(" << field.getRow() << "," << field.getColumn() << ")" << "]" << std::endl;
+ChessAIPositionEstimation ChessAI::estimatePosition(ChessBoard* board, PLAYER_COLOR color) {
+	ChessPiece** myPieces = board->getPieces(color);
+	ChessPiece** enemyPieces = board->getPieces(getEnemyColorFor(color));
+
+	float myMaterial = calculateMaterial(myPieces);
+	float enemyMaterial = calculateMaterial(enemyPieces);
+
+	float estimation = myMaterial - enemyMaterial;
+
+	return ChessAIPositionEstimation(estimation);
+}
+
+PLAYER_COLOR ChessAI::getEnemyColor() {
+	return getEnemyColorFor(color);
+}
+
+PLAYER_COLOR ChessAI::getEnemyColorFor(PLAYER_COLOR color) {
+	return color == WHITE ? BLACK : WHITE;
+}
+
+float ChessAI::calculateMaterial(ChessPiece** pieces) {
+	float result = 0;
+
+	for (int i = 0; i < 16; ++i) {
+		if (pieces[i]->isAlive()) {
+			result += calculateMaterial(pieces[i]);
+		}
 	}
-};
+
+	return result;
+}
+
+float ChessAI::calculateMaterial(ChessPiece* piece) {
+	switch (piece->getType()) {
+
+	case PAWN: {
+		return 1;
+	}
+
+	case KNIGHT:
+	{
+		return 3;
+	}
+	case ROOK:
+	{
+		return 5;
+	}
+	case BISHOP:
+	{
+		return 3;
+	}
+	case QUEEN:
+	{
+		return 9;
+	}
+	case KING:
+	{
+		return 0;
+	}
+	}
+
+	throw "ChessAI::calculateMaterial -> UNKNOWN TYPE";
+}
 
 ChessAIMove ChessAI::calculateNextMove(ChessBoard* board)
 {
-	board->printfBoard(" REAL ");
+	return calculateNextMove(board, color, 1);
+}
+
+ChessAIMove ChessAI::calculateNextMove(ChessBoard* board, PLAYER_COLOR color) {
+
+	return calculateNextMove(board, color, 1);
+}
+
+ChessAIMove ChessAI::calculateNextMove(ChessBoard* board, PLAYER_COLOR color, int depthLevel)
+{
 	ChessBoard* tmpBoard = board->toTemporaryBoard();
-	tmpBoard->printfBoard(" TEMP ");
+
 	std::vector<PieceWithField> allMoves;
 	ChessPiece** allPieces = tmpBoard->getPieces(color);
 	for (int i = 0; i < 16; ++i) {
@@ -50,34 +134,81 @@ ChessAIMove ChessAI::calculateNextMove(ChessBoard* board)
 			allMoves.push_back(PieceWithField(allPieces[i], field, estimation));
 		}
 	}
-	
-	int random = rand() % allMoves.size();
-	PieceWithField selectedMove = allMoves[random];
-	std::cout << "SELECTED MOVE: ";
-	selectedMove.printf();
 
-	board->printfBoard(" REAL ?? again ");
+	std::vector<PieceWithField> selectedMoves;
+
+	if (depthLevel == 0) {
+		selectedMoves = allMoves;
+	} else {
+		int howMany = 3;
+		selectedMoves = findBestMoves(allMoves, 3);
+		for (int i = 0; i < selectedMoves.size(); ++i) {
+			selectedMoves[i].setEstimation(estimateMove(selectedMoves[i], tmpBoard, 1));
+		}
+		for (auto move : selectedMoves)
+			move.printf();
+	}
+	
+	PieceWithField selectedMove = findBestMove(selectedMoves);
+
 	ChessPiece* realPiece = board->getMyChessPiece(selectedMove.getPiece());
-	std::cout << "REAL PIECE: ";
-	realPiece->printf();
 
 	delete tmpBoard;
-	return ChessAIMove(realPiece, selectedMove.getField());
-	
+	return ChessAIMove(realPiece, selectedMove.getField(), selectedMove.getEstimation().getForPromotionPawn(), selectedMove.getEstimation());
+}
 
-	/*
-	std::vector<PieceWithField> allMoves;
-	ChessPiece** allPieces = board->getPieces(color);
-	for (int i = 0; i < 16; ++i) {
-		for (auto field : allPieces[i]->getPossibleMoves()) {
-			ChessAIPositionEstimation estimation = estimatePosition(allPieces[i], field, board);
-			allMoves.push_back(PieceWithField(allPieces[i], field, estimation));
-		}
+ChessAIPositionEstimation ChessAI::estimateMove(PieceWithField pieceWithField, ChessBoard* board, int howDeep) {
+	pieceWithField.printf();
+	ChessAIPositionEstimation finalEstimation = pieceWithField.getEstimation();
+	ChessBoard* tmpBoard = board->toTemporaryBoard();
+
+	ChessPiece* piece = tmpBoard->getMyChessPiece(pieceWithField.getPiece());
+	piece->tryToMove(pieceWithField.getField());
+
+	
+	for (int i = 0; i < howDeep; ++i) {
+		ChessAIMove enemyMove = calculateNextMove(tmpBoard, getEnemyColor(), 0);
+		enemyMove.getEstimation().printf();
+		finalEstimation -= enemyMove.getEstimation();
+		std::cout << "FINAL = ";  finalEstimation.printf();
+		board->makeMoveAndUpdateCurrentPlayer(enemyMove);
+
+		ChessAIMove myMove = calculateNextMove(tmpBoard, color, 0);
+		myMove.getEstimation().printf();
+		finalEstimation += myMove.getEstimation();
+		std::cout << "FINAL = "; finalEstimation.printf();
+		board->makeMoveAndUpdateCurrentPlayer(myMove);
+	}
+	
+	delete tmpBoard;
+	std::cout << "LAST ONE == " << finalEstimation.getEstimation() << std::endl;
+	return finalEstimation;
+}
+
+PieceWithField ChessAI::findBestMove(std::vector<PieceWithField> allMoves) {
+	PieceWithField bestMove = allMoves[0];
+	for (auto move : allMoves) {
+		if (bestMove.getEstimation() < move.getEstimation())
+			bestMove = move;
 	}
 
-	int random = rand() % allMoves.size();
-	PieceWithField selectedMove = allMoves[random];
+	return bestMove;
+}
 
+ChessAIPositionEstimation ChessAI::findBestEstimation(std::vector<ChessAIPositionEstimation> estimations) {
+	ChessAIPositionEstimation bestEstimation = estimations[0];
+	for (auto estimation : estimations) {
+		if (bestEstimation < estimation)
+			bestEstimation = estimation;
+	}
 
-	return ChessAIMove(selectedMove.getPiece(), selectedMove.getField());*/
+	return bestEstimation;
+}
+
+std::vector<PieceWithField> ChessAI::findBestMoves(std::vector<PieceWithField> allMoves, int howMany) {
+	std::sort(allMoves.begin(), allMoves.end(), PieceWithField::greater);
+	if (allMoves.size() <= howMany)
+		return allMoves;
+
+	return std::vector<PieceWithField>(allMoves.begin(), allMoves.begin() + howMany);
 }

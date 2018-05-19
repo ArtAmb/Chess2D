@@ -126,6 +126,7 @@
   <ItemGroup>
     <ClCompile Include="Bishop.cpp" />
     <ClCompile Include="ChessAI.cpp" />
+    <ClCompile Include="ChessAiMove.cpp" />
     <ClCompile Include="ChessBoard.cpp" />
     <ClCompile Include="ChessPiece.cpp" />
     <ClCompile Include="ClickEvent.cpp" />
@@ -159,6 +160,8 @@
   <ItemGroup>
     <ClInclude Include="Bishop.h" />
     <ClInclude Include="ChessAI.h" />
+    <ClInclude Include="ChessAiMove.h" />
+    <ClInclude Include="ChessAiPositionEstimation.h" />
     <ClInclude Include="ChessBoard.h" />
     <ClInclude Include="ChessEnums.h" />
     <ClInclude Include="ChessPiece.h" />

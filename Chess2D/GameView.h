@@ -8,6 +8,7 @@ class GameView : public LayoutView
 	ChessBoard* board = new ChessBoard(); 
 	FieldSelector* fieldSelector = new FieldSelector();
 	ChessAI* chessAI = nullptr;
+	bool testMode = false;
 	
 	
 public:
