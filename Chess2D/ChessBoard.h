@@ -8,6 +8,7 @@
 #include "King.h"
 #include "Pawn.h"
 #include "FieldSelector.h"
+#include "ChessAiMove.h"
 #include <fstream>
 #include <iostream>
 #include <cstdlib>
@@ -141,7 +142,8 @@ class ChessBoard {
 	sf::IntRect getWhiteFieldSprite();
 	sf::IntRect getBlackFieldSprite();
 	void checkKing(King* king);
-	
+	CHESS_BOARD_TYPE chessBoardType;
+		
 public:
 	
 	ChessBoard();
@@ -165,7 +167,14 @@ public:
 	void addEnPassantPawns(Pawn* pawn);
 	void tryToKillEnPassantPawn(SimpleChessField field);
 	void loadSprites();
+	void promotePawnTo(PAWN_PROMOTION * pawnPromotion);
 	void promotePawnTo(PAWN_PROMOTION);
+
+	void makeMoveAndUpdateCurrentPlayer(ChessAIMove chessAIMove);
+
+	void realPromotePawnTo(PAWN_PROMOTION pawnPromotion);
+
+	void simulatePromotePawnTo(PAWN_PROMOTION pawnPromotion);
 
 	void activatePromotionButtons(PLAYER_COLOR);
 	void deactivatePromotionButtons();
@@ -185,7 +194,7 @@ public:
 
 	ChessPiece* getMyChessPiece(ChessPiece* chessPieceFromTemporaryBoard);
 	ChessBoard* toTemporaryBoard();
-
+	bool isPawnBeingPromoted();
 
 	void printfBoard(std::string comment);
 };

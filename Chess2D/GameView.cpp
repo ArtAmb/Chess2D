@@ -51,12 +51,22 @@ void GameView::additionalEventCheck(sf::RenderWindow * window) {
 			<< "Saved piece  " << fieldSelector->getSavedPiece() << std::endl << std::endl;
 	}
 
+	if (happening.type == sf::Event::KeyReleased && happening.key.code == sf::Keyboard::T) {
+		testMode = !testMode;
+
+		if (testMode)
+			std::cout << "TEST MODE ACTIVATED!!!!!" << std::endl;
+		else
+			std::cout << "TEST MODE DEACTIVATED!!!!!" << std::endl;
+	}
+
+
 	for (int i = 0; i < 8; ++i)
 		for (int j = 0; j < 8; ++j) {
 			ChessBoardField* field = board->getField(i, j);
 			if (field->contains(mousePosition)) {
 				field->selected();
-				if (chessAI != nullptr && board->getCurrPlayer() == chessAI->getColor())
+				if (!testMode && chessAI != nullptr && board->getCurrPlayer() == chessAI->getColor())
 					continue;
 
 				fieldSelector->update(field->toSimpleField());
@@ -72,7 +82,7 @@ void GameView::additionalEventCheck(sf::RenderWindow * window) {
 		for (int j = 0; j < 4; ++j) {
 			PawnTransformationButton* button = board->getPawnTransformationButton((PLAYER_COLOR)i, (PAWN_PROMOTION)j);
 			if (button->contains(mousePosition)) {
-			
+
 				if (happening.type == sf::Event::MouseButtonReleased && happening.key.code == sf::Mouse::Left) {
 					if (button->isActive()) {
 						board->promotePawnTo(button->getPawnPromotionType());
@@ -81,10 +91,10 @@ void GameView::additionalEventCheck(sf::RenderWindow * window) {
 			}
 		}
 
-	if ( chessAI != nullptr && board->getGameState() == CONTINIUE && board->getCurrPlayer() == chessAI->getColor() && !chessAI->isThinking()) {
+	if (!testMode && chessAI != nullptr && board->getGameState() == CONTINIUE && board->getCurrPlayer() == chessAI->getColor() && !chessAI->isThinking()) {
 		chessAI->startThinking();
 		ChessAIMove chessAIMove = chessAI->calculateNextMove(board);
-		board->updateCurrentPlayer(chessAIMove.getPiece()->tryToMove(chessAIMove.getField()));
+		board->makeMoveAndUpdateCurrentPlayer(chessAIMove);
 		chessAI->stopThinking();
 	}
 

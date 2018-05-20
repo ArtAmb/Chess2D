@@ -99,6 +99,10 @@ ChessBoard * ChessBoard::toTemporaryBoard()
 	return new ChessBoard(this);
 }
 
+bool ChessBoard::isPawnBeingPromoted()
+{
+	return getPawnBeingPromoted() != nullptr;
+}
 
 std::string pawnTypeToChar(CHESS_PIECES type) {
 	switch (type) {
@@ -172,6 +176,7 @@ void ChessBoard::checkKing(King * king)
 
 ChessBoard::ChessBoard()
 {
+	chessBoardType = REAL;
 	fieldTexture = ResourceManager::getInstance()->getTexture(RESOURCE::TEXTURE::FIELDS);
 	transformationButtonTexture = ResourceManager::getInstance()->getTexture(RESOURCE::TEXTURE::TRANSFORMATION_PAWN_BUTTON);
 	TRANSFORMATION_BUTTON_FIELD = transformationButtonTexture->getConverter()->getElementWidth();
@@ -222,6 +227,7 @@ ChessBoard::ChessBoard()
 }
 
 ChessBoard::ChessBoard(ChessBoard* chessBoard) {
+	chessBoardType = TEMPORARY;
 	for (int i = 0; i < BOARD_SIZE; ++i)
 		for (int j = 0; j < BOARD_SIZE; ++j)
 		{
@@ -377,8 +383,26 @@ void ChessBoard::tryToKillEnPassantPawn(SimpleChessField field)
 	}
 }
 
+void ChessBoard::promotePawnTo(PAWN_PROMOTION* pawnPromotion)
+{
+	promotePawnTo(*pawnPromotion);
+}
 void ChessBoard::promotePawnTo(PAWN_PROMOTION pawnPromotion)
 {
+	if (chessBoardType == REAL)
+		realPromotePawnTo(pawnPromotion);
+	else
+		simulatePromotePawnTo(pawnPromotion);
+}
+
+void ChessBoard::makeMoveAndUpdateCurrentPlayer(ChessAIMove chessAIMove) {
+	updateCurrentPlayer(chessAIMove.getPiece()->tryToMove(chessAIMove.getField()));
+	if (isPawnBeingPromoted())
+		promotePawnTo(chessAIMove.getPawnPromotionType());
+}
+
+void ChessBoard::realPromotePawnTo(PAWN_PROMOTION pawnPromotion) {
+
 	if (pawnBeingPromoted == nullptr)
 		return;
 	PLAYER_COLOR pawnColor = pawnBeingPromoted->getColor();
@@ -414,9 +438,44 @@ void ChessBoard::promotePawnTo(PAWN_PROMOTION pawnPromotion)
 	updateCurrentPlayer(true);
 }
 
+void ChessBoard::simulatePromotePawnTo(PAWN_PROMOTION pawnPromotion)
+{
+	if (pawnBeingPromoted == nullptr)
+		return;
+	PLAYER_COLOR pawnColor = pawnBeingPromoted->getColor();
+
+	ChessPiece * newPawn = nullptr;
+	switch (pawnPromotion) {
+	case PROM_KNIGHT:
+		newPawn = createChessPiece(pawnBeingPromoted);
+		break;
+	case PROM_ROOK:
+		newPawn = createChessPiece(pawnBeingPromoted);
+		break;
+	case PROM_BISHOP:
+		newPawn = createChessPiece(pawnBeingPromoted);
+		break;
+	case PROM_QUEEN:
+		newPawn = createChessPiece(pawnBeingPromoted);
+		break;
+	}
+	
+	for (int i = 0; i < 16; ++i)
+		if (pieces[pawnBeingPromoted->getColor()][i] == pawnBeingPromoted) {
+			pieces[pawnBeingPromoted->getColor()][i] = newPawn;
+			delete pawnBeingPromoted;
+			break;
+		}
+	
+	pawnBeingPromoted = nullptr;
+	updateCurrentPlayer(true);
+}
 
 void ChessBoard::activatePromotionButtons(PLAYER_COLOR color)
 {
+	if (chessBoardType != REAL)
+		return;
+
 	for (int j = 0; j < 4; ++j)
 		pawnTransformationButtons[color][j]->setActive(true);
 }

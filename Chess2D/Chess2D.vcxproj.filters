@@ -28,6 +28,9 @@
     <Filter Include="Header Files\chesspieces">
       <UniqueIdentifier>{82da75ad-c303-47ff-9353-baf689393747}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\ai">
+      <UniqueIdentifier>{8a042575-51c4-4a66-b2c0-4e67a70fe036}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -126,6 +129,9 @@
     <ClCompile Include="SimpleChessField.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ChessAiMove.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MenuButton.h">
@@ -203,9 +209,6 @@
     <ClInclude Include="LevelOptionsButton.h">
       <Filter>Header Files\buttons</Filter>
     </ClInclude>
-    <ClInclude Include="ChessAI.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Bishop.h">
       <Filter>Header Files\chesspieces</Filter>
     </ClInclude>
@@ -223,6 +226,15 @@
     </ClInclude>
     <ClInclude Include="Rook.h">
       <Filter>Header Files\chesspieces</Filter>
+    </ClInclude>
+    <ClInclude Include="ChessAI.h">
+      <Filter>Header Files\ai</Filter>
+    </ClInclude>
+    <ClInclude Include="ChessAiMove.h">
+      <Filter>Header Files\ai</Filter>
+    </ClInclude>
+    <ClInclude Include="ChessAiPositionEstimation.h">
+      <Filter>Header Files\ai</Filter>
     </ClInclude>
     <ClInclude Include="GameView.h">
       <Filter>Header Files</Filter>
