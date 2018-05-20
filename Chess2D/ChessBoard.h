@@ -10,6 +10,9 @@
 #include "Pawn.h"
 #include "FieldSelector.h"
 #include "ChessAiMove.h"
+#include <fstream>
+#include <iostream>
+#include <cstdlib>
 
 class ChessBoardField {
 private:
@@ -162,11 +165,12 @@ public:
 	void updateCastlingsFor(PLAYER_COLOR color, CHESS_BOARD_SIDE boardSide, std::vector<SimpleChessField> enemyMoves);
 	bool isFieldInVector(SimpleChessField field, std::vector<SimpleChessField> vector);
 	CHESS_GAME_STATE checkIfGameEnd();
-	void endGame(CHESS_GAME_STATE gameState);
+	std::string endGame(CHESS_GAME_STATE gameState);
 	CHESS_GAME_STATE getGameState();
 	PLAYER_COLOR getCurrPlayer();
 	void disableEnPassantPawns();
 	void selectField(FieldSelector* fieldSelector);
+	void saveMovement();
 	void highlightFields(FieldSelector fieldSelector);
 	bool checkIfKingIsInCheck(PLAYER_COLOR color);
 	void unlightAllFields();

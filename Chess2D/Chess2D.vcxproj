@@ -154,6 +154,7 @@
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="InstructionButtonAction.cpp" />
     <ClCompile Include="Rook.cpp" />
+    <ClCompile Include="SimpleChessField.cpp" />
     <ClCompile Include="SingleGameButtonAction.cpp" />
     <ClCompile Include="TextureResource.cpp" />
   </ItemGroup>
@@ -171,6 +172,7 @@
     <ClInclude Include="FieldSelector.h" />
     <ClInclude Include="GameModeButtonAction.h" />
     <ClInclude Include="GameSettings.h" />
+    <ClInclude Include="GameView.h" />
     <ClInclude Include="LevelOptionsButton.h" />
     <ClInclude Include="King.h" />
     <ClInclude Include="Knight.h" />

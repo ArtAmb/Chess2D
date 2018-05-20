@@ -2,6 +2,7 @@
 #include "LayoutView.h"
 #include "ChessBoard.h"
 #include "ChessAI.h"
+#include <vector>
 
 class GameView : public LayoutView
 {
@@ -19,6 +20,7 @@ public:
 	void initDisplaying();
 	void additionalEventCheck(sf::RenderWindow* window);
 	void checkStatus(sf::RenderWindow * window);
+	void displayHistory(sf::RenderWindow * window);
 	void highlightSelectedPromotionPawnButton();
 	void setChessAI(ChessAI* chessAI) { this->chessAI = chessAI; }
 };

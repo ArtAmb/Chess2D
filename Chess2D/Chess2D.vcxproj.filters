@@ -126,6 +126,9 @@
     <ClCompile Include="ChessAI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SimpleChessField.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="ChessAiMove.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -232,6 +235,9 @@
     </ClInclude>
     <ClInclude Include="ChessAiPositionEstimation.h">
       <Filter>Header Files\ai</Filter>
+    </ClInclude>
+    <ClInclude Include="GameView.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

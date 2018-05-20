@@ -19,6 +19,7 @@ void GameView::additionalDisplayAction(sf::RenderWindow * window) {
 
 	board->draw(window);
 	checkStatus(window);
+	displayHistory(window);
 }
 
 void GameView::highlightSelectedPromotionPawnButton() {
@@ -139,6 +140,67 @@ void GameView::checkStatus(sf::RenderWindow * window)
 		break;
 	}
 	window->draw(str);
+
+
+}
+
+void GameView::displayHistory(sf::RenderWindow * window)
+{
+	std::vector<std::string> movements;
+
+	movements.push_back("BIALE : [P(2,B))-> (3,B)]");
+	movements.push_back("CZARNE : [S(2,B))-> (3,B)]");
+	movements.push_back("BIALE : [G(2,B))-> (3,A)]");
+	movements.push_back("CZARNE : [W(2,B))-> (3,B)]");
+	
+	
+
+	sf::Text title;
+	title.setFont(font);
+	title.setCharacterSize(34);
+	title.setFillColor(sf::Color(0, 0, 0));
+	title.setStyle(sf::Text::Bold);
+	title.setPosition(710, 180);
+	title.setString(L"Historia ruchów:");
+
+	
+
+	const size_t mSize = movements.size();
+	size_t startIt = 0;
+
+	if (mSize >15)
+		startIt = mSize - 15;
+
+	
+	std::vector<sf::Text> str(mSize);
+	float pos = 230;
+	for (auto &text : str)
+	{
+		
+		text.setFont(font);
+		text.setCharacterSize(20);
+		text.setFillColor(sf::Color(0, 0, 0));
+		text.setStyle(sf::Text::Bold);
+		
+		
+	}			
+	
+	for (size_t i = startIt; i < movements.size(); i++) {
+		
+		  
+		str[i].setPosition(710, pos);
+		str[i].setString(movements[i]);
+		pos += 28.f;
+
+	}
+		
+		
+
+	window->draw(title);
+	for (auto& text : str)
+	{
+		window ->draw(text);
+	}
 
 
 }

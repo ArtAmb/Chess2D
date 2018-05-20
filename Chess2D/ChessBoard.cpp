@@ -561,6 +561,7 @@ void ChessBoard::updateCurrentPlayer(bool isChangeNeeded)
 		disableEnPassantPawns();
 		updateCastlings();
 		endGame(checkIfGameEnd());
+		saveMovement();
 	}
 
 }
@@ -669,38 +670,40 @@ CHESS_GAME_STATE ChessBoard::checkIfGameEnd()
 	return CONTINIUE;
 }
 
-void ChessBoard::endGame(CHESS_GAME_STATE gameState)
+std::string ChessBoard::endGame(CHESS_GAME_STATE gameState)
 {
+
+	std::string status;
 	state = gameState;
 	switch (gameState)
 	{
 	case CONTINIUE:
 	{
 		if (getCurrPlayer() == WHITE)
-			std::cout << "MOVE: WHITE" << std::endl;
+			status = "RUCH: BIALE";
 		else
-			std::cout << "MOVE: BLACK" << std::endl;
+			status = "RUCH: CZARNE";
 		break;
 	}
 	case WINNER_BLACK:
-
-		std::cout << "CHECKMATE!!! WINNER: BLACK" << std::endl;
+		status = "MAT! ZWYCIEZCA: CZARNE";
 		break;
 
 	case WINNER_WHITE:
-
-		std::cout << "CHECKMATE!!! WINNER: WHITE" << std::endl;
+		status = "MAT! ZWYCIEZCA: BIALE";
 		break;
 
 	case STALEMATE:
-
-		std::cout << "STALEMATE!" << std::endl;
+		status = "PAT";
 		break;
 
 	default:
-
 		break;
 	}
+
+	std::cout << status << std::endl;
+	return status;
+
 }
 CHESS_GAME_STATE ChessBoard::getGameState()
 {
@@ -781,6 +784,7 @@ bool ChessBoardField::checkPieceColor(PLAYER_COLOR chessColor)
 {
 	if (isEmpty())
 		return false;
+	
 	return getPiece()->getColor() == chessColor;
 }
 void ChessBoardField::prepareSprite()
@@ -813,4 +817,19 @@ void ChessBoard::selectField(FieldSelector* fieldSelector)
 		}
 	}
 
+}
+void ChessBoard::saveMovement() {
+	
+	/*
+	
+	std::cout << "[" << getPiece()->getTypeName() << "(" << piece->getRowName() << "," << piece->getColumnName() << ") -> " << "(" << field->getRowName() << "," << field->getColumnName() << ")" << "]" << std::endl;
+	std::fstream plik;
+
+	plik.open("resources/movements.txt", std::ios::out | std::ios::app);
+	if (plik.good() == true)
+	{
+		plik << "[" << piece->getTypeName() << "(" << piece->getRowName() << "," << piece->getColumnName() << ") -> " << "(" << field.getRowName() << "," << field.getColumnName() << ")" << "]" << std::endl;
+
+		plik.close();
+	}*/
 }

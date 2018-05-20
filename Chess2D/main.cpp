@@ -25,7 +25,7 @@ int main()
 {
 	ResourceManager* resourceManager = ResourceManager::getInstance();
 	resourceManager->setPathToResource("resources/");
-
+	srand(time(0));
 	resourceManager->loadTexture(RESOURCE::TEXTURE::BACKGROUNDS, "backgrounds.png", WIDTH_BACKGROUND, HEIGHT_BACKGROUND);
 	resourceManager->loadTexture(RESOURCE::TEXTURE::NORMAL_BUTTONS, "buttons.png", WIDTH_BUTTON, HEIGHT_BUTTON);
 	resourceManager->loadTexture(RESOURCE::TEXTURE::GAME_MODE_BUTTONS, "game_mode_buttons.png", GAME_MODE_WIDTH_BUTTON, GAME_MODE_HEIGHT_BUTTON);
