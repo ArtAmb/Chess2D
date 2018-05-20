@@ -60,6 +60,22 @@ void GameView::additionalEventCheck(sf::RenderWindow * window) {
 			std::cout << "TEST MODE DEACTIVATED!!!!!" << std::endl;
 	}
 
+	if (happening.type == sf::Event::KeyReleased && happening.key.code == sf::Keyboard::X) {
+		if (testMode) {
+			auto field = board->getField(fieldSelector->getColumn(), fieldSelector->getRow());
+			if (field->getPiece() != nullptr) {
+				auto piece = field->getPiece();
+				piece->die();
+				std::cout << "The piece["<< piece->getType() <<"] on field [" << fieldSelector->getRow() << "," << fieldSelector->getColumn() << "] was killed" << std::endl;
+			}
+			else {
+				std::cout << "There is no piece on field [" << fieldSelector->getRow() << "," << fieldSelector->getColumn() << "]" << std::endl;
+			}
+
+		}
+
+	}
+
 
 	for (int i = 0; i < 8; ++i)
 		for (int j = 0; j < 8; ++j) {
@@ -152,8 +168,8 @@ void GameView::displayHistory(sf::RenderWindow * window)
 	movements.push_back("CZARNE : [S(2,B))-> (3,B)]");
 	movements.push_back("BIALE : [G(2,B))-> (3,A)]");
 	movements.push_back("CZARNE : [W(2,B))-> (3,B)]");
-	
-	
+
+
 
 	sf::Text title;
 	title.setFont(font);
@@ -163,43 +179,43 @@ void GameView::displayHistory(sf::RenderWindow * window)
 	title.setPosition(710, 180);
 	title.setString(L"Historia ruchów:");
 
-	
+
 
 	const size_t mSize = movements.size();
 	size_t startIt = 0;
 
-	if (mSize >15)
+	if (mSize > 15)
 		startIt = mSize - 15;
 
-	
+
 	std::vector<sf::Text> str(mSize);
 	float pos = 230;
 	for (auto &text : str)
 	{
-		
+
 		text.setFont(font);
 		text.setCharacterSize(20);
 		text.setFillColor(sf::Color(0, 0, 0));
 		text.setStyle(sf::Text::Bold);
-		
-		
-	}			
-	
+
+
+	}
+
 	for (size_t i = startIt; i < movements.size(); i++) {
-		
-		  
+
+
 		str[i].setPosition(710, pos);
 		str[i].setString(movements[i]);
 		pos += 28.f;
 
 	}
-		
-		
+
+
 
 	window->draw(title);
 	for (auto& text : str)
 	{
-		window ->draw(text);
+		window->draw(text);
 	}
 
 

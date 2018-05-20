@@ -18,7 +18,7 @@ ChessAIPositionEstimation ChessAI::estimatePosition(ChessPiece* piece, SimpleChe
 		estimation = estimatePosition(tmpBoard, piece->getColor());
 	}
 
-	
+
 	delete tmpBoard;
 	return estimation;
 }
@@ -56,14 +56,45 @@ ChessAIPositionEstimation ChessAI::estimatePosition(ChessBoard* board, PLAYER_CO
 	float enemyMaterial = calculateMaterial(enemyPieces);
 
 	float estimation = myMaterial - enemyMaterial;
-	
-	int myPossibleMoves = calculatePossibleMoves(myPieces);
-	int enemyPossibleMoves = calculatePossibleMoves(enemyPieces);
 
-	int possibleMoves = myPossibleMoves - enemyPossibleMoves;
+	ChessAIMovesDTO myMovesCalculationResult = calculatePossibleMoves(myPieces);
+	ChessAIMovesDTO enemyMovesCalculationResult = calculatePossibleMoves(enemyPieces);
+
+	EndGameDTO myEndGameDTO = myMovesCalculationResult.getEndGameDTO();
+	EndGameDTO enemyEndGameDTO = enemyMovesCalculationResult.getEndGameDTO();
+
+	int possibleMoves = myEndGameDTO.getPossibleMoves().size() - enemyEndGameDTO.getPossibleMoves().size();
+
+	CHESS_GAME_STATE state = (color == WHITE ? board->checkIfGameEnd(myEndGameDTO, enemyEndGameDTO) : board->checkIfGameEnd(enemyEndGameDTO, myEndGameDTO));
+
+	if (state == WINNER_BLACK && color == BLACK)
+		estimation += 9000;
+	if (state == WINNER_WHITE && color == WHITE)
+		estimation += 9000;
 
 	return ChessAIPositionEstimation(estimation, possibleMoves);
 }
+
+std::map<SimpleChessField, std::vector<ChessPiece* >> ChessAI::findAttackedFields(ChessBoard* board, std::vector<PieceWithField> moves) {
+	std::map<SimpleChessField, std::vector<ChessPiece* >> attackedFieldsMap;
+	
+	for (auto move : moves) {
+		if (board->getField(move.getField())->getPiece() != nullptr) {
+			if (attackedFieldsMap.find(move.getField()) == attackedFieldsMap.end()) {
+				attackedFieldsMap[move.getField()] = std::vector<ChessPiece* >();
+			}
+			
+			attackedFieldsMap[move.getField()].push_back(move.getPiece());
+		}
+			
+	}
+	return attackedFieldsMap;
+}
+
+/*
+float ChessAI::estimateInfluenceOnField(SimpleChessField field, std::vector<ChessPiece* > enemyAttackingFields) {
+
+}*/
 
 PLAYER_COLOR ChessAI::getEnemyColor() {
 	return getEnemyColorFor(color);
@@ -85,16 +116,24 @@ float ChessAI::calculateMaterial(ChessPiece** pieces) {
 	return result;
 }
 
-int ChessAI::calculatePossibleMoves(ChessPiece** pieces) {
-	int result = 0;
-
+ChessAIMovesDTO ChessAI::calculatePossibleMoves(ChessPiece** pieces) {
+	std::vector<SimpleChessField> possibeMoves;
+	std::vector<ChessPiece* > alivePiecesWithoutKing;
+	std::vector<PieceWithField> piecesWithFields;
 	for (int i = 0; i < 16; ++i) {
 		if (pieces[i]->isAlive()) {
-			result += pieces[i]->getPossibleMoves().size();
+			if (pieces[i]->getType() != KING)
+				alivePiecesWithoutKing.push_back(pieces[i]);
+
+			std::vector<SimpleChessField> tmp = pieces[i]->getPossibleMoves();
+			for(auto tmpField : tmp)
+				piecesWithFields.push_back(PieceWithField(pieces[i], tmpField));
+
+			possibeMoves.insert(possibeMoves.end(), tmp.begin(), tmp.end());
 		}
 	}
 
-	return result;
+	return ChessAIMovesDTO(EndGameDTO(alivePiecesWithoutKing, possibeMoves), piecesWithFields);
 }
 
 float ChessAI::calculateMaterial(ChessPiece* piece) {
@@ -161,7 +200,8 @@ ChessAIMove ChessAI::calculateNextMove(ChessBoard* board, PLAYER_COLOR color, in
 
 	if (depthLevel == 0) {
 		selectedMoves = allMoves;
-	} else {
+	}
+	else {
 		int howMany = 3;
 		selectedMoves = findBestMoves(allMoves, 3);
 		for (int i = 0; i < selectedMoves.size(); ++i) {
@@ -170,7 +210,7 @@ ChessAIMove ChessAI::calculateNextMove(ChessBoard* board, PLAYER_COLOR color, in
 		for (auto move : selectedMoves)
 			move.printf();
 	}
-	
+
 	PieceWithField selectedMove = findBestMove(selectedMoves);
 
 	ChessPiece* realPiece = board->getMyChessPiece(selectedMove.getPiece());
@@ -188,7 +228,7 @@ ChessAIPositionEstimation ChessAI::estimateMove(PieceWithField pieceWithField, C
 	ChessPiece* piece = tmpBoard->getMyChessPiece(pieceWithField.getPiece());
 	piece->tryToMove(pieceWithField.getField());
 
-	
+
 	for (int i = 0; i < howDeep; ++i) {
 		ChessAIMove enemyMove = calculateNextMove(tmpBoard, getEnemyColor(), 0);
 		enemyMove.getEstimation().printf();
@@ -202,7 +242,7 @@ ChessAIPositionEstimation ChessAI::estimateMove(PieceWithField pieceWithField, C
 		std::cout << "FINAL = "; finalEstimation.printf();
 		board->makeMoveAndUpdateCurrentPlayer(myMove);
 	}
-	
+
 	delete tmpBoard;
 	std::cout << "LAST ONE == " << finalEstimation.getEstimation() << std::endl;
 	return finalEstimation;

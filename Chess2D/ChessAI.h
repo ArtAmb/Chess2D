@@ -4,6 +4,8 @@
 #include "ChessAiPositionEstimation.h"
 #include "ChessAiMove.h"
 #include "vector"
+#include <map>
+
 class PieceWithField {
 	ChessPiece* piece;
 	SimpleChessField field;
@@ -12,6 +14,9 @@ class PieceWithField {
 public:
 	PieceWithField(ChessPiece* piece, SimpleChessField field, ChessAIPositionEstimation estimation)
 		: piece(piece), field(field), estimation(estimation) {};
+
+	PieceWithField(ChessPiece* piece, SimpleChessField field)
+		: piece(piece), field(field){};
 
 	ChessPiece* getPiece() { return piece; };
 	SimpleChessField getField() { return field; };
@@ -22,7 +27,7 @@ public:
 		std::cout << "[" << piece->getType() << "(" << piece->getRow() << "," << piece->getCol() << ") -> " << "(" << field.getRow() << "," << field.getColumn() << ")" << "] " << estimation.getEstimation() << std::endl;
 	}
 
-	
+
 	void saveMovement() {
 
 
@@ -35,7 +40,7 @@ public:
 		size_t mSize = movements.size();
 		size_t startIt = 0;
 
-		if (mSize >5)
+		if (mSize > 5)
 			startIt = mSize - 5;
 
 		for (size_t i = startIt; i < movements.size(); i++)
@@ -73,6 +78,19 @@ public:
 	}
 };
 
+class ChessAIMovesDTO {
+	EndGameDTO endGameDTO;
+	std::vector<PieceWithField> pieceWithFields;
+public:
+	ChessAIMovesDTO(EndGameDTO endGameDTO, std::vector<PieceWithField> pieceWithFields) : endGameDTO(endGameDTO), pieceWithFields(pieceWithFields) {}
+	std::vector<PieceWithField> getPieceWithFields() {
+		return pieceWithFields;
+	}
+	EndGameDTO getEndGameDTO() {
+		return endGameDTO;
+	}
+};
+
 class ChessAI
 {
 	PLAYER_COLOR color;
@@ -86,6 +104,7 @@ public:
 	ChessAIPositionEstimation estimatePostionForPawnPromotion(ChessBoard * board);
 	ChessAIPositionEstimation estimatePostiontionForPawnPromotionType(ChessBoard * board, PAWN_PROMOTION promotionType);
 	ChessAIPositionEstimation estimatePosition(ChessBoard * board, PLAYER_COLOR color);
+	std::map<SimpleChessField, std::vector<ChessPiece* >> findAttackedFields(ChessBoard * board, std::vector<PieceWithField> moves);
 	ChessAIPositionEstimation estimateMove(PieceWithField pieceWithField, ChessBoard * board, int howDeep);
 	ChessAIMove calculateNextMove(ChessBoard*);
 	ChessAIMove calculateNextMove(ChessBoard * board, PLAYER_COLOR color);
@@ -102,7 +121,7 @@ public:
 	PLAYER_COLOR getEnemyColor();
 	PLAYER_COLOR getEnemyColorFor(PLAYER_COLOR color);
 	float calculateMaterial(ChessPiece ** pieces);
-	int calculatePossibleMoves(ChessPiece ** pieces);
 	float calculateMaterial(ChessPiece * piece);
+	ChessAIMovesDTO calculatePossibleMoves(ChessPiece ** pieces);
 };
 

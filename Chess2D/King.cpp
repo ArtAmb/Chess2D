@@ -28,12 +28,17 @@ void King::move(ChessBoardField * field)
 		disableFirstMove();
 
 	int numberOfPassedFields = (col - field->getColumn());
-	CHESS_BOARD_SIDE boardSide = (numberOfPassedFields < 0 ? KING_SIDE : QUEEN_SIDE);
-	Rook* rook = board->getRook(chessColor, boardSide);
-
+	
 	ChessPiece::move(field);
 
-	rook->doCastlingOnField(getSimpleField().move(0, boardSide == QUEEN_SIDE ? 1 : -1));
+	if (abs(numberOfPassedFields) == 2) {
+		CHESS_BOARD_SIDE boardSide = (numberOfPassedFields < 0 ? KING_SIDE : QUEEN_SIDE);
+		Rook* rook = board->getRook(chessColor, boardSide);
+		rook->doCastlingOnField(getSimpleField().move(0, boardSide == QUEEN_SIDE ? 1 : -1));
+	}
+	
+
+	
 }
 
 void King::fillOneFieldAroundPiece(int deltaRow, int deltaColumn) {

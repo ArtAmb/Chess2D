@@ -138,13 +138,13 @@ void ChessBoard::printfBoard(std::string comment)
 {
 	std::cout << "==============" << comment << "==============" << std::endl;
 	for (int i = 0; i < 8; ++i) {
-		
+
 		for (int j = 0; j < 8; ++j) {
 			if (board[i][j].getPiece() == nullptr) {
 				std::cout << ".";
 			}
 			else {
-				if(board[i][j].getPiece()->getColor() == BLACK)
+				if (board[i][j].getPiece()->getColor() == BLACK)
 					std::cout << pawnTypeToChar(board[i][j].getPiece()->getType());
 				else
 					std::cout << board[i][j].getPiece()->getType();
@@ -253,10 +253,10 @@ ChessBoard::ChessBoard(ChessBoard* chessBoard) {
 
 void ChessBoard::initEnPasantPawns(std::vector<Pawn*> pawns) {
 	for (auto pawn : pawns) {
-		if(pawn != nullptr)
-		enPassantPawns.push_back(static_cast<Pawn*>(getMyChessPiece(pawn)));
+		if (pawn != nullptr)
+			enPassantPawns.push_back(static_cast<Pawn*>(getMyChessPiece(pawn)));
 	}
-		
+
 }
 
 void ChessBoard::initCastlings() {
@@ -474,14 +474,14 @@ void ChessBoard::simulatePromotePawnTo(PAWN_PROMOTION pawnPromotion)
 		newPawn = createChessPiece(pawnBeingPromoted);
 		break;
 	}
-	
+
 	for (int i = 0; i < 16; ++i)
 		if (pieces[pawnBeingPromoted->getColor()][i] == pawnBeingPromoted) {
 			pieces[pawnBeingPromoted->getColor()][i] = newPawn;
 			delete pawnBeingPromoted;
 			break;
 		}
-	
+
 	pawnBeingPromoted = nullptr;
 	updateCurrentPlayer(true);
 }
@@ -581,8 +581,8 @@ void ChessBoard::updateCastlingsFor(PLAYER_COLOR color) {
 	if (!kings[color]->isFirstMoveAvaliable())
 		return;
 	std::vector<SimpleChessField> enemyMoves;
-	
-	ChessPiece** enemyPieces = getPieces(color == WHITE ? BLACK: WHITE);
+
+	ChessPiece** enemyPieces = getPieces(color == WHITE ? BLACK : WHITE);
 	for (int i = 0; i < 16; ++i) {
 		std::vector<SimpleChessField> tmp = enemyPieces[i]->getPossibleMoves();
 		enemyMoves.insert(enemyMoves.end(), tmp.begin(), tmp.end());
@@ -600,18 +600,18 @@ void ChessBoard::updateCastlingsFor(PLAYER_COLOR color) {
 void ChessBoard::updateCastlingsFor(PLAYER_COLOR color, CHESS_BOARD_SIDE boardSide, std::vector<SimpleChessField> enemyMoves) {
 	if (!rooks[color][boardSide]->isAlive() || !rooks[color][boardSide]->isFirstMoveAvaliable())
 		return;
-	
+
 	int direction = (boardSide == QUEEN_SIDE ? -1 : 1);
 
 
 	SimpleChessField kingField = kings[color]->getSimpleField();
-	
+
 	std::vector<SimpleChessField> fieldsThatKingGoingToPass;
 	fieldsThatKingGoingToPass.push_back(kingField.move(0, 1 * direction));
 	fieldsThatKingGoingToPass.push_back(kingField.move(0, 2 * direction));
 
 	CHESS_COLUMN rookCol = rooks[color][boardSide]->getCol();
-	
+
 	int numberOfFieldsBetweenKingAndRook = abs(rookCol - kingField.getColumn());
 	for (int i = 1; i < numberOfFieldsBetweenKingAndRook; ++i) {
 		if (!getField(kingField.move(0, i * direction))->isEmpty())
@@ -640,20 +640,37 @@ CHESS_GAME_STATE ChessBoard::checkIfGameEnd()
 {
 	std::vector<SimpleChessField> whiteMoves;
 	std::vector<SimpleChessField> blackMoves;
+	std::vector<ChessPiece*> aliveBlackPiecesWithoutKing;
+	std::vector<ChessPiece*> aliveWhitePiecesWithoutKing;
 	for (int j = 0; j < 2; ++j)
 		for (int i = 0; i < 16; ++i)
 		{
 			if (pieces[j][i]->getColor() == WHITE)
 			{
+				if (pieces[j][i]->isAlive() && pieces[j][i]->getType() != KING)
+					aliveWhitePiecesWithoutKing.push_back(pieces[j][i]);
+
 				std::vector<SimpleChessField> tmp = pieces[j][i]->getPossibleMoves();
 				whiteMoves.insert(whiteMoves.end(), tmp.begin(), tmp.end());
 			}
 			else
 			{
+				if (pieces[j][i]->isAlive() && pieces[j][i]->getType() != KING)
+					aliveBlackPiecesWithoutKing.push_back(pieces[j][i]);
+
 				std::vector<SimpleChessField> tmp = pieces[j][i]->getPossibleMoves();
 				blackMoves.insert(blackMoves.end(), tmp.begin(), tmp.end());
 			}
 		}
+
+	return checkIfGameEnd(EndGameDTO(aliveWhitePiecesWithoutKing, whiteMoves), EndGameDTO(aliveBlackPiecesWithoutKing, blackMoves));
+}
+
+CHESS_GAME_STATE ChessBoard::checkIfGameEnd(EndGameDTO white, EndGameDTO black) {
+	std::vector<ChessPiece* > aliveWhitePiecesWithoutKing;
+	std::vector<SimpleChessField> whiteMoves;
+	std::vector<ChessPiece* > aliveBlackPiecesWithoutKing;
+	std::vector<SimpleChessField> blackMoves;
 
 	bool isWhiteKingChecked = isFieldInVector(kings[WHITE]->getSimpleField(), blackMoves);
 	bool isBlackKingChecked = isFieldInVector(kings[BLACK]->getSimpleField(), whiteMoves);
@@ -662,12 +679,54 @@ CHESS_GAME_STATE ChessBoard::checkIfGameEnd()
 		return WINNER_BLACK;
 	if (isBlackKingChecked && blackMoves.empty())
 		return WINNER_WHITE;
+
 	if (!isWhiteKingChecked && whiteMoves.empty())
 		return STALEMATE;
 	if (!isBlackKingChecked && blackMoves.empty())
 		return STALEMATE;
+	if ((checkIfIsOneLightPiece(aliveWhitePiecesWithoutKing) || (checkIfTwoKnights(aliveWhitePiecesWithoutKing) || aliveWhitePiecesWithoutKing.empty()))
+		&& (checkIfIsOneLightPiece(aliveBlackPiecesWithoutKing) || checkIfTwoKnights(aliveBlackPiecesWithoutKing) || aliveBlackPiecesWithoutKing.empty()))
+		return STALEMATE;
+
 
 	return CONTINIUE;
+}
+
+
+bool ChessBoard::checkIfIsOneLightPiece(std::vector<ChessPiece*> pieces) {
+	return (pieces.size() == 1 && isLight(pieces[0]->getType()));
+}
+
+bool ChessBoard::checkIfTwoKnights(std::vector<ChessPiece*> pieces) {
+	return (pieces.size() == 2 && pieces[0]->getType() == KNIGHT && pieces[1]->getType() == KNIGHT);
+}
+
+int ChessBoard::countHeavyPieces(std::vector<ChessPiece*> pieces) {
+	int counter = 0;
+	for (auto piece : pieces) {
+		if (isHeavy(piece->getType()))
+			++counter;
+	}
+
+	return counter;
+}
+
+int ChessBoard::countLightPieces(std::vector<ChessPiece*> pieces) {
+	int counter = 0;
+	for (auto piece : pieces) {
+		if (isLight(piece->getType()))
+			++counter;
+	}
+
+	return counter;
+}
+
+bool ChessBoard::isHeavy(CHESS_PIECES type) {
+	return type == QUEEN || type == ROOK;
+}
+
+bool ChessBoard::isLight(CHESS_PIECES type) {
+	return type == KNIGHT || type == BISHOP;
 }
 
 std::string ChessBoard::endGame(CHESS_GAME_STATE gameState)
@@ -784,7 +843,7 @@ bool ChessBoardField::checkPieceColor(PLAYER_COLOR chessColor)
 {
 	if (isEmpty())
 		return false;
-	
+
 	return getPiece()->getColor() == chessColor;
 }
 void ChessBoardField::prepareSprite()
@@ -819,9 +878,9 @@ void ChessBoard::selectField(FieldSelector* fieldSelector)
 
 }
 void ChessBoard::saveMovement() {
-	
+
 	/*
-	
+
 	std::cout << "[" << getPiece()->getTypeName() << "(" << piece->getRowName() << "," << piece->getColumnName() << ") -> " << "(" << field->getRowName() << "," << field->getColumnName() << ")" << "]" << std::endl;
 	std::fstream plik;
 

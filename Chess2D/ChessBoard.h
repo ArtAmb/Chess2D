@@ -39,13 +39,13 @@ public:
 	void setTexture(sf::Texture* sprite);
 	bool isEmpty();
 	void empty();
-	
+
 	bool contains(sf::Vector2f);
 
 	ChessPiece* getPiece();
 	void setPiece(ChessPiece* piece);
 	SimpleChessField toSimpleField() { return SimpleChessField(row, column); }
-	
+
 	void setHighlighted(sf::IntRect);
 	void setInDanger(sf::IntRect);
 	void setSelected(sf::IntRect);
@@ -70,8 +70,8 @@ class PawnTransformationButton {
 	sf::Sprite* sprite = nullptr;
 	sf::IntRect frames[2];
 	bool active = false;
-	enum TransformationButtonFieldState { DISABLED, SELECTED};
-	
+	enum TransformationButtonFieldState { DISABLED, SELECTED };
+
 	PLAYER_COLOR color;
 	PAWN_PROMOTION pawnPromotionType;
 
@@ -79,7 +79,7 @@ public:
 	bool contains(sf::Vector2f point) {
 		return sprite->getGlobalBounds().contains(point);
 	}
-	
+
 	PawnTransformationButton(sf::Texture* texture) {
 		this->texture = texture;
 		sprite = new sf::Sprite(*texture);
@@ -120,21 +120,44 @@ public:
 	PAWN_PROMOTION getPawnPromotionType() { return pawnPromotionType; }
 };
 
+class EndGameDTO {
+	std::vector<ChessPiece* > alivePiecesWithoutKing;
+	std::vector<SimpleChessField> possibleMoves;
+
+public:
+	EndGameDTO(std::vector<ChessPiece* > alivePiecesWithoutKing, std::vector<SimpleChessField> possibleMoves)
+		: alivePiecesWithoutKing(alivePiecesWithoutKing), possibleMoves(possibleMoves) {};
+
+	void setAlivePiecesWithoutKing(std::vector<ChessPiece* > alivePiecesWithoutKing) {
+		this->alivePiecesWithoutKing = alivePiecesWithoutKing;
+	}
+	void setPossibleMoves(std::vector<SimpleChessField> possibleMoves) {
+		this->possibleMoves = possibleMoves;
+	}
+
+	std::vector<ChessPiece* > getAlivePiecesWithoutKing() {
+		return alivePiecesWithoutKing;
+	}
+	std::vector<SimpleChessField> getPossibleMoves() {
+		return possibleMoves;
+	}
+};
+
 class ChessBoard {
 
 	PLAYER_COLOR currPlayer;
 	ChessPiece* pieces[2][16];
-	
+
 	TextureResource* fieldTexture = ResourceManager::getInstance()->getTexture(RESOURCE::TEXTURE::FIELDS);
 	TextureResource* transformationButtonTexture = ResourceManager::getInstance()->getTexture(RESOURCE::TEXTURE::TRANSFORMATION_PAWN_BUTTON);
 	int TRANSFORMATION_BUTTON_FIELD = transformationButtonTexture->getConverter()->getElementWidth();
-	
+
 	King* kings[2];
 	//King* checkedKing = NULL;
-	
+
 	Rook* rooks[2][2];
 	bool castling[2][2];
-	
+
 	std::vector<Pawn*> enPassantPawns;
 	Pawn* pawnBeingPromoted = nullptr;
 	CHESS_GAME_STATE state = CONTINIUE;
@@ -147,9 +170,9 @@ class ChessBoard {
 	sf::IntRect getBlackFieldSprite();
 	void checkKing(King* king);
 	CHESS_BOARD_TYPE chessBoardType;
-		
+
 public:
-	
+
 	ChessBoard();
 	ChessBoard(ChessBoard * board);
 	void initEnPasantPawns(std::vector<Pawn*> pawns);
@@ -165,6 +188,13 @@ public:
 	void updateCastlingsFor(PLAYER_COLOR color, CHESS_BOARD_SIDE boardSide, std::vector<SimpleChessField> enemyMoves);
 	bool isFieldInVector(SimpleChessField field, std::vector<SimpleChessField> vector);
 	CHESS_GAME_STATE checkIfGameEnd();
+	CHESS_GAME_STATE checkIfGameEnd(EndGameDTO white, EndGameDTO black);
+	bool checkIfIsOneLightPiece(std::vector<ChessPiece*> pieces);
+	bool checkIfTwoKnights(std::vector<ChessPiece*> pieces);
+	int countHeavyPieces(std::vector<ChessPiece*> pieces);
+	int countLightPieces(std::vector<ChessPiece*> pieces);
+	bool isHeavy(CHESS_PIECES type);
+	bool isLight(CHESS_PIECES type);
 	std::string endGame(CHESS_GAME_STATE gameState);
 	CHESS_GAME_STATE getGameState();
 	PLAYER_COLOR getCurrPlayer();
@@ -188,11 +218,11 @@ public:
 
 	void activatePromotionButtons(PLAYER_COLOR);
 	void deactivatePromotionButtons();
-	
+
 	PawnTransformationButton* getPawnTransformationButton(PLAYER_COLOR color, PAWN_PROMOTION pawnType) {
 		return pawnTransformationButtons[color][pawnType];
 	}
-	
+
 	void setKing(King * king);
 
 	void setPawnBeingPromoted(Pawn* pawn) { this->pawnBeingPromoted = pawn; }
