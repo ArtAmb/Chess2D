@@ -75,5 +75,6 @@ public:
 	void stopProcessing() { beingProcessed = false; }
 
 	void printf();
+	void doCastlingOnField(SimpleChessField field);
 };
 

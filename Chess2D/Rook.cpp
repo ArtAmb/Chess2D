@@ -24,3 +24,11 @@ void Rook::fillPossibleMoves()
 {
 	fillPossibleMovesForRook();
 }
+
+void Rook::move(ChessBoardField * field)
+{
+	if (isFirstMoveAvaliable())
+		disableFirstMove();
+
+	ChessPiece::move(field);
+}

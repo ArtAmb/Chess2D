@@ -71,6 +71,7 @@ public:
 	PLAYER_COLOR getEnemyColor();
 	PLAYER_COLOR getEnemyColorFor(PLAYER_COLOR color);
 	float calculateMaterial(ChessPiece ** pieces);
+	int calculatePossibleMoves(ChessPiece ** pieces);
 	float calculateMaterial(ChessPiece * piece);
 };
 

@@ -19,6 +19,7 @@ public:
 	void enableEnPasant() { enPasantAvailable = true; }
 	void initFirstMove(bool firstMoveAvailable) { this->firstMoveAvailable = firstMoveAvailable; }
 	SimpleChessField getOldField() { return SimpleChessField(oldRow, oldColumn); }
+	void setOldField(SimpleChessField oldField) { oldRow = oldField.getRow(); oldColumn = oldField.getColumn(); }
 
 public:
 	Pawn(CHESS_ROW, CHESS_COLUMN, PLAYER_COLOR, ChessBoard*, sf::Sprite*);

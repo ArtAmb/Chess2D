@@ -18,7 +18,7 @@ ChessAIPositionEstimation ChessAI::estimatePosition(ChessPiece* piece, SimpleChe
 		estimation = estimatePosition(tmpBoard, piece->getColor());
 	}
 
-
+	
 	delete tmpBoard;
 	return estimation;
 }
@@ -56,8 +56,13 @@ ChessAIPositionEstimation ChessAI::estimatePosition(ChessBoard* board, PLAYER_CO
 	float enemyMaterial = calculateMaterial(enemyPieces);
 
 	float estimation = myMaterial - enemyMaterial;
+	
+	int myPossibleMoves = calculatePossibleMoves(myPieces);
+	int enemyPossibleMoves = calculatePossibleMoves(enemyPieces);
 
-	return ChessAIPositionEstimation(estimation);
+	int possibleMoves = myPossibleMoves - enemyPossibleMoves;
+
+	return ChessAIPositionEstimation(estimation, possibleMoves);
 }
 
 PLAYER_COLOR ChessAI::getEnemyColor() {
@@ -74,6 +79,18 @@ float ChessAI::calculateMaterial(ChessPiece** pieces) {
 	for (int i = 0; i < 16; ++i) {
 		if (pieces[i]->isAlive()) {
 			result += calculateMaterial(pieces[i]);
+		}
+	}
+
+	return result;
+}
+
+int ChessAI::calculatePossibleMoves(ChessPiece** pieces) {
+	int result = 0;
+
+	for (int i = 0; i < 16; ++i) {
+		if (pieces[i]->isAlive()) {
+			result += pieces[i]->getPossibleMoves().size();
 		}
 	}
 
@@ -134,6 +151,11 @@ ChessAIMove ChessAI::calculateNextMove(ChessBoard* board, PLAYER_COLOR color, in
 			allMoves.push_back(PieceWithField(allPieces[i], field, estimation));
 		}
 	}
+
+	/*std::cout << "============== ALL MOVES ==============" << std::endl;
+	for (auto tmp : allMoves) {
+		tmp.printf();
+	}*/
 
 	std::vector<PieceWithField> selectedMoves;
 

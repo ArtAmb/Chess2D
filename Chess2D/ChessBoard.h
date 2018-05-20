@@ -6,6 +6,7 @@
 #include "GraphicEngine.h"
 #include "ChessPiece.h"
 #include "King.h"
+#include "Rook.h"
 #include "Pawn.h"
 #include "FieldSelector.h"
 #include "ChessAiMove.h"
@@ -124,10 +125,13 @@ class ChessBoard {
 	TextureResource* fieldTexture = ResourceManager::getInstance()->getTexture(RESOURCE::TEXTURE::FIELDS);
 	TextureResource* transformationButtonTexture = ResourceManager::getInstance()->getTexture(RESOURCE::TEXTURE::TRANSFORMATION_PAWN_BUTTON);
 	int TRANSFORMATION_BUTTON_FIELD = transformationButtonTexture->getConverter()->getElementWidth();
-
-
+	
 	King* kings[2];
-	King* checkedKing = NULL;
+	//King* checkedKing = NULL;
+	
+	Rook* rooks[2][2];
+	bool castling[2][2];
+	
 	std::vector<Pawn*> enPassantPawns;
 	Pawn* pawnBeingPromoted = nullptr;
 	CHESS_GAME_STATE state = CONTINIUE;
@@ -146,11 +150,17 @@ public:
 	ChessBoard();
 	ChessBoard(ChessBoard * board);
 	void initEnPasantPawns(std::vector<Pawn*> pawns);
+	void initCastlings();
 	ChessPiece * createChessPiece(ChessPiece * piece);
 	~ChessBoard();
 	void prepareBoard();
 	void draw(sf::RenderWindow* window);
 	void updateCurrentPlayer(bool isChangeNeeded);
+	void updateCastlings();
+	void disableCastlings();
+	void updateCastlingsFor(PLAYER_COLOR color);
+	void updateCastlingsFor(PLAYER_COLOR color, CHESS_BOARD_SIDE boardSide, std::vector<SimpleChessField> enemyMoves);
+	bool isFieldInVector(SimpleChessField field, std::vector<SimpleChessField> vector);
 	CHESS_GAME_STATE checkIfGameEnd();
 	void endGame(CHESS_GAME_STATE gameState);
 	CHESS_GAME_STATE getGameState();
@@ -191,6 +201,14 @@ public:
 	ChessPiece* getMyChessPiece(ChessPiece* chessPieceFromTemporaryBoard);
 	ChessBoard* toTemporaryBoard();
 	bool isPawnBeingPromoted();
+
+	bool isCastlingPossible(PLAYER_COLOR color, CHESS_BOARD_SIDE boardSide) {
+		return castling[color][boardSide];;
+	}
+
+	Rook* getRook(PLAYER_COLOR color, CHESS_BOARD_SIDE side) {
+		return rooks[color][side];
+	}
 
 	void printfBoard(std::string comment);
 };

@@ -84,6 +84,11 @@ void ChessPiece::printf()
 	std::cout << getType() << "(" << getRow() << "," << getCol() << ")" << std::endl;
 }
 
+void ChessPiece::doCastlingOnField(SimpleChessField field)
+{
+	move(board->getField(field));
+}
+
 void ChessPiece::highlightPossibleMoves()
 {
 	tryToFillPossibleMoves();

@@ -8,6 +8,7 @@
 #include "Knight.h"
 #include "PositionTextureConverter.h"
 #include "SimpleChessField.h"
+#include <cmath>
 
 void ChessBoardField::setSprite(sf::Sprite* sprite)
 {
@@ -223,7 +224,7 @@ ChessBoard::ChessBoard()
 	pieces[WHITE][15] = new King(R_1, C_E, WHITE, this, fieldTexture->getSprite(0, 5));
 	pieces[BLACK][15] = new King(R_8, C_E, BLACK, this, fieldTexture->getSprite(1, 5));
 
-
+	initCastlings();
 }
 
 ChessBoard::ChessBoard(ChessBoard* chessBoard) {
@@ -242,16 +243,29 @@ ChessBoard::ChessBoard(ChessBoard* chessBoard) {
 		}
 
 	currPlayer = chessBoard->currPlayer;
-	checkedKing = chessBoard->checkedKing != nullptr ? kings[chessBoard->checkedKing->getColor()] : nullptr;
+	//checkedKing = chessBoard->checkedKing != nullptr ? kings[chessBoard->checkedKing->getColor()] : nullptr;
 
 	initEnPasantPawns(chessBoard->enPassantPawns);
 	pawnBeingPromoted = chessBoard->pawnBeingPromoted != nullptr ? static_cast<Pawn*>(getMyChessPiece(chessBoard->pawnBeingPromoted)) : nullptr;
 	state = chessBoard->state;
+	initCastlings();
 }
 
 void ChessBoard::initEnPasantPawns(std::vector<Pawn*> pawns) {
-	for (auto pawn : pawns)
+	for (auto pawn : pawns) {
+		if(pawn != nullptr)
 		enPassantPawns.push_back(static_cast<Pawn*>(getMyChessPiece(pawn)));
+	}
+		
+}
+
+void ChessBoard::initCastlings() {
+	disableCastlings();
+
+	rooks[BLACK][QUEEN_SIDE] = static_cast<Rook*>(getField(C_A, R_8)->getPiece());
+	rooks[BLACK][KING_SIDE] = static_cast<Rook*>(getField(C_H, R_8)->getPiece());
+	rooks[WHITE][QUEEN_SIDE] = static_cast<Rook*>(getField(C_A, R_1)->getPiece());
+	rooks[WHITE][KING_SIDE] = static_cast<Rook*>(getField(C_H, R_1)->getPiece());
 }
 
 ChessPiece* ChessBoard::createChessPiece(ChessPiece* piece) {
@@ -263,6 +277,7 @@ ChessPiece* ChessBoard::createChessPiece(ChessPiece* piece) {
 		Pawn* piecePawn = static_cast<Pawn*>(piece);
 		pawn->initFirstMove(piecePawn->isFirstMoveAvailable());
 		piecePawn->isEnPasantAvailable() ? pawn->enableEnPasant() : pawn->disableEnPasant();
+		pawn->setOldField(piecePawn->getOldField());
 
 		result = pawn;
 		break;
@@ -544,12 +559,73 @@ void ChessBoard::updateCurrentPlayer(bool isChangeNeeded)
 	if (isChangeNeeded) {
 		currPlayer = (currPlayer == WHITE ? BLACK : WHITE);
 		disableEnPassantPawns();
+		updateCastlings();
 		endGame(checkIfGameEnd());
 	}
 
 }
 
-bool isFieldInVector(SimpleChessField field, std::vector<SimpleChessField> vector)
+void ChessBoard::updateCastlings() {
+	disableCastlings();
+	updateCastlingsFor(currPlayer);
+}
+
+void ChessBoard::disableCastlings() {
+	for (int i = 0; i < 2; ++i)
+		for (int j = 0; j < 2; ++j)
+			castling[i][j] = false;
+}
+
+void ChessBoard::updateCastlingsFor(PLAYER_COLOR color) {
+	if (!kings[color]->isFirstMoveAvaliable())
+		return;
+	std::vector<SimpleChessField> enemyMoves;
+	
+	ChessPiece** enemyPieces = getPieces(color == WHITE ? BLACK: WHITE);
+	for (int i = 0; i < 16; ++i) {
+		std::vector<SimpleChessField> tmp = enemyPieces[i]->getPossibleMoves();
+		enemyMoves.insert(enemyMoves.end(), tmp.begin(), tmp.end());
+	}
+
+	bool isKingChecked = isFieldInVector(kings[color]->getSimpleField(), enemyMoves);
+
+	if (isKingChecked)
+		return;
+
+	updateCastlingsFor(color, KING_SIDE, enemyMoves);
+	updateCastlingsFor(color, QUEEN_SIDE, enemyMoves);
+}
+
+void ChessBoard::updateCastlingsFor(PLAYER_COLOR color, CHESS_BOARD_SIDE boardSide, std::vector<SimpleChessField> enemyMoves) {
+	if (!rooks[color][boardSide]->isAlive() || !rooks[color][boardSide]->isFirstMoveAvaliable())
+		return;
+	
+	int direction = (boardSide == QUEEN_SIDE ? -1 : 1);
+
+
+	SimpleChessField kingField = kings[color]->getSimpleField();
+	
+	std::vector<SimpleChessField> fieldsThatKingGoingToPass;
+	fieldsThatKingGoingToPass.push_back(kingField.move(0, 1 * direction));
+	fieldsThatKingGoingToPass.push_back(kingField.move(0, 2 * direction));
+
+	CHESS_COLUMN rookCol = rooks[color][boardSide]->getCol();
+	
+	int numberOfFieldsBetweenKingAndRook = abs(rookCol - kingField.getColumn());
+	for (int i = 1; i < numberOfFieldsBetweenKingAndRook; ++i) {
+		if (!getField(kingField.move(0, i * direction))->isEmpty())
+			return;
+	}
+
+	for (auto field : fieldsThatKingGoingToPass) {
+		if (isFieldInVector(field, enemyMoves))
+			return;
+	}
+
+	castling[color][boardSide] = true;
+}
+
+bool ChessBoard::isFieldInVector(SimpleChessField field, std::vector<SimpleChessField> vector)
 {
 	for (int i = 0; i < vector.size(); ++i)
 	{
@@ -595,8 +671,6 @@ CHESS_GAME_STATE ChessBoard::checkIfGameEnd()
 
 void ChessBoard::endGame(CHESS_GAME_STATE gameState)
 {
-
-
 	state = gameState;
 	switch (gameState)
 	{
