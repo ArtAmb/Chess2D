@@ -70,6 +70,10 @@ public:
 	CHESS_COLUMN getCol() { return col; }
 	CHESS_PIECES getType() { return type; }
 
+	std::string getTypeName();
+	std::string getRowName();
+	std::string getColumnName();
+
 	bool isBeingProcessed() { return beingProcessed; }
 	void startProcessing() { beingProcessed = true; }
 	void stopProcessing() { beingProcessed = false; }

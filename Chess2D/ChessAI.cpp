@@ -1,5 +1,5 @@
 #include "ChessAI.h"
-
+#include <vector>
 ChessAI::~ChessAI()
 {
 }
@@ -24,16 +24,49 @@ class PieceWithField {
 	ChessPiece* piece;
 	SimpleChessField field;
 	ChessAIPositionEstimation estimation;
+	std::vector <std::string> movements;
+
 public:
 	PieceWithField(ChessPiece* piece, SimpleChessField field, ChessAIPositionEstimation estimation)
 		: piece(piece), field(field), estimation(estimation) {};
 
 	ChessPiece* getPiece() { return piece; };
 	SimpleChessField getField() { return field; };
-	ChessAIPositionEstimation getEstimation() { return estimation; };
+	ChessAIPositionEstimation getEstimation() { return estimation; };	
+	std::vector <std::string> getMovements() { return movements; };
 
 	void printf() {
 		std::cout << "[" << piece->getType() << "(" << piece->getRow() << "," << piece->getCol() << ") -> " << "(" << field.getRow() << "," << field.getColumn() << ")" << "]" << std::endl;
+	}
+
+	void saveMovement() {
+		
+
+		std::string movement = "[" + getPiece()->getTypeName() + "(" + piece->getRowName() + "," + piece->getColumnName() + ") -> " + "(" + field.getRowName() + "," + field.getColumnName() + ")" + "]";
+		std::cout << movement << std::endl;
+
+		movements.push_back(movement);
+
+		std::cout << "Ostatnie 5 ruchow" << std::endl;
+		size_t mSize = movements.size();
+		size_t startIt = 0;
+
+		if (mSize >5)
+			startIt = mSize - 5;
+
+		for (size_t i = startIt; i < movements.size(); i++)
+			std::cout << movements[i] << std::endl;
+		
+		std::fstream plik;
+
+		plik.open("resources/movements.txt", std::ios::out | std::ios::app);
+		if (plik.good() == true)
+		{
+		plik << movement<< std::endl;
+
+		plik.close();
+		}
+
 	}
 };
 
@@ -55,6 +88,8 @@ ChessAIMove ChessAI::calculateNextMove(ChessBoard* board)
 	PieceWithField selectedMove = allMoves[random];
 	std::cout << "SELECTED MOVE: ";
 	selectedMove.printf();
+	selectedMove.saveMovement();
+	
 
 	board->printfBoard(" REAL ?? again ");
 	ChessPiece* realPiece = board->getMyChessPiece(selectedMove.getPiece());

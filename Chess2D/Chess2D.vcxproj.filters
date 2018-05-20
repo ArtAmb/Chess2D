@@ -123,6 +123,9 @@
     <ClCompile Include="ChessAI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SimpleChessField.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MenuButton.h">
@@ -220,6 +223,9 @@
     </ClInclude>
     <ClInclude Include="Rook.h">
       <Filter>Header Files\chesspieces</Filter>
+    </ClInclude>
+    <ClInclude Include="GameView.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

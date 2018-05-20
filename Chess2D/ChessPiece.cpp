@@ -79,6 +79,82 @@ std::vector<SimpleChessField> ChessPiece::getPossibleMoves() {
 	return possibleMoves;
 }
 
+std::string ChessPiece::getTypeName()
+{
+	
+	CHESS_PIECES pieceType = getType();
+	std::string pieceTypeName;
+
+	switch (pieceType)
+	{
+	case 0:
+		pieceTypeName = "P";
+		break;
+	case 1:
+		pieceTypeName = "S";
+		break;
+	case 2:
+		pieceTypeName = "W";
+		break;
+	case 3:
+		pieceTypeName = "G";
+		break;
+	case 4:
+		pieceTypeName = "H";
+		break;
+	case 5:
+		pieceTypeName = "K";
+		break;
+
+	}
+	return pieceTypeName;
+}
+
+std::string ChessPiece::getRowName()
+{	
+	int row = getRow() + 1;
+	std::string rowName = std::to_string(row);
+	return rowName;
+}
+
+std::string ChessPiece::getColumnName()
+{
+
+	CHESS_COLUMN pieceColumn = getCol();
+	std::string pieceColumnName;
+
+	switch (pieceColumn)
+	{
+	case 0:
+		pieceColumnName = "A";
+		break;
+	case 1:
+		pieceColumnName = "B";
+		break;
+	case 2:
+		pieceColumnName = "C";
+		break;
+	case 3:
+		pieceColumnName = "D";
+		break;
+	case 4:
+		pieceColumnName = "E";
+		break;
+	case 5:
+		pieceColumnName = "F";
+		break;
+	case 6:
+		pieceColumnName = "G";
+		break;
+	case 7:
+		pieceColumnName = "H";
+		break;
+
+	}
+
+	return pieceColumnName;
+}
+
 void ChessPiece::printf()
 {
 	std::cout << getType() << "(" << getRow() << "," << getCol() << ")" << std::endl;

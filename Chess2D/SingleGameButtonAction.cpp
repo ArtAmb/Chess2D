@@ -11,6 +11,7 @@ void SingleGameButtonAction::prepareBoard()
 	sf::Sprite* back = fieldTexture->getSprite(0, 1);
 
 	view = new GameView(fieldTexture->getHeight(), fieldTexture->getWidth(), back);
+	view->setChessAI(new ChessAI(BLACK, LEVEL_OPTION::EASY));
 }
 
 SingleGameButtonAction::SingleGameButtonAction()
