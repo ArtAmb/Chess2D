@@ -3,11 +3,12 @@
 #include "ChessBoard.h"
 #include "ChessAiPositionEstimation.h"
 #include "ChessAiMove.h"
-
+#include "vector"
 class PieceWithField {
 	ChessPiece* piece;
 	SimpleChessField field;
 	ChessAIPositionEstimation estimation;
+	std::vector<std::string> movements;
 public:
 	PieceWithField(ChessPiece* piece, SimpleChessField field, ChessAIPositionEstimation estimation)
 		: piece(piece), field(field), estimation(estimation) {};
@@ -21,6 +22,36 @@ public:
 		std::cout << "[" << piece->getType() << "(" << piece->getRow() << "," << piece->getCol() << ") -> " << "(" << field.getRow() << "," << field.getColumn() << ")" << "] " << estimation.getEstimation() << std::endl;
 	}
 
+	
+	void saveMovement() {
+
+
+		std::string movement = "[" + getPiece()->getTypeName() + "(" + piece->getRowName() + "," + piece->getColumnName() + ") -> " + "(" + field.getRowName() + "," + field.getColumnName() + ")" + "]";
+		std::cout << movement << std::endl;
+
+		movements.push_back(movement);
+
+		std::cout << "Ostatnie 5 ruchow" << std::endl;
+		size_t mSize = movements.size();
+		size_t startIt = 0;
+
+		if (mSize >5)
+			startIt = mSize - 5;
+
+		for (size_t i = startIt; i < movements.size(); i++)
+			std::cout << movements[i] << std::endl;
+
+		std::fstream plik;
+
+		plik.open("resources/movements.txt", std::ios::out | std::ios::app);
+		if (plik.good() == true)
+		{
+			plik << movement << std::endl;
+
+			plik.close();
+		}
+
+	}
 
 	bool operator <(PieceWithField object) {
 		return estimation < object.getEstimation();

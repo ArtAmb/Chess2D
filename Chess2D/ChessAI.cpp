@@ -159,6 +159,7 @@ ChessAIMove ChessAI::calculateNextMove(ChessBoard* board, PLAYER_COLOR color, in
 
 ChessAIPositionEstimation ChessAI::estimateMove(PieceWithField pieceWithField, ChessBoard* board, int howDeep) {
 	pieceWithField.printf();
+	pieceWithField.saveMovement();
 	ChessAIPositionEstimation finalEstimation = pieceWithField.getEstimation();
 	ChessBoard* tmpBoard = board->toTemporaryBoard();
 
