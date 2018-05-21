@@ -23,6 +23,10 @@ public:
 		this->forPromotionPawn = forPawnPromotion;
 	}
 
+	void setEstimation(double estimation) {
+		this->estimation = estimation;
+	}
+
 	bool operator <(ChessAIPositionEstimation entimationObject) {
 		if (estimation == entimationObject.getEstimation())
 			return posibleMoves < entimationObject.getAllPosibleMoves();

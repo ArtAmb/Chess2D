@@ -7,6 +7,7 @@ class SimpleChessField {
 	CHESS_ROW row;
 	CHESS_COLUMN column;
 public:
+	SimpleChessField() {}
 	SimpleChessField(CHESS_ROW row, CHESS_COLUMN column) : row(row), column(column) {}
 	CHESS_ROW getRow() { return row; }
 	CHESS_COLUMN getColumn() { return column; }
@@ -35,6 +36,10 @@ public:
 			newCol = CHESS_COLUMN::C_H;
 
 		return SimpleChessField((CHESS_ROW)newRow, (CHESS_COLUMN)newCol);
+	}
+
+	std::string toHashString() {
+		return "[" + std::to_string(row) + "," + std::to_string(column) + "]";
 	}
 
 };

@@ -134,6 +134,41 @@ std::string pawnTypeToChar(CHESS_PIECES type) {
 	}
 }
 
+std::unordered_map<std::string, std::vector<std::vector<ChessPiece* >> > ChessBoard::findAttackedFields() {
+	AllMoves allMoves = getAllPossibleMoves();
+	return findAttackedFields(allMoves);
+}
+
+std::unordered_map<std::string, std::vector<std::vector<ChessPiece* >> > ChessBoard::findAttackedFields(AllMoves allMoves) {
+	std::unordered_map<std::string, std::vector<std::vector<ChessPiece*>>> attackedFieldsMap;
+
+	for (auto move : allMoves.getBlackMoves()) {
+		if (getField(move.getField())->getPiece() != nullptr) {
+			if (attackedFieldsMap.find(move.getField().toHashString()) == attackedFieldsMap.end()) {
+				attackedFieldsMap[move.getField().toHashString()] = std::vector<std::vector<ChessPiece*>>();
+				attackedFieldsMap[move.getField().toHashString()].push_back(std::vector<ChessPiece*>());
+				attackedFieldsMap[move.getField().toHashString()].push_back(std::vector<ChessPiece*>());
+			}
+
+			attackedFieldsMap[move.getField().toHashString()][BLACK].push_back(move.getPiece());
+		}
+	}
+
+	for (auto move : allMoves.getWhiteMoves()) {
+		if (getField(move.getField())->getPiece() != nullptr) {
+			if (attackedFieldsMap.find(move.getField().toHashString()) == attackedFieldsMap.end()) {
+				attackedFieldsMap[move.getField().toHashString()] = std::vector<std::vector<ChessPiece*>>();
+				attackedFieldsMap[move.getField().toHashString()].push_back(std::vector<ChessPiece*>());
+				attackedFieldsMap[move.getField().toHashString()].push_back(std::vector<ChessPiece*>());
+			}
+
+			attackedFieldsMap[move.getField().toHashString()][WHITE].push_back(move.getPiece());
+		}
+	}
+
+	return attackedFieldsMap;
+}
+
 void ChessBoard::printfBoard(std::string comment)
 {
 	std::cout << "==============" << comment << "==============" << std::endl;
@@ -243,12 +278,15 @@ ChessBoard::ChessBoard(ChessBoard* chessBoard) {
 		}
 
 	currPlayer = chessBoard->currPlayer;
-	//checkedKing = chessBoard->checkedKing != nullptr ? kings[chessBoard->checkedKing->getColor()] : nullptr;
-
 	initEnPasantPawns(chessBoard->enPassantPawns);
 	pawnBeingPromoted = chessBoard->pawnBeingPromoted != nullptr ? static_cast<Pawn*>(getMyChessPiece(chessBoard->pawnBeingPromoted)) : nullptr;
 	state = chessBoard->state;
 	initCastlings();
+
+	for(int i = 0; i < 2; ++i)
+		for (int j = 0; j < 2; ++j) {
+			rooks[i][j] = static_cast<Rook*>(getMyChessPiece(chessBoard->rooks[i][j]));
+		}
 }
 
 void ChessBoard::initEnPasantPawns(std::vector<Pawn*> pawns) {
@@ -290,7 +328,10 @@ ChessPiece* ChessBoard::createChessPiece(ChessPiece* piece) {
 	}
 	case ROOK:
 	{
-		result = new Rook(piece->getCol(), piece->getRow(), piece->getColor(), this, piece->isAlive());
+		Rook* rook = new Rook(piece->getCol(), piece->getRow(), piece->getColor(), this, piece->isAlive());
+		Rook* pieceRook = static_cast<Rook*>(piece);
+		rook->initFirstMove(pieceRook->isFirstMoveAvaliable());
+		result = rook;
 		break;
 	}
 	case BISHOP:
@@ -305,7 +346,10 @@ ChessPiece* ChessBoard::createChessPiece(ChessPiece* piece) {
 	}
 	case KING:
 	{
-		result = new King(piece->getCol(), piece->getRow(), piece->getColor(), this, piece->isAlive());
+		King* king = new King(piece->getCol(), piece->getRow(), piece->getColor(), this, piece->isAlive());
+		King* pieceKing = static_cast<King*>(piece);
+		king->initFirstMove(pieceKing->isFirstMoveAvaliable());
+		result = king;
 		break;
 	}
 	default:
@@ -501,6 +545,29 @@ void ChessBoard::deactivatePromotionButtons() {
 			pawnTransformationButtons[i][j]->setActive(false);
 }
 
+AllMoves ChessBoard::getAllPossibleMoves()
+{
+	std::vector<PieceMove> whiteMoves;
+	std::vector<PieceMove> blackMoves;
+
+	auto whitePieces = getPieces(WHITE);
+	auto blackPieces = getPieces(BLACK);
+
+	for (int i = 0; i < 16; ++i) {
+		for (auto field : whitePieces[i]->getPossibleMoves()) {
+			whiteMoves.push_back(PieceMove(whitePieces[i], field));
+		}
+	}
+
+	for (int i = 0; i < 16; ++i) {
+		for (auto field : blackPieces[i]->getPossibleMoves()) {
+			blackMoves.push_back(PieceMove(blackPieces[i], field));
+		}
+	}
+
+	return AllMoves(blackMoves, whiteMoves);
+}
+
 void ChessBoard::setKing(King * king)
 {
 	kings[king->getColor()] = king;
@@ -667,10 +734,10 @@ CHESS_GAME_STATE ChessBoard::checkIfGameEnd()
 }
 
 CHESS_GAME_STATE ChessBoard::checkIfGameEnd(EndGameDTO white, EndGameDTO black) {
-	std::vector<ChessPiece* > aliveWhitePiecesWithoutKing;
-	std::vector<SimpleChessField> whiteMoves;
-	std::vector<ChessPiece* > aliveBlackPiecesWithoutKing;
-	std::vector<SimpleChessField> blackMoves;
+	std::vector<ChessPiece* > aliveWhitePiecesWithoutKing = white.getAlivePiecesWithoutKing();
+	std::vector<SimpleChessField> whiteMoves = white.getPossibleMoves();
+	std::vector<ChessPiece* > aliveBlackPiecesWithoutKing = black.getAlivePiecesWithoutKing();
+	std::vector<SimpleChessField> blackMoves = black.getPossibleMoves();
 
 	bool isWhiteKingChecked = isFieldInVector(kings[WHITE]->getSimpleField(), blackMoves);
 	bool isBlackKingChecked = isFieldInVector(kings[BLACK]->getSimpleField(), whiteMoves);

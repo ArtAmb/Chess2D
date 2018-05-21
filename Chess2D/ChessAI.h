@@ -4,7 +4,7 @@
 #include "ChessAiPositionEstimation.h"
 #include "ChessAiMove.h"
 #include "vector"
-#include <map>
+#include <unordered_map>
 
 class PieceWithField {
 	ChessPiece* piece;
@@ -24,7 +24,10 @@ public:
 	void setEstimation(ChessAIPositionEstimation estimation) { this->estimation = estimation; }
 
 	void printf() {
-		std::cout << "[" << piece->getType() << "(" << piece->getRow() << "," << piece->getCol() << ") -> " << "(" << field.getRow() << "," << field.getColumn() << ")" << "] " << estimation.getEstimation() << std::endl;
+		if (piece == nullptr)
+			std::cout << "CHESS PIECE IS NULL. MOVE IS NOT POSSIBLE!" << std::endl;
+		else
+			std::cout << "[" << piece->getType() << "(" << piece->getRow() << "," << piece->getCol() << ") -> " << "(" << field.getRow() << "," << field.getColumn() << ")" << "] " << estimation.getEstimation() << std::endl;
 	}
 
 
@@ -91,6 +94,16 @@ public:
 	}
 };
 
+class FieldInfluence {
+	float materialDifference;
+	int piecesDifference;
+public:
+	FieldInfluence(float materialDifference, int piecesDifference) : materialDifference(materialDifference), piecesDifference(piecesDifference) {}
+
+	float getMaterialDifference() { return materialDifference; }
+	int getPiecesDifference() { return piecesDifference; }
+};
+
 class ChessAI
 {
 	PLAYER_COLOR color;
@@ -100,11 +113,18 @@ public:
 	ChessAI(PLAYER_COLOR color, LEVEL_OPTION level) : color(color), level(level) {};
 	~ChessAI();
 
-	ChessAIPositionEstimation estimatePosition(ChessPiece* piece, SimpleChessField field, ChessBoard* board);
+	ChessAIPositionEstimation estimatePosition(ChessPiece * piece, SimpleChessField field, ChessBoard * board, std::unordered_map<std::string, std::vector<std::vector<ChessPiece*>>> attackedFields);
+	ChessAIPositionEstimation estimatePosition(ChessBoard * board, PLAYER_COLOR color, std::unordered_map<std::string, std::vector<std::vector<ChessPiece*>>> attackedFields);
+	std::unordered_map<std::string, std::vector<std::vector<ChessPiece* >> > findAttackedFields(ChessBoard* board, AllMoves allMoves);
+
+	//ChessAIPositionEstimation estimatePosition(ChessPiece * piece, SimpleChessField field, ChessBoard * board, AllMoves allPossibleMovesOnBoard);
+	//ChessAIPositionEstimation estimatePosition(ChessPiece* piece, SimpleChessField field, ChessBoard* board);
 	ChessAIPositionEstimation estimatePostionForPawnPromotion(ChessBoard * board);
 	ChessAIPositionEstimation estimatePostiontionForPawnPromotionType(ChessBoard * board, PAWN_PROMOTION promotionType);
-	ChessAIPositionEstimation estimatePosition(ChessBoard * board, PLAYER_COLOR color);
-	std::map<SimpleChessField, std::vector<ChessPiece* >> findAttackedFields(ChessBoard * board, std::vector<PieceWithField> moves);
+	
+	//ChessAIPositionEstimation estimatePosition(ChessBoard * board, PLAYER_COLOR color, AllMoves allPossibleMovesOnBoard);
+	//ChessAIPositionEstimation estimatePosition(ChessBoard * board, PLAYER_COLOR color, std::vector<PieceWithField> moves);
+	//ChessAIPositionEstimation estimatePosition(ChessBoard * board, PLAYER_COLOR color);
 	ChessAIPositionEstimation estimateMove(PieceWithField pieceWithField, ChessBoard * board, int howDeep);
 	ChessAIMove calculateNextMove(ChessBoard*);
 	ChessAIMove calculateNextMove(ChessBoard * board, PLAYER_COLOR color);
@@ -118,6 +138,8 @@ public:
 	bool isThinking() { return thinking; }
 	void startThinking() { thinking = true; }
 	void stopThinking() { thinking = false; }
+	FieldInfluence estimateInfluenceOnField(PLAYER_COLOR myColor, SimpleChessField field, std::unordered_map<std::string, std::vector<std::vector<ChessPiece* >> > attackedFields);
+	float calculateMaterial(std::vector<ChessPiece*> pieces);
 	PLAYER_COLOR getEnemyColor();
 	PLAYER_COLOR getEnemyColorFor(PLAYER_COLOR color);
 	float calculateMaterial(ChessPiece ** pieces);

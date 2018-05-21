@@ -13,6 +13,7 @@
 #include <fstream>
 #include <iostream>
 #include <cstdlib>
+#include <unordered_map>
 
 class ChessBoardField {
 private:
@@ -143,6 +144,30 @@ public:
 	}
 };
 
+class PieceMove {
+	ChessPiece* piece;
+	SimpleChessField field;
+
+public:
+	PieceMove(ChessPiece* piece, SimpleChessField field)
+		: piece(piece), field(field) {};
+
+	ChessPiece* getPiece() { return piece; };
+	SimpleChessField getField() { return field; };
+};
+
+class AllMoves {
+	std::vector<PieceMove> blackMoves;
+	std::vector<PieceMove> whiteMoves;
+
+public:
+	AllMoves() {}
+	AllMoves(std::vector<PieceMove> blackMoves, std::vector<PieceMove> whiteMoves) : blackMoves(blackMoves), whiteMoves(whiteMoves) {};
+
+	std::vector<PieceMove> getBlackMoves() { return blackMoves; }
+	std::vector<PieceMove> getWhiteMoves() { return whiteMoves; }
+};
+
 class ChessBoard {
 
 	PLAYER_COLOR currPlayer;
@@ -209,7 +234,6 @@ public:
 	void loadSprites();
 	void promotePawnTo(PAWN_PROMOTION * pawnPromotion);
 	void promotePawnTo(PAWN_PROMOTION);
-
 	void makeMoveAndUpdateCurrentPlayer(ChessAIMove chessAIMove);
 
 	void realPromotePawnTo(PAWN_PROMOTION pawnPromotion);
@@ -223,6 +247,8 @@ public:
 		return pawnTransformationButtons[color][pawnType];
 	}
 
+
+	AllMoves getAllPossibleMoves();
 	void setKing(King * king);
 
 	void setPawnBeingPromoted(Pawn* pawn) { this->pawnBeingPromoted = pawn; }
@@ -243,6 +269,9 @@ public:
 	Rook* getRook(PLAYER_COLOR color, CHESS_BOARD_SIDE side) {
 		return rooks[color][side];
 	}
+	std::unordered_map<std::string, std::vector<std::vector<ChessPiece* >> > findAttackedFields();
+
+	std::unordered_map<std::string, std::vector<std::vector<ChessPiece*>>> findAttackedFields(AllMoves allMoves);
 
 	void printfBoard(std::string comment);
 };
