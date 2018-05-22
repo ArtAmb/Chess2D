@@ -18,6 +18,7 @@ void GameView::additionalDisplayAction(sf::RenderWindow * window) {
 	highlightSelectedPromotionPawnButton();
 
 	board->draw(window);
+	writeText(window);
 	checkStatus(window);
 	displayHistory(window);
 }
@@ -93,7 +94,7 @@ void GameView::additionalEventCheck(sf::RenderWindow * window) {
 			}
 
 		}
-
+	
 	for (int i = 0; i < 2; ++i)
 		for (int j = 0; j < 4; ++j) {
 			PawnTransformationButton* button = board->getPawnTransformationButton((PLAYER_COLOR)i, (PAWN_PROMOTION)j);
@@ -115,6 +116,8 @@ void GameView::additionalEventCheck(sf::RenderWindow * window) {
 		chessAI->stopThinking();
 	}
 
+	
+	
 }
 
 void GameView::checkStatus(sf::RenderWindow * window)
@@ -209,5 +212,25 @@ void GameView::displayHistory(sf::RenderWindow * window)
 		window->draw(text);
 	}
 
+
+}
+void GameView::writeText(sf::RenderWindow * window)
+{
+
+	sf::Text str[2];
+	for (int i = 0; i < 2; i++) {
+		str[i].setFont(font);
+		str[i].setCharacterSize(26);
+		str[i].setFillColor(sf::Color(0, 0, 0));
+		str[i].setStyle(sf::Text::Bold);
+		str[i].setString(L"Promocja pionka:");
+	}
+	str[0].setPosition(40, 10);
+	str[1].setPosition(40, 680);
+		
+			
+	for (int i = 0; i < 2; i++) {
+		window->draw(str[i]);
+	}
 
 }

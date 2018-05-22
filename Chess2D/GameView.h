@@ -21,6 +21,7 @@ public:
 	void additionalEventCheck(sf::RenderWindow* window);
 	void checkStatus(sf::RenderWindow * window);
 	void displayHistory(sf::RenderWindow * window);
+	void writeText(sf::RenderWindow * window);
 	void highlightSelectedPromotionPawnButton();
 	void setChessAI(ChessAI* chessAI) { this->chessAI = chessAI; }
 };
