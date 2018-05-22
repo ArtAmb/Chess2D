@@ -143,16 +143,19 @@ void GameView::checkStatus(sf::RenderWindow * window)
 	}
 	case WINNER_BLACK:
 		str.setString(L"MAT! ZWYCIÊZCA: CZARNE");
+		str.setFillColor(sf::Color(255, 0, 0));
 		str.setPosition(1008 / 2 - str.getGlobalBounds().width / 2, 300);
 		break;
 
 	case WINNER_WHITE:
 		str.setString(L"MAT! ZWYCIÊZCA: BIA£E");
+		str.setFillColor(sf::Color(255, 0, 0));
 		str.setPosition(1008 / 2 - str.getGlobalBounds().width / 2, 300);
 		break;
 
 	case STALEMATE:
 		str.setString("PAT");
+		str.setFillColor(sf::Color(255, 0, 0));
 		str.setPosition(1008 / 2 - str.getGlobalBounds().width / 2, 300);
 		break;
 
