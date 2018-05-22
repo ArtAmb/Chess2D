@@ -101,7 +101,8 @@ void GameView::additionalEventCheck(sf::RenderWindow * window) {
 
 				if (happening.type == sf::Event::MouseButtonReleased && happening.key.code == sf::Mouse::Left) {
 					if (button->isActive()) {
-						board->promotePawnTo(button->getPawnPromotionType());
+						ChessPiece* piece = board->getPawnBeingPromoted();
+						board->promotePawnTo(button->getPawnPromotionType(), ChessMoveToSave(piece->getSimpleField(), piece->getSimpleField(), piece));
 					}
 				}
 			}
@@ -162,14 +163,7 @@ void GameView::checkStatus(sf::RenderWindow * window)
 
 void GameView::displayHistory(sf::RenderWindow * window)
 {
-	std::vector<std::string> movements;
-
-	movements.push_back("BIALE : [P(2,B))-> (3,B)]");
-	movements.push_back("CZARNE : [S(2,B))-> (3,B)]");
-	movements.push_back("BIALE : [G(2,B))-> (3,A)]");
-	movements.push_back("CZARNE : [W(2,B))-> (3,B)]");
-
-
+	std::vector<std::string> movements = board->getMovements();
 
 	sf::Text title;
 	title.setFont(font);
@@ -190,23 +184,20 @@ void GameView::displayHistory(sf::RenderWindow * window)
 
 	std::vector<sf::Text> str(mSize);
 	float pos = 230;
-	for (auto &text : str)
-	{
-
-		text.setFont(font);
-		text.setCharacterSize(20);
-		text.setFillColor(sf::Color(0, 0, 0));
-		text.setStyle(sf::Text::Bold);
-
-
-	}
-
+	
+	int j = 0;
 	for (size_t i = startIt; i < movements.size(); i++) {
 
+		str[j].setFont(font);
+		str[j].setCharacterSize(20);
+		str[j].setFillColor(sf::Color(0, 0, 0));
+		str[j].setStyle(sf::Text::Bold);
+		str[j].setPosition(710, pos);
 
-		str[i].setPosition(710, pos);
-		str[i].setString(movements[i]);
+		std::string nr = std::to_string(i+1);		
+		str[j].setString(nr+". " + movements[i]);
 		pos += 28.f;
+		++j;
 
 	}
 

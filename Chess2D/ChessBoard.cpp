@@ -263,7 +263,7 @@ ChessBoard::ChessBoard()
 }
 
 ChessBoard::ChessBoard(ChessBoard* chessBoard) {
-	chessBoardType = TEMPORARY;
+		chessBoardType = TEMPORARY;
 	for (int i = 0; i < BOARD_SIZE; ++i)
 		for (int j = 0; j < BOARD_SIZE; ++j)
 		{
@@ -361,7 +361,17 @@ ChessPiece* ChessBoard::createChessPiece(ChessPiece* piece) {
 
 	return result;
 }
-
+void::ChessBoard::getCurrentTime()
+{
+	time_t result = time(NULL);
+	char tmp[26];
+	ctime_s(tmp, sizeof tmp, &result);
+	curTime = tmp;
+	curTime.erase(curTime.size() - 1);
+	for (int i = 0; i<curTime.length(); i++)
+		if (curTime[i] == ':')curTime[i] = '-';
+	//std::cout << curTime << std::endl;
+}
 void ChessBoard::prepareBoard() {
 	for (int i = 0; i < BOARD_SIZE; ++i)
 	{
@@ -398,6 +408,7 @@ void ChessBoard::prepareBoard() {
 	pawnTransformationButtons[WHITE][PAWN_PROMOTION::PROM_ROOK]->setFrames(transformationButtonTexture->getConverter()->getElementRect(0, 3), transformationButtonTexture->getConverter()->getElementRect(1, 3), WHITE, PROM_ROOK);
 	pawnTransformationButtons[BLACK][PAWN_PROMOTION::PROM_ROOK]->setFrames(transformationButtonTexture->getConverter()->getElementRect(0, 3), transformationButtonTexture->getConverter()->getElementRect(1, 3), BLACK, PROM_ROOK);
 
+	getCurrentTime();
 }
 
 ChessBoard::~ChessBoard()
@@ -411,6 +422,8 @@ ChessBoard::~ChessBoard()
 	for (int i = 0; i < 2; ++i)
 		for (int j = 0; j < 4; ++j)
 			delete pawnTransformationButtons[i][j];
+
+	movements.clear();
 }
 
 void ChessBoard::draw(sf::RenderWindow* window) {
@@ -442,25 +455,30 @@ void ChessBoard::tryToKillEnPassantPawn(SimpleChessField field)
 	}
 }
 
-void ChessBoard::promotePawnTo(PAWN_PROMOTION* pawnPromotion)
+void ChessBoard::promotePawnTo(PAWN_PROMOTION* pawnPromotion, ChessMoveToSave moveToSave)
 {
-	promotePawnTo(*pawnPromotion);
+	promotePawnTo(*pawnPromotion, moveToSave);
 }
-void ChessBoard::promotePawnTo(PAWN_PROMOTION pawnPromotion)
+void ChessBoard::promotePawnTo(PAWN_PROMOTION pawnPromotion, ChessMoveToSave moveToSave)
 {
 	if (chessBoardType == REAL)
-		realPromotePawnTo(pawnPromotion);
+		realPromotePawnTo(pawnPromotion, moveToSave);
 	else
-		simulatePromotePawnTo(pawnPromotion);
+		simulatePromotePawnTo(pawnPromotion, moveToSave);
 }
 
 void ChessBoard::makeMoveAndUpdateCurrentPlayer(ChessAIMove chessAIMove) {
-	updateCurrentPlayer(chessAIMove.getPiece()->tryToMove(chessAIMove.getField()));
+	/*if (chessBoardType == REAL) {
+		saveMovement(chessAIMove);
+	}*/
+	ChessPiece* piece = chessAIMove.getPiece();
+	ChessMoveToSave chessMoveToSave(piece->getSimpleField(), chessAIMove.getField(), piece);
+	updateCurrentPlayer(chessAIMove.getPiece()->tryToMove(chessAIMove.getField()), ChessMoveToSave(piece->getSimpleField(), chessAIMove.getField(), piece));
 	if (isPawnBeingPromoted())
-		promotePawnTo(chessAIMove.getPawnPromotionType());
+		promotePawnTo(chessAIMove.getPawnPromotionType(), chessMoveToSave);
 }
 
-void ChessBoard::realPromotePawnTo(PAWN_PROMOTION pawnPromotion) {
+void ChessBoard::realPromotePawnTo(PAWN_PROMOTION pawnPromotion, ChessMoveToSave moveToSave) {
 
 	if (pawnBeingPromoted == nullptr)
 		return;
@@ -494,10 +512,10 @@ void ChessBoard::realPromotePawnTo(PAWN_PROMOTION pawnPromotion) {
 
 	pawnBeingPromoted = nullptr;
 	deactivatePromotionButtons();
-	updateCurrentPlayer(true);
+	updateCurrentPlayer(true, moveToSave);
 }
 
-void ChessBoard::simulatePromotePawnTo(PAWN_PROMOTION pawnPromotion)
+void ChessBoard::simulatePromotePawnTo(PAWN_PROMOTION pawnPromotion, ChessMoveToSave moveToSave)
 {
 	if (pawnBeingPromoted == nullptr)
 		return;
@@ -527,7 +545,7 @@ void ChessBoard::simulatePromotePawnTo(PAWN_PROMOTION pawnPromotion)
 		}
 
 	pawnBeingPromoted = nullptr;
-	updateCurrentPlayer(true);
+	updateCurrentPlayer(true, moveToSave);
 }
 
 void ChessBoard::activatePromotionButtons(PLAYER_COLOR color)
@@ -621,14 +639,15 @@ bool ChessBoard::checkIfKingIsInCheck(PLAYER_COLOR color)
 	return false;
 }
 
-void ChessBoard::updateCurrentPlayer(bool isChangeNeeded)
+void ChessBoard::updateCurrentPlayer(bool isChangeNeeded, ChessMoveToSave move)
 {
 	if (isChangeNeeded) {
 		currPlayer = (currPlayer == WHITE ? BLACK : WHITE);
 		disableEnPassantPawns();
 		updateCastlings();
 		endGame(checkIfGameEnd());
-		saveMovement();
+		if(chessBoardType == REAL)
+			saveMovement(move);
 	}
 
 }
@@ -927,7 +946,8 @@ void ChessBoard::selectField(FieldSelector* fieldSelector)
 
 	if (fieldSelector->isSelected())
 	{
-		updateCurrentPlayer(fieldSelector->getSavedPiece()->tryToMove(field));
+		ChessPiece* piece = fieldSelector->getSavedPiece();
+		updateCurrentPlayer(fieldSelector->getSavedPiece()->tryToMove(field), ChessMoveToSave(piece->getSimpleField(), field->toSimpleField(), piece));
 		fieldSelector->unselect();
 		return;
 	}
@@ -944,18 +964,37 @@ void ChessBoard::selectField(FieldSelector* fieldSelector)
 	}
 
 }
-void ChessBoard::saveMovement() {
+void ChessBoard::saveMovement(ChessMoveToSave move) {
 
+	
+	std::string movement = "[" + move.getPiece()->getTypeName() + "(" + move.getOldField().getRowName() + "," + move.getOldField().getColumnName() + ") -> " + "(" + move.getNewField().getRowName() + "," + move.getNewField().getColumnName() + ")" + "]";
+	//std::cout << movement << std::endl;
+	
+	movements.push_back(movement);
+	
 	/*
+	std::cout << "Ostatnie 5 ruchow" << std::endl;
+	size_t mSize = movements.size();
+	size_t startIt = 0;
 
-	std::cout << "[" << getPiece()->getTypeName() << "(" << piece->getRowName() << "," << piece->getColumnName() << ") -> " << "(" << field->getRowName() << "," << field->getColumnName() << ")" << "]" << std::endl;
-	std::fstream plik;
+	if (mSize > 5)
+		startIt = mSize - 5;
 
-	plik.open("resources/movements.txt", std::ios::out | std::ios::app);
+	for (size_t i = startIt; i < movements.size(); i++)
+		std::cout << movements[i] << std::endl;
+	*/	
+	std::fstream plik; 
+	
+	
+	std::string filename= "resources/history/" +curTime+".txt" ;
+	//std::cout << filename << std::endl;
+
+	plik.open(filename, std::ios::out | std::ios::app);
 	if (plik.good() == true)
 	{
-		plik << "[" << piece->getTypeName() << "(" << piece->getRowName() << "," << piece->getColumnName() << ") -> " << "(" << field.getRowName() << "," << field.getColumnName() << ")" << "]" << std::endl;
+		plik << movement << std::endl;
 
 		plik.close();
-	}*/
+	}
+	
 }

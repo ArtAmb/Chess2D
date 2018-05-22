@@ -14,6 +14,11 @@
 #include <iostream>
 #include <cstdlib>
 #include <unordered_map>
+#include <vector>
+#include <time.h>
+#include <conio.h>
+#include <string>
+
 
 class ChessBoardField {
 private:
@@ -64,6 +69,7 @@ public:
 	void prepareSprite();
 	CHESS_ROW getRow() { return row; }
 	CHESS_COLUMN getColumn() { return column; }
+
 };
 
 class PawnTransformationButton {
@@ -168,6 +174,19 @@ public:
 	std::vector<PieceMove> getWhiteMoves() { return whiteMoves; }
 };
 
+class ChessMoveToSave {
+	SimpleChessField oldField;
+	SimpleChessField newField;
+	ChessPiece* piece;
+public:
+	ChessMoveToSave() {}
+	ChessMoveToSave(SimpleChessField oldField, SimpleChessField newField, ChessPiece* piece) : oldField(oldField), newField(newField), piece(piece) {}
+
+	SimpleChessField getOldField() { return oldField; };
+	SimpleChessField getNewField() { return newField; };
+	ChessPiece* getPiece() { return piece; };
+};
+
 class ChessBoard {
 
 	PLAYER_COLOR currPlayer;
@@ -195,6 +214,9 @@ class ChessBoard {
 	sf::IntRect getBlackFieldSprite();
 	void checkKing(King* king);
 	CHESS_BOARD_TYPE chessBoardType;
+		
+	std::vector<std::string> movements;
+	std::string curTime;
 
 public:
 
@@ -206,7 +228,7 @@ public:
 	~ChessBoard();
 	void prepareBoard();
 	void draw(sf::RenderWindow* window);
-	void updateCurrentPlayer(bool isChangeNeeded);
+	//void updateCurrentPlayer(bool isChangeNeeded);
 	void updateCastlings();
 	void disableCastlings();
 	void updateCastlingsFor(PLAYER_COLOR color);
@@ -225,20 +247,28 @@ public:
 	PLAYER_COLOR getCurrPlayer();
 	void disableEnPassantPawns();
 	void selectField(FieldSelector* fieldSelector);
-	void saveMovement();
+	void saveMovement(ChessMoveToSave move);
+	std::vector<std::string> getMovements() { return movements; };
+	
 	void highlightFields(FieldSelector fieldSelector);
 	bool checkIfKingIsInCheck(PLAYER_COLOR color);
+	void updateCurrentPlayer(bool isChangeNeeded, ChessMoveToSave move);
+	//void updateCurrentPlayer(bool isChangeNeeded, SimpleChessField field);
 	void unlightAllFields();
 	void addEnPassantPawns(Pawn* pawn);
 	void tryToKillEnPassantPawn(SimpleChessField field);
+	void promotePawnTo(PAWN_PROMOTION * pawnPromotion, ChessMoveToSave moveToSave);
+	void promotePawnTo(PAWN_PROMOTION pawnPromotion, ChessMoveToSave moveToSave);
 	void loadSprites();
-	void promotePawnTo(PAWN_PROMOTION * pawnPromotion);
-	void promotePawnTo(PAWN_PROMOTION);
+	//void promotePawnTo(PAWN_PROMOTION * pawnPromotion);
+	//void promotePawnTo(PAWN_PROMOTION);
 	void makeMoveAndUpdateCurrentPlayer(ChessAIMove chessAIMove);
 
-	void realPromotePawnTo(PAWN_PROMOTION pawnPromotion);
+	void realPromotePawnTo(PAWN_PROMOTION pawnPromotion, ChessMoveToSave moveToSave);
 
-	void simulatePromotePawnTo(PAWN_PROMOTION pawnPromotion);
+	//void realPromotePawnTo(PAWN_PROMOTION pawnPromotion);
+
+	void simulatePromotePawnTo(PAWN_PROMOTION pawnPromotion, ChessMoveToSave moveToSave);
 
 	void activatePromotionButtons(PLAYER_COLOR);
 	void deactivatePromotionButtons();
@@ -274,4 +304,5 @@ public:
 	std::unordered_map<std::string, std::vector<std::vector<ChessPiece*>>> findAttackedFields(AllMoves allMoves);
 
 	void printfBoard(std::string comment);
+	void getCurrentTime();
 };

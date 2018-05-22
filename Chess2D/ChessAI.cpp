@@ -46,7 +46,7 @@ ChessAIPositionEstimation ChessAI::estimatePostionForPawnPromotion(ChessBoard* b
 ChessAIPositionEstimation ChessAI::estimatePostiontionForPawnPromotionType(ChessBoard* board, PAWN_PROMOTION promotionType) {
 	ChessBoard* tmpBoard = board->toTemporaryBoard();
 	PLAYER_COLOR playerColor = board->getPawnBeingPromoted()->getColor();
-	board->promotePawnTo(PROM_QUEEN);
+	board->promotePawnTo(PROM_QUEEN, ChessMoveToSave());
 	ChessAIPositionEstimation estimation = estimatePosition(board, playerColor, std::unordered_map<std::string, std::vector<std::vector<ChessPiece* >>>());
 	estimation.setForPromotionPawn(promotionType);
 	delete tmpBoard;
@@ -265,8 +265,8 @@ ChessAIMove ChessAI::calculateNextMove(ChessBoard* board, PLAYER_COLOR color, in
 }
 
 ChessAIPositionEstimation ChessAI::estimateMove(PieceWithField pieceWithField, ChessBoard* board, int howDeep) {
-	pieceWithField.printf();
-	pieceWithField.saveMovement();
+	//pieceWithField.printf();
+	
 	ChessAIPositionEstimation finalEstimation = pieceWithField.getEstimation();
 	ChessBoard* tmpBoard = board->toTemporaryBoard();
 
