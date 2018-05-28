@@ -41,9 +41,38 @@ void King::move(ChessBoardField * field)
 	
 }
 
+std::vector<SimpleChessField> King::getAttackedFields()
+{
+	std::vector<SimpleChessField> result;
+	std::vector<ChessBoardField* > tmp;
+
+
+	tmp.push_back(getOneFieldAroundPiece(1, 1));
+	tmp.push_back(getOneFieldAroundPiece(-1, -1));
+	tmp.push_back(getOneFieldAroundPiece(-1, 1));
+	tmp.push_back(getOneFieldAroundPiece(1, -1));
+	
+	tmp.push_back(getOneFieldAroundPiece(0, 1));
+	tmp.push_back(getOneFieldAroundPiece(0, -1));
+	tmp.push_back(getOneFieldAroundPiece(1, 0));
+	tmp.push_back(getOneFieldAroundPiece(-1, 0));
+	
+
+	for (auto field : tmp) {
+		if (field != nullptr)
+			result.push_back(field->toSimpleField());
+	}
+
+	return result;
+}
+
 void King::fillOneFieldAroundPiece(int deltaRow, int deltaColumn) {
 	if (board->getField(col + deltaColumn, row + deltaRow) && board->getField(col + deltaColumn, row + deltaRow)->isPossibleToMoveHere(chessColor))
 		addToPossibleMoves(board->getField(col + deltaColumn, row + deltaRow));
+}
+
+ChessBoardField* King::getOneFieldAroundPiece(int deltaRow, int deltaColumn) {
+	return board->getField(col + deltaColumn, row + deltaRow);
 }
 
 

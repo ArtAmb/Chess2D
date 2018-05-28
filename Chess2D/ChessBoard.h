@@ -197,8 +197,6 @@ class ChessBoard {
 	int TRANSFORMATION_BUTTON_FIELD = transformationButtonTexture->getConverter()->getElementWidth();
 
 	King* kings[2];
-	//King* checkedKing = NULL;
-
 	Rook* rooks[2][2];
 	bool castling[2][2];
 
@@ -228,7 +226,6 @@ public:
 	~ChessBoard();
 	void prepareBoard();
 	void draw(sf::RenderWindow* window);
-	//void updateCurrentPlayer(bool isChangeNeeded);
 	void updateCastlings();
 	void disableCastlings();
 	void updateCastlingsFor(PLAYER_COLOR color);
@@ -253,21 +250,14 @@ public:
 	void highlightFields(FieldSelector fieldSelector);
 	bool checkIfKingIsInCheck(PLAYER_COLOR color);
 	void updateCurrentPlayer(bool isChangeNeeded, ChessMoveToSave move);
-	//void updateCurrentPlayer(bool isChangeNeeded, SimpleChessField field);
 	void unlightAllFields();
 	void addEnPassantPawns(Pawn* pawn);
 	void tryToKillEnPassantPawn(SimpleChessField field);
 	void promotePawnTo(PAWN_PROMOTION * pawnPromotion, ChessMoveToSave moveToSave);
 	void promotePawnTo(PAWN_PROMOTION pawnPromotion, ChessMoveToSave moveToSave);
-	void loadSprites();
-	//void promotePawnTo(PAWN_PROMOTION * pawnPromotion);
-	//void promotePawnTo(PAWN_PROMOTION);
 	void makeMoveAndUpdateCurrentPlayer(ChessAIMove chessAIMove);
 
 	void realPromotePawnTo(PAWN_PROMOTION pawnPromotion, ChessMoveToSave moveToSave);
-
-	//void realPromotePawnTo(PAWN_PROMOTION pawnPromotion);
-
 	void simulatePromotePawnTo(PAWN_PROMOTION pawnPromotion, ChessMoveToSave moveToSave);
 
 	void activatePromotionButtons(PLAYER_COLOR);
@@ -299,10 +289,23 @@ public:
 	Rook* getRook(PLAYER_COLOR color, CHESS_BOARD_SIDE side) {
 		return rooks[color][side];
 	}
+	AllMoves getAllAttackedFields();
 	std::unordered_map<std::string, std::vector<std::vector<ChessPiece* >> > findAttackedFields();
 
 	std::unordered_map<std::string, std::vector<std::vector<ChessPiece*>>> findAttackedFields(AllMoves allMoves);
 
+	void fillAttackedFieldsHashMap(std::unordered_map<std::string, std::vector<std::vector<ChessPiece*>>>& attackedFieldsMap, AllMoves allMoves);
+	
+	bool checkIfPawnIsAttackingField(PieceMove move);
+
+	bool checkIfPawnIsJustMoving(PieceMove move);
+
+	void fillAttackedFieldsHashMap(std::unordered_map<std::string, std::vector<std::vector<ChessPiece*>>>& attackedFieldsMap, std::vector<PieceMove> moves, PLAYER_COLOR color);
+			
+	bool checkIfPieceExistInVector(std::vector<ChessPiece*> pieces, ChessPiece * piece);
+
 	void printfBoard(std::string comment);
 	void getCurrentTime();
+
+	std::unordered_map<std::string, std::vector<std::vector<ChessPiece* >> > convertToMyPieces(std::unordered_map<std::string, std::vector<std::vector<ChessPiece* >> > attackedFields);
 };

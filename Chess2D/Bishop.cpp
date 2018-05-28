@@ -27,3 +27,8 @@ void Bishop::fillPossibleMoves()
 {
 	fillPossibleMovesForBishop();
 }
+
+std::vector<SimpleChessField> Bishop::getAttackedFields()
+{
+	return getAttackedFieldsByBishop();
+}

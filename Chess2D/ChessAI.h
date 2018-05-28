@@ -67,11 +67,13 @@ public:
 class FieldInfluence {
 	float materialDifference;
 	int piecesDifference;
+	float metarialExchangeEstimation;
 public:
-	FieldInfluence(float materialDifference, int piecesDifference) : materialDifference(materialDifference), piecesDifference(piecesDifference) {}
+	FieldInfluence(float materialDifference, int piecesDifference, float metarialExchangeEstimation) : materialDifference(materialDifference), piecesDifference(piecesDifference), metarialExchangeEstimation(metarialExchangeEstimation) {}
 
 	float getMaterialDifference() { return materialDifference; }
 	int getPiecesDifference() { return piecesDifference; }
+	float getMetarialExchangeEstimation() { return metarialExchangeEstimation; }
 };
 
 class ChessAI
@@ -85,16 +87,17 @@ public:
 
 	ChessAIPositionEstimation estimatePosition(ChessPiece * piece, SimpleChessField field, ChessBoard * board, std::unordered_map<std::string, std::vector<std::vector<ChessPiece*>>> attackedFields);
 	ChessAIPositionEstimation estimatePosition(ChessBoard * board, PLAYER_COLOR color, std::unordered_map<std::string, std::vector<std::vector<ChessPiece*>>> attackedFields);
+	float estimatePositionBasingOnFieldImpact(ChessBoard * board, PLAYER_COLOR color, std::unordered_map<std::string, std::vector<std::vector<ChessPiece*>>> attackedFields);
 	std::unordered_map<std::string, std::vector<std::vector<ChessPiece* >> > findAttackedFields(ChessBoard* board, AllMoves allMoves);
 
-	//ChessAIPositionEstimation estimatePosition(ChessPiece * piece, SimpleChessField field, ChessBoard * board, AllMoves allPossibleMovesOnBoard);
-	//ChessAIPositionEstimation estimatePosition(ChessPiece* piece, SimpleChessField field, ChessBoard* board);
+	float estimateImpactOnFieldWithMyPieces(PLAYER_COLOR myColor, ChessBoard * board, std::unordered_map<std::string, std::vector<std::vector<ChessPiece*>>> attackedFields);
+
+	FieldInfluence estimateInfluenceOnFieldWithMyPiece(PLAYER_COLOR myColor, ChessBoardField * field, std::unordered_map<std::string, std::vector<std::vector<ChessPiece*>>> attackedFields);
+
+	FieldInfluence estimateInfluenceOnField(PLAYER_COLOR myColor, ChessBoardField * field, std::unordered_map<std::string, std::vector<std::vector<ChessPiece*>>> attackedFields);
+	static bool orderPieceByValueAsc(ChessPiece * one, ChessPiece * two);
 	ChessAIPositionEstimation estimatePostionForPawnPromotion(ChessBoard * board);
 	ChessAIPositionEstimation estimatePostiontionForPawnPromotionType(ChessBoard * board, PAWN_PROMOTION promotionType);
-	
-	//ChessAIPositionEstimation estimatePosition(ChessBoard * board, PLAYER_COLOR color, AllMoves allPossibleMovesOnBoard);
-	//ChessAIPositionEstimation estimatePosition(ChessBoard * board, PLAYER_COLOR color, std::vector<PieceWithField> moves);
-	//ChessAIPositionEstimation estimatePosition(ChessBoard * board, PLAYER_COLOR color);
 	ChessAIPositionEstimation estimateMove(PieceWithField pieceWithField, ChessBoard * board, int howDeep);
 	ChessAIMove calculateNextMove(ChessBoard*);
 	ChessAIMove calculateNextMove(ChessBoard * board, PLAYER_COLOR color);
@@ -108,12 +111,13 @@ public:
 	bool isThinking() { return thinking; }
 	void startThinking() { thinking = true; }
 	void stopThinking() { thinking = false; }
-	FieldInfluence estimateInfluenceOnField(PLAYER_COLOR myColor, SimpleChessField field, std::unordered_map<std::string, std::vector<std::vector<ChessPiece* >> > attackedFields);
+	//FieldInfluence estimateInfluenceOnField(PLAYER_COLOR myColor, SimpleChessField field, std::unordered_map<std::string, std::vector<std::vector<ChessPiece* >> > attackedFields);
+	std::vector<float> mapPiecesToValue(std::vector<ChessPiece*> pieces);
 	float calculateMaterial(std::vector<ChessPiece*> pieces);
 	PLAYER_COLOR getEnemyColor();
 	PLAYER_COLOR getEnemyColorFor(PLAYER_COLOR color);
 	float calculateMaterial(ChessPiece ** pieces);
-	float calculateMaterial(ChessPiece * piece);
+	static float calculateMaterial(ChessPiece * piece);
 	ChessAIMovesDTO calculatePossibleMoves(ChessPiece ** pieces);
 };
 

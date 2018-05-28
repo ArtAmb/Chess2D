@@ -21,6 +21,17 @@ Queen::~Queen()
 {
 }
 
+std::vector<SimpleChessField> Queen::getAttackedFields() {
+	std::vector<SimpleChessField> result;
+	auto bishopAttackedFields = getAttackedFieldsByBishop();
+	auto rookAttackedFields = getAttackedFieldsByRook();
+
+	result.insert(result.end(), bishopAttackedFields.begin(), bishopAttackedFields.end());
+	result.insert(result.end(), rookAttackedFields.begin(), rookAttackedFields.end());
+
+	return result;
+}
+
 void Queen::fillPossibleMoves()
 {
 	fillPossibleMovesForRook();

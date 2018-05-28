@@ -72,8 +72,15 @@ void GameView::additionalEventCheck(sf::RenderWindow * window) {
 			else {
 				std::cout << "There is no piece on field [" << fieldSelector->getRow() << "," << fieldSelector->getColumn() << "]" << std::endl;
 			}
-
 		}
+	}
+
+	if (happening.type == sf::Event::KeyReleased && happening.key.code == sf::Keyboard::N) {
+		auto attackedFields = board->findAttackedFields();
+		auto field = board->getField(fieldSelector->getColumn(), fieldSelector->getRow());
+		auto influence = chessAI->estimatePositionBasingOnFieldImpact(board, board->getCurrPlayer(), attackedFields);
+
+		std::cout << field->toSimpleField().toHashString() << " INFLUENCE == " << influence << std::endl;
 
 	}
 

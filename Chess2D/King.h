@@ -4,6 +4,7 @@
 class King : public ChessPiece
 {
 	void fillOneFieldAroundPiece(int deltaRow, int deltaColumn);
+	ChessBoardField* getOneFieldAroundPiece(int deltaRow, int deltaColumn);
 	bool firstMove = true;
 public:
 	void fillPossibleMoves();
@@ -19,5 +20,6 @@ public:
 	bool isFirstMoveAvaliable() { return firstMove; }
 
 	void move(ChessBoardField* field);
+	std::vector<SimpleChessField> getAttackedFields();
 };
 

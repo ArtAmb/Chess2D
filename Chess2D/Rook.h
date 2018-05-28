@@ -19,6 +19,6 @@ public:
 	void initFirstMove(bool firstMove) { this->firstMove = firstMove; }
 	bool isFirstMoveAvaliable() { return firstMove; }
 
-	
+	std::vector<SimpleChessField> getAttackedFields();
 };
 

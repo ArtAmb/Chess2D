@@ -47,6 +47,23 @@ void Pawn::fillPossibleMovesForPawn(int deltaRow)
 	fillPossibleMovesForEnPasant(-1, deltaRow);
 }
 
+std::vector<SimpleChessField> Pawn::getAttackedFields() {
+	return getAttackedFields(chessColor == BLACK ? -1 : 1);
+}
+
+std::vector<SimpleChessField> Pawn::getAttackedFields(int deltaRow) {
+	std::vector<SimpleChessField> result;
+
+	if (board->getField(col - 1, row + deltaRow))
+		result.push_back(board->getField(col - 1, row + deltaRow)->toSimpleField());
+
+	if (board->getField(col + 1, row + deltaRow))
+		result.push_back(board->getField(col + 1, row + deltaRow)->toSimpleField());
+
+	return result;
+}
+
+
 void Pawn::fillPossibleMovesForEnPasant(int deltaColumn, int deltaRow) {
 	if (board->getField(col + deltaColumn, row + deltaRow) && !board->getField(col + deltaColumn, row)->isEmpty()) {
 		if (dynamic_cast<Pawn*>(board->getField(col + deltaColumn, row)->getPiece()) != NULL)

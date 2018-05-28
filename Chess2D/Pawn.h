@@ -20,6 +20,9 @@ public:
 	void initFirstMove(bool firstMoveAvailable) { this->firstMoveAvailable = firstMoveAvailable; }
 	SimpleChessField getOldField() { return SimpleChessField(oldRow, oldColumn); }
 	void setOldField(SimpleChessField oldField) { oldRow = oldField.getRow(); oldColumn = oldField.getColumn(); }
+	std::vector<SimpleChessField> getAttackedFields();
+
+	std::vector<SimpleChessField> getAttackedFields(int deltaRow);
 
 public:
 	Pawn(CHESS_ROW, CHESS_COLUMN, PLAYER_COLOR, ChessBoard*, sf::Sprite*);

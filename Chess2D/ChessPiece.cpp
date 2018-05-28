@@ -65,6 +65,10 @@ void ChessPiece::die()
 
 std::vector<SimpleChessField> ChessPiece::getPossibleMovesIncludingKing()
 {
+	if (isColorChanged()) {
+		return std::vector<SimpleChessField>();
+	}
+
 	if (!isBeingProcessed()) {
 		resetPossibleMoves();
 		fillPossibleMoves();
@@ -165,6 +169,14 @@ void ChessPiece::doCastlingOnField(SimpleChessField field)
 	move(board->getField(field));
 }
 
+std::vector<SimpleChessField> ChessPiece::tryToGetAttackedFields()
+{
+	if(!isAlive())
+		return std::vector<SimpleChessField>();
+
+	return getAttackedFields();
+}
+
 void ChessPiece::highlightPossibleMoves()
 {
 	tryToFillPossibleMoves();
@@ -233,6 +245,21 @@ void ChessPiece::fillPossibleMovesFieldSeries(int deltaRow, int deltaColumn) {
 	}
 }
 
+std::vector<SimpleChessField> ChessPiece::getAttackedFieldSeries(int deltaRow, int deltaColumn) {
+	std::vector<SimpleChessField> result;
+	for (int i = 1; ; i++) {
+		if (board->getField(col + i * deltaColumn, row + i * deltaRow)) {
+			result.push_back(board->getField(col + i * deltaColumn, row + i * deltaRow)->toSimpleField());
+
+			if (!board->getField(col + i * deltaColumn, row + i * deltaRow)->isEmpty())
+				break;
+		}
+		else break;
+	}
+
+	return result;
+}
+
 void ChessPiece::fillPossibleMovesForRook() {
 	fillPossibleMovesFieldSeries(1, 0);
 	fillPossibleMovesFieldSeries(-1, 0);
@@ -245,6 +272,45 @@ void ChessPiece::fillPossibleMovesForBishop() {
 	fillPossibleMovesFieldSeries(-1, -1);
 	fillPossibleMovesFieldSeries(-1, 1);
 	fillPossibleMovesFieldSeries(1, -1);
+}
+
+std::vector<SimpleChessField> ChessPiece::getAttackedFieldsByRook() {
+	std::vector<SimpleChessField> result;
+	std::vector<SimpleChessField> tmp;
+
+	tmp = getAttackedFieldSeries(1, 0);
+	result.insert(result.end(), tmp.begin(), tmp.end());
+
+	tmp = getAttackedFieldSeries(-1, 0);
+	result.insert(result.end(), tmp.begin(), tmp.end());
+
+	tmp = getAttackedFieldSeries(0, 1);
+	result.insert(result.end(), tmp.begin(), tmp.end());
+
+	tmp = getAttackedFieldSeries(0, -1);
+	result.insert(result.end(), tmp.begin(), tmp.end());
+
+	return result;
+}
+
+
+std::vector<SimpleChessField> ChessPiece::getAttackedFieldsByBishop() {
+	std::vector<SimpleChessField> result;
+	std::vector<SimpleChessField> tmp;
+	
+	tmp = getAttackedFieldSeries(1, 1);
+	result.insert(result.end(), tmp.begin(), tmp.end());
+	
+	tmp = getAttackedFieldSeries(-1, -1);
+	result.insert(result.end(), tmp.begin(), tmp.end());
+	
+	tmp = getAttackedFieldSeries(-1, 1);
+	result.insert(result.end(), tmp.begin(), tmp.end());
+	
+	tmp = getAttackedFieldSeries(1, -1);
+	result.insert(result.end(), tmp.begin(), tmp.end());
+
+	return result;
 }
 
 void ChessPiece::addToPossibleMoves(ChessBoardField* field)
@@ -268,6 +334,9 @@ void ChessPiece::tryToFillPossibleMoves()
 	resetPossibleMoves();
 	if (!isAlive())
 		return;
+	if (isColorChanged())
+		return;
+
 	fillPossibleMoves();
 	for (int i = 0; i < possibleMoves.size(); ) {
 		ChessBoardField* field = board->getField(possibleMoves[i]);

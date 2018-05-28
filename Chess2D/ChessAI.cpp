@@ -1,5 +1,6 @@
 #include "ChessAI.h"
 #include <algorithm>   
+#include <functional>   
 
 ChessAI::~ChessAI()
 {
@@ -7,27 +8,24 @@ ChessAI::~ChessAI()
 
 ChessAIPositionEstimation ChessAI::estimatePosition(ChessPiece* piece, SimpleChessField field, ChessBoard* board, std::unordered_map<std::string, std::vector<std::vector<ChessPiece* >> > attackedFields)
 {
-	//FieldInfluence fieldInfluence = estimateInfluenceOnField(piece->getColor(), field, attackedFields);
-	
 	ChessAIPositionEstimation estimation;
 	ChessBoard* tmpBoard = board->toTemporaryBoard();
+	auto myAttackedFields = tmpBoard->convertToMyPieces(attackedFields);
+
 	tmpBoard->getMyChessPiece(piece)->tryToMove(field);
 
 	if (tmpBoard->isPawnBeingPromoted()) {
 		estimation = estimatePostionForPawnPromotion(tmpBoard);
 	}
 	else {
-		estimation = estimatePosition(tmpBoard, piece->getColor(), attackedFields);
+		estimation = estimatePosition(tmpBoard, piece->getColor(), myAttackedFields);
 	}
-
-	/*
-	if (fieldInfluence.getPiecesDifference() == 0) {
-		if(fieldInfluence.getMaterialDifference() < 0)
-	}*/
 
 	delete tmpBoard;
 	return estimation;
 }
+
+
 
 ChessAIPositionEstimation ChessAI::estimatePostionForPawnPromotion(ChessBoard* board) {
 
@@ -45,9 +43,9 @@ ChessAIPositionEstimation ChessAI::estimatePostionForPawnPromotion(ChessBoard* b
 
 ChessAIPositionEstimation ChessAI::estimatePostiontionForPawnPromotionType(ChessBoard* board, PAWN_PROMOTION promotionType) {
 	ChessBoard* tmpBoard = board->toTemporaryBoard();
-	PLAYER_COLOR playerColor = board->getPawnBeingPromoted()->getColor();
-	board->promotePawnTo(PROM_QUEEN, ChessMoveToSave());
-	ChessAIPositionEstimation estimation = estimatePosition(board, playerColor, std::unordered_map<std::string, std::vector<std::vector<ChessPiece* >>>());
+	PLAYER_COLOR playerColor = tmpBoard->getPawnBeingPromoted()->getColor();
+	tmpBoard->promotePawnTo(PROM_QUEEN, ChessMoveToSave());
+	ChessAIPositionEstimation estimation = estimatePosition(tmpBoard, playerColor, std::unordered_map<std::string, std::vector<std::vector<ChessPiece* >>>());
 	estimation.setForPromotionPawn(promotionType);
 	delete tmpBoard;
 
@@ -57,11 +55,13 @@ ChessAIPositionEstimation ChessAI::estimatePostiontionForPawnPromotionType(Chess
 ChessAIPositionEstimation ChessAI::estimatePosition(ChessBoard* board, PLAYER_COLOR color, std::unordered_map<std::string, std::vector<std::vector<ChessPiece* >> > attackedFields) {
 	ChessPiece** myPieces = board->getPieces(color);
 	ChessPiece** enemyPieces = board->getPieces(getEnemyColorFor(color));
+	//float materialFromFieldImpact = estimatePositionBasingOnFieldImpact(board, color, attackedFields);
+	float materialFromFieldImpact = estimateImpactOnFieldWithMyPieces(color, board, attackedFields);
 
 	float myMaterial = calculateMaterial(myPieces);
 	float enemyMaterial = calculateMaterial(enemyPieces);
 
-	float estimation = myMaterial - enemyMaterial;
+	float estimation = myMaterial - enemyMaterial + materialFromFieldImpact;
 
 	ChessAIMovesDTO myMovesCalculationResult = calculatePossibleMoves(myPieces);
 	ChessAIMovesDTO enemyMovesCalculationResult = calculatePossibleMoves(enemyPieces);
@@ -79,6 +79,18 @@ ChessAIPositionEstimation ChessAI::estimatePosition(ChessBoard* board, PLAYER_CO
 		estimation += 9000;
 
 	return ChessAIPositionEstimation(estimation, possibleMoves);
+}
+
+float ChessAI::estimatePositionBasingOnFieldImpact(ChessBoard* board, PLAYER_COLOR color, std::unordered_map<std::string, std::vector<std::vector<ChessPiece* >> > attackedFields) {
+	float result = 0.0;
+	for (int i = 0; i < 8; ++i) {
+		for (int j = 0; j < 8; ++j) {
+			FieldInfluence fieldInfluence = estimateInfluenceOnField(color, board->getField(i, j), attackedFields);
+			result += fieldInfluence.getMetarialExchangeEstimation();
+		}
+	}
+
+	return result;
 }
 
 std::unordered_map<std::string, std::vector<std::vector<ChessPiece* >> > ChessAI::findAttackedFields(ChessBoard* board, AllMoves allMoves) {
@@ -107,18 +119,246 @@ std::unordered_map<std::string, std::vector<std::vector<ChessPiece* >> > ChessAI
 	return attackedFieldsMap;
 }
 
-FieldInfluence ChessAI::estimateInfluenceOnField(PLAYER_COLOR myColor, SimpleChessField field, std::unordered_map<std::string, std::vector<std::vector<ChessPiece* >> > attackedFields) {
-	auto pieces = attackedFields[field.toHashString()];
+float ChessAI::estimateImpactOnFieldWithMyPieces(PLAYER_COLOR myColor, ChessBoard* board, std::unordered_map<std::string, std::vector<std::vector<ChessPiece* >> > attackedFields) {
+	auto myPieces = board->getPieces(myColor);
+	float result = 0.0;
+
+	for (int i = 0; i < 16; ++i) {
+		if (myPieces[i]->isAlive()) {
+			result += estimateInfluenceOnFieldWithMyPiece(myColor, board->getField(myPieces[i]->getSimpleField()), attackedFields).getMetarialExchangeEstimation();
+		}
+	}
+
+	for (int i = 0; i < 8; ++i) {
+		for (int j = 0; j < 8; ++j) {
+			if (board->getField(i, j)->isEmpty()) {
+				result += estimateInfluenceOnFieldWithMyPiece(myColor, board->getField(i, j), attackedFields).getMetarialExchangeEstimation();
+			}
+		}
+	}
+
+	return result;
+}
+
+FieldInfluence ChessAI::estimateInfluenceOnFieldWithMyPiece(PLAYER_COLOR myColor, ChessBoardField* field, std::unordered_map<std::string, std::vector<std::vector<ChessPiece* >> > attackedFields) {
+	SimpleChessField simpleField = field->toSimpleField();
+
+	if (attackedFields.find(simpleField.toHashString()) == attackedFields.end()) {
+		return FieldInfluence(0.0, 0, 0.0);
+	}
+
+	auto pieces = attackedFields[simpleField.toHashString()];
 	auto myPieces = pieces[myColor];
 	auto enemyPieces = pieces[getEnemyColorFor(myColor)];
 
 	float myMaterial = calculateMaterial(myPieces);
 	float enemyMaterial = calculateMaterial(enemyPieces);
 
-	float materialDiff =  myMaterial - enemyMaterial;
+	float materialDiff = myMaterial - enemyMaterial;
 	int piecesDiff = myPieces.size() - enemyPieces.size();
 
-	return FieldInfluence(materialDiff, piecesDiff);
+	float result = 0.0;
+
+	ChessPiece* piece = field->getPiece();
+	ChessBoardField tmpField;
+	tmpField.setPiece(piece);
+
+	int myIndex = 0;
+	int enemyIndex = 0;
+
+
+	if (piece != nullptr) {
+		if (piece->getColor() == myColor && enemyPieces.size() > 0) {
+			result -= calculateMaterial(piece);
+
+			tmpField.setPiece(enemyPieces[enemyIndex++]);
+
+			for (int i = 0; i < myPieces.size(); ++i) {
+				if (myPieces[i] == piece) {
+					myPieces.erase(myPieces.begin() + i);
+					break;
+				}
+			}
+		}
+	}
+
+	std::sort(myPieces.begin(), myPieces.end(), ChessAI::orderPieceByValueAsc);
+
+	for (int i = 0; i < myPieces.size(); ++i) {
+		if (myPieces[i]->getType() == KING) {
+			ChessPiece* king = myPieces[i];
+			myPieces.erase(myPieces.begin() + i);
+			myPieces.push_back(king);
+		}
+	}
+
+	std::sort(enemyPieces.begin(), enemyPieces.end(), ChessAI::orderPieceByValueAsc);
+
+	for (int i = 0; i < enemyPieces.size(); ++i) {
+		if (enemyPieces[i]->getType() == KING) {
+			ChessPiece* king = enemyPieces[i];
+			enemyPieces.erase(enemyPieces.begin() + i);
+			enemyPieces.push_back(king);
+		}
+	}
+
+
+	if (piece == nullptr) {
+		if (enemyIndex < enemyPieces.size()) {
+			if (enemyPieces[enemyIndex]->getType() == KING && myPieces.size() > 0) {
+				return FieldInfluence(materialDiff, piecesDiff, 0.0);
+			}
+
+			tmpField.setPiece(enemyPieces[enemyIndex++]);
+		} else return FieldInfluence(materialDiff, piecesDiff, 0.0);
+	}
+
+	while (true) {
+		if (tmpField.getPiece()->getColor() == myColor && enemyIndex < enemyPieces.size()) {
+			if (enemyPieces[enemyIndex]->getType() == KING && myPieces.size() > 0) {
+				break;
+			}
+
+			result -= calculateMaterial(tmpField.getPiece());
+			tmpField.setPiece(enemyPieces[enemyIndex++]);
+		}
+		else if (tmpField.getPiece()->getColor() != myColor && myIndex < myPieces.size()) {
+			if (myPieces[myIndex]->getType() == KING && enemyPieces.size() > 0) {
+				break;
+			}
+			result += calculateMaterial(tmpField.getPiece());
+			tmpField.setPiece(myPieces[myIndex++]);
+		}
+		else break;
+	}
+
+	return FieldInfluence(materialDiff, piecesDiff, result);
+}
+
+FieldInfluence ChessAI::estimateInfluenceOnField(PLAYER_COLOR myColor, ChessBoardField* field, std::unordered_map<std::string, std::vector<std::vector<ChessPiece* >> > attackedFields) {
+	SimpleChessField simpleField = field->toSimpleField();
+
+	if (attackedFields.find(simpleField.toHashString()) == attackedFields.end()) {
+		return FieldInfluence(0.0, 0, 0.0);
+	}
+
+	auto pieces = attackedFields[simpleField.toHashString()];
+	auto myPieces = pieces[myColor];
+	auto enemyPieces = pieces[getEnemyColorFor(myColor)];
+
+	float myMaterial = calculateMaterial(myPieces);
+	float enemyMaterial = calculateMaterial(enemyPieces);
+
+	float materialDiff = myMaterial - enemyMaterial;
+	int piecesDiff = myPieces.size() - enemyPieces.size();
+
+	float result = 0.0;
+
+	std::sort(myPieces.begin(), myPieces.end(), ChessAI::orderPieceByValueAsc);
+	std::sort(enemyPieces.begin(), enemyPieces.end(), ChessAI::orderPieceByValueAsc);
+
+	ChessPiece* piece = field->getPiece();
+	ChessBoardField tmpField;
+	tmpField.setPiece(piece);
+
+	int myIndex = 0;
+	int enemyIndex = 0;
+
+
+	if (piece != nullptr) {
+		if (piece->getColor() == myColor && enemyPieces.size() > 0) {
+			result -= calculateMaterial(piece);
+
+			tmpField.setPiece(enemyPieces[enemyIndex++]);
+
+			for (int i = 0; i < myPieces.size(); ++i) {
+				if (myPieces[i] == piece) {
+					myPieces.erase(myPieces.begin() + i);
+					break;
+				}
+			}
+		}
+		else if (piece->getColor() != myColor && myPieces.size() > 0) {
+			result += calculateMaterial(piece);
+
+			tmpField.setPiece(myPieces[myIndex++]);
+
+			for (int i = 0; i < enemyPieces.size(); ++i) {
+				if (enemyPieces[i] == piece) {
+					enemyPieces.erase(enemyPieces.begin() + i);
+					break;
+				}
+			}
+
+		}
+	}
+	else if (enemyPieces.size() > 0) {
+		tmpField.setPiece(enemyPieces[enemyIndex++]);
+	}
+	else return FieldInfluence(materialDiff, piecesDiff, 0);
+
+	while (true) {
+		if (tmpField.getPiece()->getColor() == myColor && enemyIndex < enemyPieces.size()) {
+			result -= calculateMaterial(tmpField.getPiece());
+			tmpField.setPiece(enemyPieces[enemyIndex++]);
+		}
+		else if (tmpField.getPiece()->getColor() != myColor && myIndex < myPieces.size()) {
+			result += calculateMaterial(tmpField.getPiece());
+			tmpField.setPiece(myPieces[myIndex++]);
+		}
+		else break;
+	}
+
+
+	//auto myPiecesValues = mapPiecesToValue(myPieces);
+	//auto enemyPiecesValues = mapPiecesToValue(enemyPieces);
+
+
+
+
+
+	/*
+	int myAllMoveCount = myPiecesValues.size();
+	int enemyAllMoveCount = enemyPiecesValues.size();
+
+	if (result < 0) {
+		while (true) {
+			if (myAllMoveCount > 0 && enemyIndex < enemyPiecesValues.size()) {
+				result += enemyPiecesValues[enemyIndex++];
+				--enemyAllMoveCount;
+			}
+			if (enemyAllMoveCount > 0 && myIndex < myPiecesValues.size()) {
+				result -= myPiecesValues[myIndex++];
+				--myAllMoveCount;
+			}
+
+		}
+	}else if (result > 0) {
+		result -= myPiecesValues[myIndex];
+		result += enemyPiecesValues[enemyIndex];
+	}*/
+
+	/*for (; i < myPiecesValues.size() && i < enemyPiecesValues.size(); ++i) {
+		result += enemyPiecesValues[i];
+		result -= myPiecesValues[i];
+	}*/
+
+	return FieldInfluence(materialDiff, piecesDiff, result);
+}
+
+bool ChessAI::orderPieceByValueAsc(ChessPiece* one, ChessPiece* two) {
+	return calculateMaterial(one) < calculateMaterial(two);
+}
+
+std::vector<float> ChessAI::mapPiecesToValue(std::vector<ChessPiece* > pieces) {
+	std::vector<float> values;
+
+	for (auto piece : pieces) {
+		values.push_back(calculateMaterial(piece));
+	}
+	std::sort(values.begin(), values.end(), std::less<float>());
+
+	return values;
 }
 
 float ChessAI::calculateMaterial(std::vector<ChessPiece* > pieces) {
@@ -199,7 +439,6 @@ float ChessAI::calculateMaterial(ChessPiece* piece) {
 	}
 	}
 
-	throw "ChessAI::calculateMaterial -> UNKNOWN TYPE";
 }
 
 ChessAIMove ChessAI::calculateNextMove(ChessBoard* board)
@@ -219,24 +458,17 @@ ChessAIMove ChessAI::calculateNextMove(ChessBoard* board, PLAYER_COLOR color, in
 	AllMoves allPossibleMovesOnBoard = tmpBoard->getAllPossibleMoves();
 	std::vector<PieceMove> myMoves = (color == WHITE ? allPossibleMovesOnBoard.getWhiteMoves() : allPossibleMovesOnBoard.getBlackMoves());
 
-	/*ChessPiece** allPieces = tmpBoard->getPieces(color);
-	for (int i = 0; i < 16; ++i) {
-		for (auto field : allPieces[i]->getPossibleMoves()) {
-			ChessAIPositionEstimation estimation = estimatePosition(allPieces[i], field, tmpBoard, allPossibleMovesOnBoard);
-			allMoves.push_back(PieceWithField(allPieces[i], field, estimation));
-		}
-	} */
-	auto attackedFields = tmpBoard->findAttackedFields(allPossibleMovesOnBoard);
+	auto attackedFields = tmpBoard->findAttackedFields();
 	for (auto chessMove : myMoves) {
 		ChessAIPositionEstimation estimation = estimatePosition(chessMove.getPiece(), chessMove.getField(), tmpBoard, attackedFields);
 		allMoves.push_back(PieceWithField(chessMove.getPiece(), chessMove.getField(), estimation));
 	}
-
-	/*std::cout << "============== ALL MOVES ==============" << std::endl;
+	/*
+	std::cout << "============== ALL MOVES ==============" << std::endl;
 	for (auto tmp : allMoves) {
 		tmp.printf();
-	}*/
-
+	}
+	*/
 	std::vector<PieceWithField> selectedMoves;
 
 	if (depthLevel == 0) {
@@ -266,7 +498,7 @@ ChessAIMove ChessAI::calculateNextMove(ChessBoard* board, PLAYER_COLOR color, in
 
 ChessAIPositionEstimation ChessAI::estimateMove(PieceWithField pieceWithField, ChessBoard* board, int howDeep) {
 	//pieceWithField.printf();
-	
+
 	ChessAIPositionEstimation finalEstimation = pieceWithField.getEstimation();
 	ChessBoard* tmpBoard = board->toTemporaryBoard();
 
@@ -283,7 +515,7 @@ ChessAIPositionEstimation ChessAI::estimateMove(PieceWithField pieceWithField, C
 		if (enemyMove.getPiece() == nullptr) {
 			break;
 		}
-		board->makeMoveAndUpdateCurrentPlayer(enemyMove);
+		tmpBoard->makeMoveAndUpdateCurrentPlayer(enemyMove);
 
 		ChessAIMove myMove = calculateNextMove(tmpBoard, color, 0);
 		myMove.getEstimation().printf();
@@ -293,7 +525,7 @@ ChessAIPositionEstimation ChessAI::estimateMove(PieceWithField pieceWithField, C
 			finalEstimation.setEstimation(-9000);
 			break;
 		}
-		board->makeMoveAndUpdateCurrentPlayer(myMove);
+		tmpBoard->makeMoveAndUpdateCurrentPlayer(myMove);
 	}
 
 	delete tmpBoard;

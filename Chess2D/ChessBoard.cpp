@@ -134,41 +134,78 @@ std::string pawnTypeToChar(CHESS_PIECES type) {
 	}
 }
 
+AllMoves ChessBoard::getAllAttackedFields()
+{
+	std::vector<PieceMove> whiteMoves;
+	std::vector<PieceMove> blackMoves;
+
+	auto whitePieces = getPieces(WHITE);
+	auto blackPieces = getPieces(BLACK);
+
+	for (int i = 0; i < 16; ++i) {
+		for (auto field : whitePieces[i]->tryToGetAttackedFields()) {
+			whiteMoves.push_back(PieceMove(whitePieces[i], field));
+		}
+	}
+
+	for (int i = 0; i < 16; ++i) {
+		for (auto field : blackPieces[i]->tryToGetAttackedFields()) {
+			blackMoves.push_back(PieceMove(blackPieces[i], field));
+		}
+	}
+
+	return AllMoves(blackMoves, whiteMoves);
+}
+
 std::unordered_map<std::string, std::vector<std::vector<ChessPiece* >> > ChessBoard::findAttackedFields() {
-	AllMoves allMoves = getAllPossibleMoves();
+	AllMoves allMoves = getAllAttackedFields();
 	return findAttackedFields(allMoves);
 }
 
 std::unordered_map<std::string, std::vector<std::vector<ChessPiece* >> > ChessBoard::findAttackedFields(AllMoves allMoves) {
 	std::unordered_map<std::string, std::vector<std::vector<ChessPiece*>>> attackedFieldsMap;
 
-	for (auto move : allMoves.getBlackMoves()) {
-		if (getField(move.getField())->getPiece() != nullptr) {
-			if (attackedFieldsMap.find(move.getField().toHashString()) == attackedFieldsMap.end()) {
-				attackedFieldsMap[move.getField().toHashString()] = std::vector<std::vector<ChessPiece*>>();
-				attackedFieldsMap[move.getField().toHashString()].push_back(std::vector<ChessPiece*>());
-				attackedFieldsMap[move.getField().toHashString()].push_back(std::vector<ChessPiece*>());
-			}
-
-			attackedFieldsMap[move.getField().toHashString()][BLACK].push_back(move.getPiece());
-		}
-	}
-
-	for (auto move : allMoves.getWhiteMoves()) {
-		if (getField(move.getField())->getPiece() != nullptr) {
-			if (attackedFieldsMap.find(move.getField().toHashString()) == attackedFieldsMap.end()) {
-				attackedFieldsMap[move.getField().toHashString()] = std::vector<std::vector<ChessPiece*>>();
-				attackedFieldsMap[move.getField().toHashString()].push_back(std::vector<ChessPiece*>());
-				attackedFieldsMap[move.getField().toHashString()].push_back(std::vector<ChessPiece*>());
-			}
-
-			attackedFieldsMap[move.getField().toHashString()][WHITE].push_back(move.getPiece());
-		}
-	}
+	fillAttackedFieldsHashMap(attackedFieldsMap, allMoves);
 
 	return attackedFieldsMap;
 }
 
+void ChessBoard::fillAttackedFieldsHashMap(std::unordered_map<std::string, std::vector<std::vector<ChessPiece* >> > &attackedFieldsMap, AllMoves allMoves) {
+	fillAttackedFieldsHashMap(attackedFieldsMap, allMoves.getBlackMoves(), BLACK);
+	fillAttackedFieldsHashMap(attackedFieldsMap, allMoves.getWhiteMoves(), WHITE);
+}
+
+bool ChessBoard::checkIfPawnIsAttackingField(PieceMove move) {
+	return move.getPiece()->getCol() != move.getField().getColumn();
+}
+
+bool ChessBoard::checkIfPawnIsJustMoving(PieceMove move) {
+	return move.getPiece()->getCol() == move.getField().getColumn();
+}
+
+void ChessBoard::fillAttackedFieldsHashMap(std::unordered_map<std::string, std::vector<std::vector<ChessPiece* >> > &attackedFieldsMap, std::vector<PieceMove> moves, PLAYER_COLOR color) {
+	for (auto move : moves) {
+
+		if (attackedFieldsMap.find(move.getField().toHashString()) == attackedFieldsMap.end()) {
+			attackedFieldsMap[move.getField().toHashString()] = std::vector<std::vector<ChessPiece*>>();
+			attackedFieldsMap[move.getField().toHashString()].push_back(std::vector<ChessPiece*>());
+			attackedFieldsMap[move.getField().toHashString()].push_back(std::vector<ChessPiece*>());
+		}
+
+		if (!checkIfPieceExistInVector(attackedFieldsMap[move.getField().toHashString()][color], move.getPiece()))
+			attackedFieldsMap[move.getField().toHashString()][color].push_back(getMyChessPiece(move.getPiece()));
+	}
+}
+
+
+bool ChessBoard::checkIfPieceExistInVector(std::vector<ChessPiece* > pieces, ChessPiece* piece) {
+	for (auto p : pieces) {
+		if (p->getSimpleField() == piece->getSimpleField())
+			return true;
+	}
+
+	return false;
+}
 void ChessBoard::printfBoard(std::string comment)
 {
 	std::cout << "==============" << comment << "==============" << std::endl;
@@ -263,7 +300,7 @@ ChessBoard::ChessBoard()
 }
 
 ChessBoard::ChessBoard(ChessBoard* chessBoard) {
-		chessBoardType = TEMPORARY;
+	chessBoardType = TEMPORARY;
 	for (int i = 0; i < BOARD_SIZE; ++i)
 		for (int j = 0; j < BOARD_SIZE; ++j)
 		{
@@ -283,8 +320,12 @@ ChessBoard::ChessBoard(ChessBoard* chessBoard) {
 	state = chessBoard->state;
 	initCastlings();
 
-	for(int i = 0; i < 2; ++i)
+	for (int i = 0; i < 2; ++i)
 		for (int j = 0; j < 2; ++j) {
+			if (chessBoard->rooks[i][j] == nullptr) {
+				rooks[i][j] = nullptr;
+				continue;
+			}
 			rooks[i][j] = static_cast<Rook*>(getMyChessPiece(chessBoard->rooks[i][j]));
 		}
 }
@@ -357,6 +398,7 @@ ChessPiece* ChessBoard::createChessPiece(ChessPiece* piece) {
 	}
 
 
+	result->initColorChange(piece->isColorChanged());
 	piece->isBeingProcessed() ? result->startProcessing() : result->stopProcessing();
 
 	return result;
@@ -368,10 +410,38 @@ void::ChessBoard::getCurrentTime()
 	ctime_s(tmp, sizeof tmp, &result);
 	curTime = tmp;
 	curTime.erase(curTime.size() - 1);
-	for (int i = 0; i<curTime.length(); i++)
+	for (int i = 0; i < curTime.length(); i++)
 		if (curTime[i] == ':')curTime[i] = '-';
 	//std::cout << curTime << std::endl;
 }
+
+std::unordered_map<std::string, std::vector<std::vector<ChessPiece*>>> ChessBoard::convertToMyPieces(std::unordered_map<std::string, std::vector<std::vector<ChessPiece*>>> attackedFields)
+{
+	std::unordered_map<std::string, std::vector<std::vector<ChessPiece*>>> result;
+
+	for (auto pair : attackedFields) {
+		std::string key = pair.first;
+		std::vector<std::vector<ChessPiece*>> pieces = pair.second;
+
+		auto blackPieces = pieces[BLACK];
+		auto whitePieces = pieces[WHITE];
+
+		result[key] = std::vector<std::vector<ChessPiece*>>();
+		result[key].push_back(std::vector<ChessPiece*>());
+		result[key].push_back(std::vector<ChessPiece*>());
+
+		for (auto piece : whitePieces) {
+			result[key][WHITE].push_back(getMyChessPiece(piece));
+		}
+
+		for (auto piece : blackPieces) {
+			result[key][BLACK].push_back(getMyChessPiece(piece));
+		}
+	}
+
+	return result;
+}
+
 void ChessBoard::prepareBoard() {
 	for (int i = 0; i < BOARD_SIZE; ++i)
 	{
@@ -646,7 +716,7 @@ void ChessBoard::updateCurrentPlayer(bool isChangeNeeded, ChessMoveToSave move)
 		disableEnPassantPawns();
 		updateCastlings();
 		endGame(checkIfGameEnd());
-		if(chessBoardType == REAL)
+		if (chessBoardType == REAL)
 			saveMovement(move);
 	}
 
@@ -684,7 +754,7 @@ void ChessBoard::updateCastlingsFor(PLAYER_COLOR color) {
 }
 
 void ChessBoard::updateCastlingsFor(PLAYER_COLOR color, CHESS_BOARD_SIDE boardSide, std::vector<SimpleChessField> enemyMoves) {
-	if (!rooks[color][boardSide]->isAlive() || !rooks[color][boardSide]->isFirstMoveAvaliable())
+	if (rooks[color][boardSide] == nullptr && !rooks[color][boardSide]->isAlive() && !rooks[color][boardSide]->isFirstMoveAvaliable())
 		return;
 
 	int direction = (boardSide == QUEEN_SIDE ? -1 : 1);
@@ -881,6 +951,7 @@ void ChessBoard::disableEnPassantPawns()
 	}
 
 }
+
 void ChessBoardField::setHighlighted(sf::IntRect rect) {
 	frames[HIGHLIGHTED] = rect;
 }
@@ -966,12 +1037,12 @@ void ChessBoard::selectField(FieldSelector* fieldSelector)
 }
 void ChessBoard::saveMovement(ChessMoveToSave move) {
 
-	
+
 	std::string movement = "[" + move.getPiece()->getTypeName() + "(" + move.getOldField().getRowName() + "," + move.getOldField().getColumnName() + ") -> " + "(" + move.getNewField().getRowName() + "," + move.getNewField().getColumnName() + ")" + "]";
 	//std::cout << movement << std::endl;
-	
+
 	movements.push_back(movement);
-	
+
 	/*
 	std::cout << "Ostatnie 5 ruchow" << std::endl;
 	size_t mSize = movements.size();
@@ -982,11 +1053,11 @@ void ChessBoard::saveMovement(ChessMoveToSave move) {
 
 	for (size_t i = startIt; i < movements.size(); i++)
 		std::cout << movements[i] << std::endl;
-	*/	
-	std::fstream plik; 
-	
-	
-	std::string filename= "resources/history/" +curTime+".txt" ;
+	*/
+	std::fstream plik;
+
+
+	std::string filename = "resources/history/" + curTime + ".txt";
 	//std::cout << filename << std::endl;
 
 	plik.open(filename, std::ios::out | std::ios::app);
@@ -996,5 +1067,5 @@ void ChessBoard::saveMovement(ChessMoveToSave move) {
 
 		plik.close();
 	}
-	
+
 }

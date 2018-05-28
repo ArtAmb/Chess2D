@@ -20,12 +20,16 @@ protected:
 	sf::Sprite* sprite;
 	ChessBoard* board;
 	bool alive = true;
+	bool colorChanged = false;
 	std::vector<SimpleChessField> possibleMoves;
 	bool beingProcessed = false;
 	
 	void fillPossibleMovesFieldSeries(int deltaRow, int deltaColumn);
+	std::vector<SimpleChessField> getAttackedFieldSeries(int deltaRow, int deltaColumn);
 	void fillPossibleMovesForRook();
 	void fillPossibleMovesForBishop();
+	std::vector<SimpleChessField> getAttackedFieldsByRook();
+	std::vector<SimpleChessField> getAttackedFieldsByBishop();
 	void addToPossibleMoves(ChessBoardField* field);
 	void resetPossibleMoves();
 	void tryToFillPossibleMoves();
@@ -80,5 +84,15 @@ public:
 
 	void printf();
 	void doCastlingOnField(SimpleChessField field);
+	void changeColor(PLAYER_COLOR color) {
+		this->chessColor = color;
+		colorChanged = true;
+	}
+	bool isColorChanged() { return colorChanged; }
+
+	void initColorChange(bool isColorChanged) { this->colorChanged = isColorChanged; }
+	virtual std::vector<SimpleChessField> getAttackedFields() = 0;
+
+	std::vector<SimpleChessField> tryToGetAttackedFields();
 };
 

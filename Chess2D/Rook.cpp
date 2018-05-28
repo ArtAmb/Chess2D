@@ -20,6 +20,11 @@ Rook::~Rook()
 {
 }
 
+std::vector<SimpleChessField> Rook::getAttackedFields()
+{
+	return getAttackedFieldsByRook();
+}
+
 void Rook::fillPossibleMoves()
 {
 	fillPossibleMovesForRook();
