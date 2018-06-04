@@ -9,7 +9,7 @@ class SingleGameButtonAction : public ButtonAction
 	GameView* view;
 	
 
-	void prepareBoard();
+	void prepareBoard(GameSettings* gameSettings);
 public:
 	SingleGameButtonAction();
 	~SingleGameButtonAction();

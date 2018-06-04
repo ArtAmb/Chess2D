@@ -80,10 +80,17 @@ void GameView::additionalEventCheck(sf::RenderWindow * window) {
 		auto field = board->getField(fieldSelector->getColumn(), fieldSelector->getRow());
 		auto influence = chessAI->estimatePositionBasingOnFieldImpact(board, board->getCurrPlayer(), attackedFields);
 
-		std::cout << field->toSimpleField().toHashString() << " INFLUENCE == " << influence << std::endl;
+		std::cout << field->toSimpleField().toHashString() << "WHOLE BOARD INFLUENCE == " << influence << std::endl;
 
 	}
 
+	if (happening.type == sf::Event::KeyReleased && happening.key.code == sf::Keyboard::I) {
+		auto attackedFields = board->findAttackedFields();
+		auto field = board->getField(fieldSelector->getColumn(), fieldSelector->getRow());
+		FieldInfluence fieldInfluence = chessAI->estimateInfluenceOnField(board->getCurrPlayer(), field, attackedFields);
+		std::cout << field->toSimpleField().toHashString() << " INFLUENCE == " << fieldInfluence.getMetarialExchangeEstimation() << std::endl;
+
+	}
 
 	for (int i = 0; i < 8; ++i)
 		for (int j = 0; j < 8; ++j) {

@@ -31,6 +31,9 @@
     <Filter Include="Header Files\ai">
       <UniqueIdentifier>{8a042575-51c4-4a66-b2c0-4e67a70fe036}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\views">
+      <UniqueIdentifier>{671291cc-94ee-4bcc-9e35-44a461b10f00}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -43,9 +46,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Game.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LayoutView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PositionTextureConverter.cpp">
@@ -75,9 +75,6 @@
     <ClCompile Include="ChessBoard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GameView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="FieldSelector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -89,12 +86,6 @@
     </ClCompile>
     <ClCompile Include="CreditsButtonAction.cpp">
       <Filter>Source Files\buttons</Filter>
-    </ClCompile>
-    <ClCompile Include="CreditsView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="OptionsView.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GameSettings.cpp">
       <Filter>Source Files</Filter>
@@ -131,6 +122,21 @@
     </ClCompile>
     <ClCompile Include="ChessAiMove.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorOptionsButton.cpp">
+      <Filter>Source Files\buttons</Filter>
+    </ClCompile>
+    <ClCompile Include="GameView.cpp">
+      <Filter>Source Files\views</Filter>
+    </ClCompile>
+    <ClCompile Include="CreditsView.cpp">
+      <Filter>Source Files\views</Filter>
+    </ClCompile>
+    <ClCompile Include="LayoutView.cpp">
+      <Filter>Source Files\views</Filter>
+    </ClCompile>
+    <ClCompile Include="OptionsView.cpp">
+      <Filter>Source Files\views</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -238,6 +244,9 @@
     </ClInclude>
     <ClInclude Include="GameView.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorOptionsButton.h">
+      <Filter>Header Files\buttons</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

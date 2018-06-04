@@ -1,6 +1,7 @@
 #include "ChessAI.h"
 #include <algorithm>   
 #include <functional>   
+#include <thread>
 
 ChessAI::~ChessAI()
 {
@@ -210,7 +211,8 @@ FieldInfluence ChessAI::estimateInfluenceOnFieldWithMyPiece(PLAYER_COLOR myColor
 			}
 
 			tmpField.setPiece(enemyPieces[enemyIndex++]);
-		} else return FieldInfluence(materialDiff, piecesDiff, 0.0);
+		}
+		else return FieldInfluence(materialDiff, piecesDiff, 0.0);
 	}
 
 	while (true) {
@@ -451,6 +453,15 @@ ChessAIMove ChessAI::calculateNextMove(ChessBoard* board, PLAYER_COLOR color) {
 	return calculateNextMove(board, color, 1);
 }
 
+void ChessAI::estimatePositionThread(std::vector<PieceMove> &myMoves, ChessBoard* tmpBoard, std::unordered_map<std::string, std::vector<std::vector<ChessPiece* >> > attackedFields, std::vector<PieceWithField> &result) {
+	std::cout << "ZACZYNAM " << myMoves.size() << std::endl;
+	for (auto chessMove : myMoves) {
+		ChessAIPositionEstimation estimation = estimatePosition(chessMove.getPiece(), chessMove.getField(), tmpBoard, attackedFields);
+		result.push_back(PieceWithField(chessMove.getPiece(), chessMove.getField(), estimation));
+		//std::cout << "DODAJE " << result.size() << std::endl;
+	}
+}
+
 ChessAIMove ChessAI::calculateNextMove(ChessBoard* board, PLAYER_COLOR color, int depthLevel) {
 	ChessBoard* tmpBoard = board->toTemporaryBoard();
 
@@ -458,24 +469,19 @@ ChessAIMove ChessAI::calculateNextMove(ChessBoard* board, PLAYER_COLOR color, in
 	AllMoves allPossibleMovesOnBoard = tmpBoard->getAllPossibleMoves();
 	std::vector<PieceMove> myMoves = (color == WHITE ? allPossibleMovesOnBoard.getWhiteMoves() : allPossibleMovesOnBoard.getBlackMoves());
 
-	auto attackedFields = tmpBoard->findAttackedFields();
+	auto attackedFields = (level == HARD ? tmpBoard->findAttackedFields() : std::unordered_map<std::string, std::vector<std::vector<ChessPiece* >> > ());
 	for (auto chessMove : myMoves) {
 		ChessAIPositionEstimation estimation = estimatePosition(chessMove.getPiece(), chessMove.getField(), tmpBoard, attackedFields);
 		allMoves.push_back(PieceWithField(chessMove.getPiece(), chessMove.getField(), estimation));
 	}
-	/*
-	std::cout << "============== ALL MOVES ==============" << std::endl;
-	for (auto tmp : allMoves) {
-		tmp.printf();
-	}
-	*/
+		
 	std::vector<PieceWithField> selectedMoves;
 
 	if (depthLevel == 0) {
 		selectedMoves = allMoves;
 	}
 	else {
-		int howMany = 3;
+		int howMany = (level == NORMAL ? 5 : 3);
 		selectedMoves = findBestMoves(allMoves, 3);
 		for (int i = 0; i < selectedMoves.size(); ++i) {
 			selectedMoves[i].setEstimation(estimateMove(selectedMoves[i], tmpBoard, 1));
@@ -559,4 +565,73 @@ std::vector<PieceWithField> ChessAI::findBestMoves(std::vector<PieceWithField> a
 		return allMoves;
 
 	return std::vector<PieceWithField>(allMoves.begin(), allMoves.begin() + howMany);
+}
+
+
+
+
+void unsucesfullOptimalizationTry() {
+	/*
+	const int numberOfParts = 4;
+	int movePart = myMoves.size() / numberOfParts;
+
+	std::cout << "SIZE == " << myMoves.size() << std::endl;
+	std::cout << "movePart == " << movePart << std::endl;
+
+	std::vector<PieceMove> myMovesInParts[numberOfParts];
+	std::thread threads[numberOfParts];
+	std::vector<PieceWithField> results[numberOfParts];
+
+	for (int i = 0; i < numberOfParts; ++i) {
+	myMovesInParts[i] = std::vector<PieceMove>();
+	}
+
+	for (int i = 0; i < numberOfParts; ++i) {
+	auto begin = myMoves.begin() + i * movePart;
+
+	auto end = begin + movePart;
+	if (end >= myMoves.end()) {
+	end = myMoves.end();
+	myMovesInParts[i] = std::vector<PieceMove>(begin, end);
+	break;
+	}
+
+	myMovesInParts[i] = std::vector<PieceMove>(begin, end);
+	}
+
+	std::cout << "myMoves == " << myMoves.size() << std::endl;
+	for (int i = 0; i < numberOfParts; ++i) {
+	std::cout  << "DLA I == " << i << "   "<< myMovesInParts[i].size() << std::endl;
+	}
+
+
+	std::cout << "ZACZYNAM WATKI %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% " << myMoves.size() << std::endl;
+	for (int i = 0; i < numberOfParts; ++i) {
+	results[i] = std::vector<PieceWithField>();
+	//threads[i] = std::thread(&ChessAI::estimatePositionThread, (*this), myMovesInParts[i], tmpBoard, attackedFields, results[i]);
+	//std::cout << "DLA I == " << i << "   " << myMovesInParts[i].size() << std::endl;
+	threads[i] = std::thread([&](ChessAI* chessAI) { chessAI->estimatePositionThread(myMovesInParts[i], tmpBoard, attackedFields, results[i]); }, this);
+	}
+
+	for (int i = 0; i < numberOfParts; ++i) {
+	threads[i].join();
+	}
+
+	for (int i = 0; i < numberOfParts; ++i) {
+	std::cout << results[i].size() << std::endl;
+	}
+
+	for (int i = 0; i < numberOfParts; ++i) {
+	auto vect = results[i];
+	allMoves.insert(allMoves.end(), vect.begin(), vect.end());
+	}
+	*/
+
+	//std::cout << "allMoves size == " << allMoves.size() << std::endl;
+
+	/*std::cout << "============== ALL MOVES ==============" << std::endl;
+	for (auto tmp : allMoves) {
+	tmp.printf();
+	}
+	*/
 }

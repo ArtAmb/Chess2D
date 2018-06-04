@@ -15,7 +15,7 @@ class Game
 	LayoutView* menuView;
 	ChessBoard* chessBoard;
 	ResourceManager* resourceManager = ResourceManager::getInstance();
-
+	static GameSettings* gameSettings;
 public:
 	Game(sf::RenderWindow* mainWindow, GraphicEngine* engine);
 	void startGame();
@@ -23,7 +23,10 @@ public:
 	Button* createDefaultButton(TextureResource* texture, int logicalRow, LayoutView* view);
 	~Game();
 	
+	static GameSettings* getGameSettings();
 	
 	
 };
+
+//GameSettings* Game::gameSettings = nullptr;
 

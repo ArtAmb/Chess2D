@@ -23,6 +23,8 @@
 
 int main()
 {
+	srand(time(unsigned int (0)));
+
 	ResourceManager* resourceManager = ResourceManager::getInstance();
 	resourceManager->setPathToResource("resources/");
 	resourceManager->loadTexture(RESOURCE::TEXTURE::BACKGROUNDS, "backgrounds.png", WIDTH_BACKGROUND, HEIGHT_BACKGROUND);

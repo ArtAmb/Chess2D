@@ -11,6 +11,7 @@ public:
 
 class Button
 {
+protected:
 	enum ButtonType { BT_OFF = 0, BT_ON = 1 };
 	sf::Sprite SpriteButton;
 	sf::IntRect Frames[2];

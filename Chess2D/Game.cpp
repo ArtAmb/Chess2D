@@ -12,6 +12,7 @@
 #define WIDTH_BACKGROUND_MODE 648
 #define HEIGHT_BACKGROUND_MODE 264
 
+GameSettings* Game::gameSettings;
 
 Game::Game(sf::RenderWindow* mainWindow, GraphicEngine* engine)
 {
@@ -65,5 +66,13 @@ Button * Game::createDefaultButton(TextureResource * texture, int logicalRow, La
 
 Game::~Game()
 {
+}
+
+GameSettings * Game::getGameSettings() {
+	if (gameSettings == nullptr) {
+		gameSettings = new GameSettings();
+	}
+
+	return gameSettings;
 }
 

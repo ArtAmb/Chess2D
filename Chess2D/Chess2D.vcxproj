@@ -130,6 +130,7 @@
     <ClCompile Include="ChessBoard.cpp" />
     <ClCompile Include="ChessPiece.cpp" />
     <ClCompile Include="ClickEvent.cpp" />
+    <ClCompile Include="ColorOptionsButton.cpp" />
     <ClCompile Include="CreditsButtonAction.cpp" />
     <ClCompile Include="CreditsView.cpp" />
     <ClCompile Include="FieldSelector.cpp" />
@@ -167,6 +168,7 @@
     <ClInclude Include="ChessEnums.h" />
     <ClInclude Include="ChessPiece.h" />
     <ClInclude Include="ClickEvent.h" />
+    <ClInclude Include="ColorOptionsButton.h" />
     <ClInclude Include="CreditsButtonAction.h" />
     <ClInclude Include="CreditsView.h" />
     <ClInclude Include="FieldSelector.h" />

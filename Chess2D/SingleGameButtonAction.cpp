@@ -1,8 +1,7 @@
 #include "SingleGameButtonAction.h"
 #include "SFML/Graphics.hpp"
 
-
-void SingleGameButtonAction::prepareBoard()
+void SingleGameButtonAction::prepareBoard(GameSettings* gameSettings)
 {
 	if (view != nullptr)
 		delete view;
@@ -11,7 +10,23 @@ void SingleGameButtonAction::prepareBoard()
 	sf::Sprite* back = fieldTexture->getSprite(0, 1);
 
 	view = new GameView(fieldTexture->getHeight(), fieldTexture->getWidth(), back);
-	view->setChessAI(new ChessAI(BLACK, LEVEL_OPTION::EASY));
+
+	PLAYER_COLOR color = BLACK;
+
+	switch (gameSettings->getColor()) {
+	case WHITE_O:
+		color = BLACK;
+		break;
+	case BLACK_O:
+		color = WHITE;
+		break;
+	case RANDOM_O:
+		color = (rand() % 2 ? WHITE : BLACK);
+		break;
+	}
+	
+
+	view->setChessAI(new ChessAI(color, gameSettings->getLevel()));
 }
 
 SingleGameButtonAction::SingleGameButtonAction()
@@ -26,8 +41,7 @@ SingleGameButtonAction::~SingleGameButtonAction()
 
 void SingleGameButtonAction::doAction(ClickEvent* event)
 {
-	prepareBoard();
+	prepareBoard(Game::getGameSettings());
 	view->display(event->getWindow());
-	
 	
 }

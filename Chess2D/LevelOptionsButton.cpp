@@ -1,16 +1,24 @@
 #include "LevelOptionsButton.h"
+#include "OptionsView.h"
 
-LevelOptionsButton::LevelOptionsButton(LEVEL_OPTION level)
+LevelOptionsButtonAction::LevelOptionsButtonAction(LEVEL_OPTION level, OptionsView* optionsView)
 {
 	this->level = level;
+	this->optionsView = optionsView;
 }
 
-LevelOptionsButton::~LevelOptionsButton()
+LevelOptionsButtonAction::~LevelOptionsButtonAction()
 {
 }
 
 
-void LevelOptionsButton::doAction(ClickEvent * event)
+void LevelOptionsButtonAction::doAction(ClickEvent * event)
 {
-	event->getGameSettings()->setLevel(level);
+	Game::getGameSettings()->setLevel(level);
+	optionsView->setLevel(level);
 }
+
+LevelOptionsButton::LevelOptionsButton(LEVEL_OPTION level, OptionsView* optionsView) : level(level)
+{
+	action = new LevelOptionsButtonAction(level, optionsView);
+};

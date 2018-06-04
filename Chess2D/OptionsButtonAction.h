@@ -4,10 +4,10 @@
 #include "ResourceManager.h"
 #include "LayoutView.h"
 #include "ResourceKeys.h"
-#include "OptionsView.h"
 #include "Game.h"
 #include "GameSettings.h"
 
+class OptionsView;
 class OptionsButtonAction : public ButtonAction
 {
 	LayoutView* view = nullptr;
@@ -17,8 +17,9 @@ class OptionsButtonAction : public ButtonAction
 	
 public:
 	
-	//OptionsButtonAction(COLOR_OPTION color, LEVEL_OPTION level);
 	OptionsButtonAction();
+	Button * createDefaultColorButton(COLOR_OPTION color, TextureResource * texture, int logicalRow, OptionsView * view);
+	Button * createDefaultLevelButton(LEVEL_OPTION level, TextureResource * texture, int logicalRow, OptionsView * view);
 	~OptionsButtonAction();
 
 	void doAction(ClickEvent* event);

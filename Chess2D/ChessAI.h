@@ -101,6 +101,7 @@ public:
 	ChessAIPositionEstimation estimateMove(PieceWithField pieceWithField, ChessBoard * board, int howDeep);
 	ChessAIMove calculateNextMove(ChessBoard*);
 	ChessAIMove calculateNextMove(ChessBoard * board, PLAYER_COLOR color);
+	void estimatePositionThread(std::vector<PieceMove>& myMoves, ChessBoard * tmpBoard, std::unordered_map<std::string, std::vector<std::vector<ChessPiece*>>> attackedFields, std::vector<PieceWithField>& result);
 	ChessAIMove calculateNextMove(ChessBoard * board, PLAYER_COLOR color, int depthLevel);
 
 	PieceWithField findBestMove(std::vector<PieceWithField> allMoves);

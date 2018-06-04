@@ -4,10 +4,8 @@
 class GameSettings
 {
 	LEVEL_OPTION level = NORMAL;
-	COLOR_OPTION color = RANDOM_O;
+	COLOR_OPTION color = WHITE_O;
 	
-	
-
 public:
 	LEVEL_OPTION getLevel() {
 		return level;

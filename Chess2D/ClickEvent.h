@@ -7,7 +7,7 @@ class Button;
 class ClickEvent
 {
 	sf::RenderWindow* window;
-	GameSettings* gameSettings;
+	//GameSettings* gameSettings;
 	LayoutView* view;
 	Button* button;
 
@@ -21,13 +21,13 @@ public:
 		return window;
 	}
 	
-	void setGameSettings(GameSettings* settings) {
+	/*void setGameSettings(GameSettings* settings) {
 		this->gameSettings = settings;
 	}
 
 	GameSettings* getGameSettings() {
 		return gameSettings;
-	}
+	}*/
 
 	void setView(LayoutView* view);
 
