@@ -8,7 +8,7 @@ CreditsView::~CreditsView()
 void CreditsView::additionalDisplayAction(sf::RenderWindow* window)
 {
 	
-	const int howMany=6;
+	const int howMany=7;
 	sf::Text str[howMany];
 	
 	
@@ -25,15 +25,16 @@ void CreditsView::additionalDisplayAction(sf::RenderWindow* window)
 		
 	}
 	str[0].setString(L"Politechnika Œwiêtokrzyska");
-	//str[1].setString(L"Komunikacja cz³owiek-komputer");
 	str[1].setString(L"Projekt zespo³owy");
 	str[2].setString("Autorzy:");
 	str[3].setString("Ambrolewicz Artur");
-	//str[3].setString("Autor:");
 	str[4].setString(L"B¹tkowska Karolina");
 
 	str[5].setPosition(100, 600);
 	str[5].setString(L"Kielce 2018");
+
+	str[6].setPosition(100, 600);
+	str[6].setString(L"Kielce 2018");
 
 	for (int i = 0; i < howMany; i++) {
 		
