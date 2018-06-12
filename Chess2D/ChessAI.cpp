@@ -482,7 +482,7 @@ ChessAIMove ChessAI::calculateNextMove(ChessBoard* board, PLAYER_COLOR color, in
 	}
 	else {
 		int howMany = (level == NORMAL ? 5 : 3);
-		selectedMoves = findBestMoves(allMoves, 3);
+		selectedMoves = findBestMoves(allMoves, howMany);
 		for (int i = 0; i < selectedMoves.size(); ++i) {
 			selectedMoves[i].setEstimation(estimateMove(selectedMoves[i], tmpBoard, 1));
 		}
